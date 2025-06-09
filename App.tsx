@@ -1,130 +1,82 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// App.js
+import React,{ useState ,useEffect}  from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import LoginScreen from './android/app/src/component/login/login';
+import HomeScreen from './android/app/src/component/home/home';
+import MouldLoadingScreen from './android/app/src/component/mouldLoad/mould';
+import MouldUnLoadingScreen from './android/app/src/component/mouldUnload/mouldunload';
+import Pmconfg from './android/app/src/component/pmConf/pmconfg';
+import SparePart from './android/app/src/component/sparePartValidation/sparePart';
+import MouldStatus from './android/app/src/component/mouldStatus/mouldStatus';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import HealthCheck from './android/app/src/component/healthCheck/healthCheck';
+import BreakDown from './android/app/src/component/BreakDown/breakDown';
+import { LogBox } from 'react-native';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const Stack = createNativeStackNavigator();
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  useEffect(() => {
+    // Ignore all log warnings
+    LogBox.ignoreAllLogs(true);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the reccomendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
+    // Alternatively, ignore specific warnings
+    LogBox.ignoreLogs(['Warning: ...', 'Another specific warning']);
+  }, []);
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
+    <NavigationContainer>
+       <SafeAreaView style={styles.container}>
+      <Stack.Navigator initialRouteName="Login">
+          {!isLoggedIn ? (
+            <Stack.Screen name="Login">
+              {(props) =>  <LoginScreen 
+                {...props} 
+                setIsLoggedIn={setIsLoggedIn} 
+                setUsername={setUsername} // Pass setUsername to capture logged-in username
+              />} 
+            </Stack.Screen>
+          ) : (
+            <>
+               <Stack.Screen name="Home" options={{ headerShown: false }}>
+                {(props) => <HomeScreen {...props} setIsLoggedIn={setIsLoggedIn}  username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="MouldLoadingScreen"  options={{ headerShown: false }} >
+              {(props) => <MouldLoadingScreen {...props} username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="MouldUnloadingScreen"  options={{ headerShown: false }} >
+              {(props) => <MouldUnLoadingScreen {...props}  username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="SparePartScreen"  options={{ headerShown: false }} >
+              {(props) => <SparePart {...props}  username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="Pmconfg"  options={{ headerShown: false }} >
+              {(props) => <Pmconfg {...props}   username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="MouldStatus"  options={{ headerShown: false }} >
+              {(props) => <MouldStatus {...props}  username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="HealthCheck"  options={{ headerShown: false }} >
+              {(props) => <HealthCheck {...props}  username={username}/>}
+              </Stack.Screen>
+              <Stack.Screen name="BreakDown"  options={{ headerShown: false }} >
+              {(props) => <BreakDown {...props}  username={username}/>}
+              </Stack.Screen>
+            </>
+          )}
+        </Stack.Navigator>
+    </SafeAreaView>
+    </NavigationContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  container: {
+    flex: 1,
   },
 });
 

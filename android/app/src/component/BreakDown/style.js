@@ -1,0 +1,107 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#eaf3fb',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  section: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 10,
+    alignContent:'center',
+    alignItems:'center',
+    marginHorizontal:30,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  dropdownsection:{
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 5,
+    // marginHorizontal:30,
+    marginVertical: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1f3b73',
+    marginBottom: 10,
+  },
+  dropdown: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: '#f8fafc',
+    // padding: 5,
+  },
+  inputGroup: {
+    marginTop: 5,
+    gap:30
+  },
+  inputview:{flexDirection:'row' , gap :20 ,alignContent:'center' , alignItems:'center'},
+  input: {
+    backgroundColor: '#f1f5f9',
+    borderColor: '#d1d5db',
+    borderWidth: 1,
+    borderRadius: 10,
+    // padding: 14,
+    // marginBottom: 14,
+    marginRight:10,
+    marginLeft:20,
+    fontSize: 16,
+    color: '#1e293b',
+    width:'70%',
+    alignItems:'center',
+    alignContent:'center',
+    justifyContent:'center'
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2563eb',
+    // marginBottom: 6,
+    marginTop: 2,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3b82f6',
+    paddingVertical: 12,
+    width:'40%',
+    justifyContent:'center',
+    // paddingHorizontal: 25,
+    borderRadius: 12,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+});
+
+export default styles;
