@@ -12,6 +12,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HealthCheck from './android/app/src/component/healthCheck/healthCheck';
 import BreakDown from './android/app/src/component/BreakDown/breakDown';
+import PMMouldMonitoring from './android/app/src/component/PM Checklist/PM Mould Monitoring';
+import HCMonitoring from './android/app/src/component/HC Checklist/HC Monitoring';
 import { LogBox } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -49,23 +51,29 @@ const App = () => {
               {(props) => <MouldLoadingScreen {...props} username={username}/>}
               </Stack.Screen>
               <Stack.Screen name="MouldUnloadingScreen"  options={{ headerShown: false }} >
-              {(props) => <MouldUnLoadingScreen {...props}  username={username}/>}
+              {(props) => <MouldUnLoadingScreen setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
               <Stack.Screen name="SparePartScreen"  options={{ headerShown: false }} >
-              {(props) => <SparePart {...props}  username={username}/>}
+              {(props) => <SparePart setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
               <Stack.Screen name="Pmconfg"  options={{ headerShown: false }} >
-              {(props) => <Pmconfg {...props}   username={username}/>}
+              {(props) => <Pmconfg setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
               <Stack.Screen name="MouldStatus"  options={{ headerShown: false }} >
-              {(props) => <MouldStatus {...props}  username={username}/>}
+              {(props) => <MouldStatus setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
               <Stack.Screen name="HealthCheck"  options={{ headerShown: false }} >
-              {(props) => <HealthCheck {...props}  username={username}/>}
+              {(props) => <HealthCheck setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
               <Stack.Screen name="BreakDown"  options={{ headerShown: false }} >
-              {(props) => <BreakDown {...props}  username={username}/>}
+              {(props) => <BreakDown setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
+               <Stack.Screen name="PMMouldMonitoring">
+        {() => <PMMouldMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+         <Stack.Screen name="HCMonitoring">
+        {() => <HCMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
             </>
           )}
         </Stack.Navigator>

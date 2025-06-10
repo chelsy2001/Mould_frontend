@@ -44,6 +44,16 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           <Text style={styles.menuText}>Health Check</Text>
         </TouchableOpacity>
 
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMMouldMonitoring')}>
+          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Text style={styles.menuText}>PM Checklist</Text>
+        </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HCMonitoring')}>
+          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Text style={styles.menuText}>HC Checklist</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('BreakDown')}>
           <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
           <Text style={styles.menuText}>BreakDown</Text>
