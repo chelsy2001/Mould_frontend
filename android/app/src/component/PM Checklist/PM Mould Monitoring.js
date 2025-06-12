@@ -13,9 +13,12 @@ import {
 import Header from '../header/header';
 import styles from './MouldMonitoringStyle';
 import { BASE_URL } from '../config/config';
+import { useNavigation } from '@react-navigation/native';
+
 const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
 
   const [checklistData, setChecklistData] = useState([]);
+const navigation = useNavigation();
 
   //integrate the checklist api
   useEffect(() => {
@@ -74,7 +77,9 @@ const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
               <Text style={styles.label}>PMStatus</Text>
               <TextInput style={[styles.input2, { width: 150 }]} value={item.PMStatus.toString()} editable={false} />
 
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} 
+               onPress={() => navigation.navigate('PMPreparation', { checklistID: item.CheckListID })}
+              >
                 <Text style={styles.buttonText}>Execute</Text>
               </TouchableOpacity>
             </View>

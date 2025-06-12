@@ -15,6 +15,9 @@ import BreakDown from './android/app/src/component/BreakDown/breakDown';
 import PMMouldMonitoring from './android/app/src/component/PM Checklist/PM Mould Monitoring';
 import HCMonitoring from './android/app/src/component/HC Checklist/HC Monitoring';
 import { LogBox } from 'react-native';
+import PMPreparation from './android/app/src/component/PM Checklist/PMPreparation';
+import PMExecution from './android/app/src/component/PM Checklist/PMExecution';
+import PMApprove from './android/app/src/component/PM Checklist/PMApprove';
 
 const Stack = createNativeStackNavigator();
 
@@ -68,11 +71,20 @@ const App = () => {
               <Stack.Screen name="BreakDown"  options={{ headerShown: false }} >
               {(props) => <BreakDown setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
-               <Stack.Screen name="PMMouldMonitoring">
+               <Stack.Screen name="PMMouldMonitoring" options={{ headerShown: false }} >
         {() => <PMMouldMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-         <Stack.Screen name="HCMonitoring">
+         <Stack.Screen name="HCMonitoring" options={{ headerShown: false }} >
         {() => <HCMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="PMPreparation">
+        {() => <PMPreparation setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="PMExecution">
+        {() => <PMExecution setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="PMApprove">
+        {() => <PMApprove setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
             </>
           )}
