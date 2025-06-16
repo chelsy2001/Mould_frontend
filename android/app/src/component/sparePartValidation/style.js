@@ -84,6 +84,19 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
+   findButton: {
+    backgroundColor: '#004d99',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 25,
+    marginHorizontal: 20,
+    shadowColor: '#003366',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
+  },
 
   confirmText: {
     color: '#ffffff',
