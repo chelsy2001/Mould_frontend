@@ -1,29 +1,38 @@
 // SparePart.js
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Animated, Easing } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  Animated,
+  Easing,
+} from 'react-native';
 import Header from '../header/header';
 import styles from './style';
 import { SelectList } from 'react-native-dropdown-select-list';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { BASE_URL } from '../config/config';
+import { BASE_URL } from '../config/config'; // Adjust the import based on your project structure
 
 const SparePart = ({ username, setIsLoggedIn }) => {
-   const navigation = useNavigation();
-  const [spareLocationScan, setSpareLocationScan] = useState('');
+  const navigation = useNavigation();
+
+  const [selectedMouldId, setSelectedMouldId] = useState(''); // mould ID
+  const [sparePartCategoryId, setSparePartCategoryId] = useState(''); // spare part category ID
+  const [mouldGroup, setMouldGroup] = useState('');
+  const [selectedSparePart, setSelectedSparePart] = useState(''); // selected spare part ID
   const [quantity, setQuantity] = useState('');
   const [currentQuantity, setCurrentQuantity] = useState('');
-  const [selectedMouldId, setSelectedMouldId] = useState('');
-  const [selectedSparePart, setSelectedSparePart] = useState('');
-  const [sparePartOptions, setSparePartOptions] = useState([]);
   const [sparePartLoc, setSparePartLoc] = useState('');
-  const SparePartLocation = useRef(null);
-  const [sparePartCategoryId, setSparePartCategoryId] = useState('');
-  const [partNameOptions, setPartNameOptions] = useState([]);
-
-
+  const [spareLocationScan, setSpareLocationScan] = useState('');
+  const [sparePartOptions, setSparePartOptions] = useState([]); // category options
+  const [partNameOptions, setPartNameOptions] = useState([]); // part name options
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const SparePartLocation = useRef(null);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -34,100 +43,170 @@ const SparePart = ({ username, setIsLoggedIn }) => {
     }).start();
   }, []);
 
-const fetchCategoriesByMould = async (mouldId) => {
-  if (mouldId) {
-    try {
-      const response = await fetch(`${BASE_URL}/sparepart/categories/${mouldId}`);
-      const text = await response.text();
-      console.log("Raw response:", text); // Debug actual response
+  //category fetch
+useEffect(() => {
+  if (selectedMouldId) {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/sparepart/categories/${selectedMouldId}`);
+        const result = await response.json();
+        // console.log("Parsed Category Response:", result);
 
-      const data = JSON.parse(text);
-      if (data.statusCode === 200) {
-        const formatted = data.data.map(item => ({
-          key: item.SparePartCategoryID,
-          value: item.SparePartCategoryName,
-        }));
-        setSparePartOptions(formatted);
+        if (result.status === 200 && Array.isArray(result.data)) {
+          const formatted = result.data.map(item => ({
+            key: item.SparePartCategoryID,
+            value: item.SparePartCategoryName,
+          }));
+          setSparePartOptions(formatted);
+        } else {
+          Alert.alert('Error', result.message || 'Something went wrong');
+        }
+      } catch (error) {
+        Alert.alert('Error', error.message);
+        console.log("❌ Fetch Error:", error.message);
       }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    };
+    fetchCategories();
+  }
+}, [selectedMouldId]);
+
+
+// fetch spare part names based on selected category
+useEffect(() => {
+  if(sparePartCategoryId){
+    const fetchSparePartsByCategory = async () => {
+      try {
+        const response =await fetch(`${BASE_URL}/sparepart/parts/by-category/${sparePartCategoryId}`);
+        const result = await response.json();
+        // console.log("Fetched Spare Parts:", result);
+        if(result.status === 200 && Array.isArray(result.data) ){
+          const formatted = result.data.map(item => ({
+            key: item.SparePartID,
+            value: item.SparePartName,
+          }));
+          setPartNameOptions(formatted);
+        }
+        else {
+          setPartNameOptions([]); // Clear the list if empty or invalid
+          Alert.alert('Error', result.message || 'Unable to fetch part names.');
+        }
+      }catch (error) {
+        // Alert.alert('Error', error.message);
+        // console.error("Spare Part Name Fetch Error:", error.message);
+      }
+    };
+    fetchSparePartsByCategory();
+  }
+}, [sparePartCategoryId]);
+
+ //fetch mould group based on selected mould ID
+ useEffect(() => {
+  if (selectedMouldId) {
+    const fetchMouldGroup = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/sparepart/mouldgroup/${selectedMouldId}`);
+        const result = await response.json();
+        if (result.status === 200 && result.data && result.data.MouldGroupName) {
+          setMouldGroup(result.data.MouldGroupName);
+        } else {
+          setMouldGroup('--');
+        }
+      } catch (error) {
+        Alert.alert('Error', error.message);
+        console.error("Mould Group Fetch Error:", error);
+      }
+    };
+    fetchMouldGroup();
+  }
+}, [selectedMouldId]);
+
+const handleFind = async () => {
+  if (!selectedSparePart) {
+    Alert.alert("Please select a spare part first.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/sparepart/monitoring/${selectedSparePart}`);
+    const result = await response.json();
+
+    if (result.status === 200 && result.data) {
+      setCurrentQuantity(String(result.data.CurrentQuantity));
+      setSparePartLoc(result.data.SparePartLoc);
+    } else {
+      Alert.alert("Not Found", result.message || "No data found.");
     }
+  } catch (error) {
+    Alert.alert("Error", error.message);
   }
 };
 
- // ✅ Fetch mould group
-  const fetchMouldGroupByMould = async (mouldId) => {
-    if (mouldId) {
-      try {
-        const response = await fetch(`${BASE_URL}sparepart/mouldgroup/${mouldId}`);
-        const data = await response.json();
-        if (data.statusCode === 200) {
-          setCurrentQuantity(data.data?.MouldGroupName || '--');
-        }
-      } catch (error) {
-        console.error("Error fetching mould group:", error);
-      }
-    }
+const handleConfirm = async () => {
+  if (spareLocationScan.trim() !== sparePartLoc.trim()) {
+    Alert.alert("Location Mismatch", "Scanned location does not match stored location.");
+    return;
+  }
+
+  if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) {
+    Alert.alert("Invalid Quantity", "Please enter a valid quantity to use.");
+    return;
+  }
+
+  const payload = {
+    MouldID: selectedMouldId,
+    SparePartID: selectedSparePart,
+    Quantity: quantity,
   };
 
-  // ✅ When spare part category is selected
-  const handleSparePartSelect = async (categoryId) => {
-    setSelectedSparePart(categoryId);
-    try {
-      const response = await fetch(`${BASE_URL}sparepart/parts/by-category/${categoryId}`);
-      const data = await response.json();
-      if (data.statusCode === 200) {
-        const formatted = data.data.map(item => ({
-          key: item.SparePartID,
-          value: item.SparePartName,
-        }));
-        setPartNameOptions(formatted);
-      }
-    } catch (error) {
-      console.error("Error fetching spare part names:", error);
-    }
-  };
+  try {
+    const response = await fetch(`${BASE_URL}/sparepart/movement`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
 
-  // ✅ When part name is selected
-  const getSparePartDetails = async (sparePartName) => {
-    try {
-      const response = await fetch(`${BASE_URL}sparepart/details/by-name/${encodeURIComponent(sparePartName)}`);
-      const data = await response.json();
-      if (data.statusCode === 200 && data.data.length > 0) {
-        const part = data.data[0];
-        setSparePartLoc(part.Location);
-        setCurrentQuantity(part.Quantity.toString());
-      }
-    } catch (error) {
-      console.error("Error fetching spare part details:", error);
-    }
-  };
+    const result = await response.json();
 
-  useEffect(() => {
-    if (SparePartLocation.current) {
-      SparePartLocation.current.focus();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (SparePartLocation.current) {
-      SparePartLocation.current.focus();
-    }
-  }, []);
-
-  const handleConfirm = async () => {
-    if (sparePartLoc === spareLocationScan) {
-      Alert.alert('Success', 'Spare part consumption updated (simulation)', [
-        { text: 'OK', onPress: () => navigation.navigate('MouldHome') },
-      ]);
+    if (result.status === 200) {
+      Alert.alert("Success", "Spare part used and updated successfully.");
+      // Optionally reset values
+      setQuantity('');
+      setSpareLocationScan('');
     } else {
-      Alert.alert('Error', 'Spare part location does not match the scanned location.');
+      Alert.alert("Error", result.message || "Failed to update.");
     }
-  };
+  } catch (error) {
+    Alert.alert("Error", error.message);
+  }
+};
+
+
+
+  // Reset state when the screen is focused or unfocused
+
+  useFocusEffect(
+    useCallback(() => {
+      // This will run when the screen is focused
+      return () => {
+        // This will run when the screen is unfocused
+        setSelectedMouldId('');
+        setSparePartCategoryId('');
+        setMouldGroup('');
+        setSelectedSparePart('');
+        setQuantity('');
+        setCurrentQuantity('');
+        setSparePartLoc('');
+        setSpareLocationScan('');
+        setSparePartOptions([]);
+        setPartNameOptions([]);
+      };
+    }, [])
+  );
+
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Spare Part Screen'/>
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Spare Part Screen" />
       <ScrollView contentContainerStyle={{ paddingBottom: 30, padding: 40 }}>
 
         {/* MOULD SCAN AND SPARE PART CATEGORY */}
@@ -142,11 +221,7 @@ const fetchCategoriesByMould = async (mouldId) => {
               value={selectedMouldId}
               keyboardType="numeric"
               placeholderTextColor={'black'}
-             onChangeText={setSelectedMouldId}
-              onSubmitEditing={() => {
-                fetchMouldGroupByMould(selectedMouldId);
-                fetchCategoriesByMould(selectedMouldId);
-              }}
+              onChangeText={setSelectedMouldId}
             />
           </View>
 
@@ -155,19 +230,23 @@ const fetchCategoriesByMould = async (mouldId) => {
               <Icon name="shape-outline" size={18} color="#003366" /> Select Spare Part Category
             </Text>
            <SelectList
+  key={sparePartOptions.length} // ⚠️ Add this to force update
   setSelected={setSparePartCategoryId}
   data={sparePartOptions}
   save="key"
-  onSelect={handleSparePartSelect}
   placeholder="Select Spare Part Category"
   dropdownTextStyle={{ color: '#003366' }}
   dropdownItemStyle={{ backgroundColor: '#e6f0ff' }}
-  boxStyles={{ backgroundColor: '#fff', borderColor: '#b3c6ff', borderWidth: 1.5, borderRadius: 12 }}
+  boxStyles={{
+    backgroundColor: '#fff',
+    borderColor: '#b3c6ff',
+    borderWidth: 1.5,
+    borderRadius: 12,
+  }}
 />
 
           </View>
         </View>
-
 
         {/* MOULD GROUP AND SPARE PART SELECTION */}
         <View style={styles.row}>
@@ -175,28 +254,33 @@ const fetchCategoriesByMould = async (mouldId) => {
             <Text style={styles.label}>
               <Icon name="layers-outline" size={18} color="#003366" /> Mould Group
             </Text>
-            <Text style={styles.currentqty}>{ fetchMouldGroupByMould|| '--'}</Text>
+            <Text style={styles.currentqty}>{String(mouldGroup || '--')}</Text>
+
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
               <Icon name="cog-outline" size={18} color="#003366" /> Select Part Name
             </Text>
-            {/* Spare Part Name Dropdown */}
-<SelectList
-  setSelected={setSelectedSparePart}
-  data={partNameOptions}
-  save="value"
-  onSelect={getSparePartDetails}
-  placeholder="Select Spare Part"
-  dropdownTextStyle={{ color: '#003366' }}
-  dropdownItemStyle={{ backgroundColor: '#e6f0ff' }}
-  boxStyles={{ backgroundColor: '#fff', borderColor: '#b3c6ff', borderWidth: 1.5, borderRadius: 12 }}
-/>
+            <SelectList
+             setSelected={setSelectedSparePart}
+              data={partNameOptions}
+              save="key" // ✅ This ensures you get SparePartID
+              placeholder="Select Spare Part"
+              dropdownTextStyle={{ color: '#003366' }}
+              dropdownItemStyle={{ backgroundColor: '#e6f0ff' }}
+              boxStyles={{
+                backgroundColor: '#fff',
+                borderColor: '#b3c6ff',
+                borderWidth: 1.5,
+                borderRadius: 12,
+              }}
+            />
+
           </View>
         </View>
 
-        {/* REQUIRED QUANTITY */}
+        {/* REQUIRED QUANTITY AND FIND BUTTON */}
         <View style={styles.row}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
@@ -205,23 +289,23 @@ const fetchCategoriesByMould = async (mouldId) => {
             <TextInput
               style={styles.input}
               placeholder="Enter Required Quantity"
-              value={quantity}
+              value={''}
               keyboardType="numeric"
-              onChangeText={setQuantity}
+              onChangeText={''}
               placeholderTextColor={'black'}
             />
           </View>
 
           <View style={styles.inputContainer}>
-            <TouchableOpacity style={styles.findButton} onPress={handleConfirm}>
-              <Text style={styles.confirmText}>
-                <Icon name="magnify" size={20} color="#fff" /> Find
-              </Text>
-            </TouchableOpacity>
+           <TouchableOpacity style={styles.findButton} onPress={handleFind}>
+  <Text style={styles.confirmText}>
+    <Icon name="magnify" size={20} color="#fff" /> Find
+  </Text>
+</TouchableOpacity>
           </View>
         </View>
 
-        {/* CURRENT QUANTITY AND SPARE PART LOCATION */}
+        {/* CURRENT QUANTITY AND SPARE LOCATION */}
         <View style={styles.row}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
@@ -244,7 +328,7 @@ const fetchCategoriesByMould = async (mouldId) => {
           </View>
         </View>
 
-        {/* SCAN LOCATION AND QUANTITY USED */}
+        {/* SCAN LOCATION AND QUANTITY TO USE */}
         <View style={styles.row}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
@@ -275,11 +359,12 @@ const fetchCategoriesByMould = async (mouldId) => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-          <Text style={styles.confirmText}>
-            <Icon name="check-circle-outline" size={20} color="#fff" /> CONFIRM
-          </Text>
-        </TouchableOpacity>
+        {/* CONFIRM BUTTON */}
+       <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+  <Text style={styles.confirmText}>
+    <Icon name="check-circle-outline" size={20} color="#fff" /> CONFIRM
+  </Text>
+</TouchableOpacity>
       </ScrollView>
     </Animated.View>
   );
