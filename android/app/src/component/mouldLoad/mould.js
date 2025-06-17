@@ -58,7 +58,7 @@ const MouldLoadingScreen = ({ username }) => {
             if (Array.isArray(mouldData) && mouldData.length > 0) {
               const data = mouldData[0];
               if (
-                String(data.EquipmentTypeID) === String(machineScan) &&
+                String(data.MachineID) === String(machineScan) &&
                 String(data.MouldID) === String(mouldScan)
               ) {
                 if (data.ProductGroupID == null) {
@@ -131,7 +131,7 @@ const MouldLoadingScreen = ({ username }) => {
       }
       const data = {
         MouldStatus: 2,
-        EquipmentTypeID: machineScan,
+        MachineID: machineScan,
         MouldID: mouldScan,
         CurrentMouldLife: mouldActualLife,
         ParameterID: 4,

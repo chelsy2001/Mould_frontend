@@ -62,7 +62,7 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
             const mouldData = response.data.data[0];
             
             // Validate that Machine ID and Mould ID exist in the system and match the inputs
-            if (mouldData.EquipmentTypeID == machineScan && mouldData.MouldID == mouldScan)
+            if (mouldData.MachineID == machineScan && mouldData.MouldID == mouldScan)
               {
               Alert.alert('Success', 'Mould Machine validation successful');
               
@@ -201,7 +201,7 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
     const data = {
       MouldStatus: status,
       MouldLifeStatus: lifeStatus,
-      EquipmentTypeID: machineScan,
+      MachineID: machineScan,
       MouldID: mouldScan,
       CurrentMouldLife: mouldActualLife,
       ParameterID: 4,
