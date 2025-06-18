@@ -168,7 +168,10 @@ const handleFind = async () => {
     Alert.alert("Error", error.message);
   }
   if (RequiredQuantity > currentQuantity) {
-    Alert.alert("Insufficient Quantity", "The required quantity exceeds the current quantity.");
+   Alert.alert(
+          "Insufficient Quantity",
+          `Required quantity (${RequiredQuantity}) exceeds available stock (${currentQuantity}).`
+        );
     return;
   }
 };
