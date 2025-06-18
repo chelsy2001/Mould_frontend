@@ -30,6 +30,10 @@ const SparePart = ({ username, setIsLoggedIn }) => {
   const [spareLocationScan, setSpareLocationScan] = useState('');
   const [sparePartOptions, setSparePartOptions] = useState([]); // category options
   const [partNameOptions, setPartNameOptions] = useState([]); // part name options
+  const [prefferdSparePart, setPrefferdSparePart] = useState('');
+  const [RequiredQuantity, setRequiredQuantity] = useState(''); // required quantity
+  
+  console.log(prefferdSparePart,'prefferdSparePart');
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const SparePartLocation = useRef(null);
@@ -120,6 +124,30 @@ useEffect(() => {
   }
 }, [selectedMouldId]);
 
+// fetch preferred spare part based on selected category
+useEffect(() => {
+  if (sparePartCategoryId) {
+    const fetchPrefferdSparePart = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/sparepart/parts/by-category-prefferd/${sparePartCategoryId}`);
+        const result = await response.json();
+        console.log("Fetched Preferred Spare Part:", result);
+        if (result.status === 200 && Array.isArray(result.data) && result.data.length > 0) {
+          setPrefferdSparePart(result.data[0].SparePartName);
+        } else {
+          setPrefferdSparePart('--');
+        }
+      } catch (error) {
+        Alert.alert('Error', error.message);
+        console.error("prefferd spare part Fetch Error:", error);
+      }
+    };
+    fetchPrefferdSparePart();
+    console.log(fetchPrefferdSparePart(),'testeee ')
+  }
+  
+}, [sparePartCategoryId]);
+
 const handleFind = async () => {
   if (!selectedSparePart) {
     Alert.alert("Please select a spare part first.");
@@ -138,6 +166,10 @@ const handleFind = async () => {
     }
   } catch (error) {
     Alert.alert("Error", error.message);
+  }
+  if (RequiredQuantity > currentQuantity) {
+    Alert.alert("Insufficient Quantity", "The required quantity exceeds the current quantity.");
+    return;
   }
 };
 
@@ -255,7 +287,13 @@ const handleConfirm = async () => {
               <Icon name="layers-outline" size={18} color="#003366" /> Mould Group
             </Text>
             <Text style={styles.currentqty}>{String(mouldGroup || '--')}</Text>
+          </View>
 
+            <View style={styles.inputContainer}>
+            <Text style={styles.label}>
+              <Icon name="layers-outline" size={18} color="#003366" /> Perfferred Spare Part
+            </Text>
+            <Text style={styles.currentqty}>{String(prefferdSparePart || '--')}</Text>
           </View>
 
           <View style={styles.inputContainer}>
@@ -289,9 +327,9 @@ const handleConfirm = async () => {
             <TextInput
               style={styles.input}
               placeholder="Enter Required Quantity"
-              value={''}
+              value={RequiredQuantity}
               keyboardType="numeric"
-              onChangeText={''}
+              onChangeText={setRequiredQuantity}
               placeholderTextColor={'black'}
             />
           </View>
@@ -371,3 +409,4 @@ const handleConfirm = async () => {
 };
 
 export default SparePart;
+
