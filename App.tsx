@@ -18,7 +18,10 @@ import { LogBox } from 'react-native';
 import PMPreparation from './android/app/src/component/PM Checklist/PMPreparation';
 import PMExecution from './android/app/src/component/PM Checklist/PMExecution';
 import PMApprove from './android/app/src/component/PM Checklist/PMApprove';
-
+import HCExecution from './android/app/src/component/HC Checklist/HCExecution';
+import HCApprove from './android/app/src/component/HC Checklist/HCApprove';
+import SeperatePMApproval from './android/app/src/component/Approval/SeperatePMApproval';
+import SeperateHCApproval from './android/app/src/component/Approval/SeperateHCApproval';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -71,11 +74,9 @@ const App = () => {
               <Stack.Screen name="BreakDown"  options={{ headerShown: false }} >
               {(props) => <BreakDown setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
+              // pm checklist 
                <Stack.Screen name="PMMouldMonitoring" options={{ headerShown: false }} >
         {() => <PMMouldMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
-      </Stack.Screen>
-         <Stack.Screen name="HCMonitoring" options={{ headerShown: false }} >
-        {() => <HCMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
       <Stack.Screen name="PMPreparation">
         {() => <PMPreparation setIsLoggedIn={setIsLoggedIn} username={username} />}
@@ -85,6 +86,23 @@ const App = () => {
       </Stack.Screen>
       <Stack.Screen name="PMApprove">
         {() => <PMApprove setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      //HC checklist
+         <Stack.Screen name="HCMonitoring" options={{ headerShown: false }} >
+        {() => <HCMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+       <Stack.Screen name="HCExecution">
+        {() => <HCExecution setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="HCApprove">
+        {() => <HCApprove setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+       <Stack.Screen name="SeperatePMApproval">
+        {() => <SeperatePMApproval setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+
+       <Stack.Screen name="SeperateHCApproval">
+        {() => <SeperateHCApproval setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
             </>
           )}

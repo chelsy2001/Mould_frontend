@@ -58,6 +58,16 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
           <Text style={styles.menuText}>BreakDown</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperatePMApproval')}>
+          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Text style={styles.menuText}>Aprroval PM</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperateHCApproval')}>
+          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Text style={styles.menuText}>Approval HC</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
