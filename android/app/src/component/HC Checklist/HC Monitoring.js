@@ -13,10 +13,13 @@ import {
 import Header from '../header/header';
 import styles from './hcMonitoringStyle';
 import { BASE_URL } from '../config/config';
+import { useNavigation } from '@react-navigation/native';
+
+
 const HCMonitoring = ({ username, setIsLoggedIn }) => {
 
   const [checklistData, setChecklistData] = useState([]);
-
+const navigation = useNavigation();
   //integrate the checklist api
   useEffect(() => {
     fetch(`${BASE_URL}/HCMouldMonitoring/HCChecklist`)
@@ -73,7 +76,9 @@ const HCMonitoring = ({ username, setIsLoggedIn }) => {
               <Text style={styles.label}>HCStatus</Text>
               <TextInput style={[styles.input2, { width: 150 }]} value={item.HCStatus.toString()} editable={false} />
 
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button}
+              onPress={() => navigation.navigate('HCExecution', { checklistID: item.CheckListID })}
+              >
                 <Text style={styles.buttonText}>Execute</Text>
               </TouchableOpacity>
             </View>

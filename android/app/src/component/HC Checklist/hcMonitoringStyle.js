@@ -14,6 +14,7 @@ const MouldMonitoringStyle = StyleSheet.create({
     container: {
         padding: 20,
         backgroundColor: '#e0e9f5',
+        height:'100%'
     },
     label: {
         color: 'black'
