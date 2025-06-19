@@ -13,6 +13,7 @@ const PMExecution = StyleSheet.create({
  container: {
     padding: 20,
     backgroundColor: '#e0e9f5',
+         height:'100%'
   },
   label: {
     color: 'black'
@@ -123,6 +124,18 @@ const PMExecution = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+  },
+      iconButton: {
+    backgroundColor: '#2980b9',
+    borderRadius: 30,
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });
 export default PMExecution;

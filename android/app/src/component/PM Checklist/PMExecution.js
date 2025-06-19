@@ -15,7 +15,7 @@ import { useRoute } from '@react-navigation/native';
 import styles from './PMExecutionStyle';
 import { BASE_URL } from '../config/config';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const PMExecution = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
     const { checklistID } = route.params;
@@ -59,6 +59,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                     Alert.alert('Success', response.message);
                     const updated = [...checkpoints];
                     updated[index].isDisabled = true; // disable after update
+                     updated[index].OKNOK = oknok;  
                     setCheckpoints(updated);
                 } else {
                     Alert.alert('Error', response.message);
@@ -76,11 +77,12 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
     };
     //Integrate the API to submit the list
     const handleSubmit = () => {
-        fetch(`${BASE_URL}/PMMouldExecution/SubmitPMChecklist/${checklistID}`, {
+        fetch(`${BASE_URL}/PMMouldExecution/SubmitPMChecklist`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
+             body: JSON.stringify({ CheckListID: checklistID })
         })
             .then(res => res.json())
             .then(response => {
@@ -97,7 +99,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
             })
             .catch(error => {
                 console.error('Submit error:', error);
-                Alert.alert('Error', 'Something went wrong during submission.');
+                Alert.alert('Error', 'Submission failed: ' + error.message);
             });
     };
 
@@ -107,15 +109,15 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
             <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
                 <View>
                     {checkpoints.map((item, index) => (
-                        <View  key={index}
-    style={[
-        styles.Container1,
-        item.OKNOK === 1
-            ? { backgroundColor: '#00b050' } // Green background for OK
-            : item.OKNOK === 2
-            ? { backgroundColor: 'red' } // Red background for NOK
-            : {}
-    ]}>
+                        <View key={index}
+                            style={[
+                                styles.Container1,
+                                item.OKNOK === 1
+                                    ? { backgroundColor: '#00b050' } // Green background for OK
+                                    : item.OKNOK === 2
+                                        ? { backgroundColor: 'red' } // Red background for NOK
+                                        : {}
+                            ]}>
                             <View style={styles.row1}>
                                 <Text style={styles.label}>Checklist Name</Text>
                                 <TextInput style={[styles.input1, { width: 400 }]} multiline={true}
@@ -187,15 +189,15 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                 <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
                                     numberOfLines={4} value={item.UOM} editable={false} />
                             </View>
-
-
-
-
-
                             <View style={styles.row5}>
-                                <TouchableOpacity style={[styles.button, { marginRight: 10, }]}
-                                ><Text style={styles.buttonText}>Camera</Text></TouchableOpacity>
-
+                                {/* <TouchableOpacity style={[styles.iconButton, { marginRight: 10, }]} >
+                                    <Icon name="camera" size={24} color="white" />
+                                </TouchableOpacity> */}
+  {item.CheckingMethod === 'Visual' && (
+        <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]}>
+            <Icon name="camera" size={24} color="white" />
+        </TouchableOpacity>
+    )}
                                 <TouchableOpacity
                                     style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
                                     onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 1, index)}
@@ -207,7 +209,10 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                 <TouchableOpacity style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
                                     onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 2, index)}
                                     disabled={item.isDisabled}><Text style={styles.buttonText}>NOK</Text></TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => handleEdit(index)}><Text style={styles.buttonText}>Edit</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.iconButton} onPress={() => handleEdit(index)}>
+                                    {/* <Text style={styles.buttonText}>Edit</Text> */}
+                                    <Icon name="square-edit-outline" size={24} color="white"></Icon>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))}
@@ -220,8 +225,8 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button}
-                    onPress={() => navigation.goBack()}
-                //    onPress={() => navigation.navigate('PMExecution', { checklistID })}
+                    //  onPress={() => navigation.goBack()}
+                    onPress={() => navigation.navigate('PMApprove', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>

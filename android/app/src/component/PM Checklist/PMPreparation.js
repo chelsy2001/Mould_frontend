@@ -15,7 +15,7 @@ import { useRoute } from '@react-navigation/native';
 import styles from './PMPreparationStyle';
 import { BASE_URL } from '../config/config';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const PMPreparation = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
@@ -68,6 +68,7 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
                     Alert.alert('Success', response.message);
                     const updated = [...checkpoints];
                     updated[index].isDisabled = true; // disable after update
+                   updated[index].OKNOK = oknok;  
                     setCheckpoints(updated);
                 } else {
                     Alert.alert('Error', response.message);
@@ -85,24 +86,29 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
     };
     //Integrate the API to submit the list
     const handleSubmit = () => {
-        fetch(`${BASE_URL}/PMMouldPreparation/SubmitPreparation/${checklistID}`, {
+        fetch(`${BASE_URL}/PMMouldPreparation/SubmitPreparation`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
+            body: JSON.stringify({ CheckListID: checklistID })
         })
             .then(res => res.json())
             .then(response => {
                 if (response.status === 200) {
-                    Alert.alert('Success', response.message || 'Moved to execution successfully.');
-                    // You can navigate or refresh data here if needed
+                    Alert.alert('Success', response.message || 'Moved to execution successfully.', [
+                        {
+                            text: 'OK',
+                            onPress: () => navigation.navigate('PMExecution', { checklistID }),
+                        },
+                    ]);
                 } else {
                     Alert.alert('Error', response.message || 'Failed to move to execution.');
                 }
             })
             .catch(error => {
                 console.error('Submit error:', error);
-                Alert.alert('Error', 'Something went wrong during submission.');
+                Alert.alert('Error', 'Submission failed: ' + error.message);
             });
     };
 
@@ -113,7 +119,14 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
             <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
                 <View>
                     {checkpoints.map((item, index) => (
-                        <View key={index} style={styles.Container1}>
+                        <View key={index} style={[
+                            styles.Container1,
+                            item.OKNOK === 1
+                                ? { backgroundColor: '#00b050' } // Green background for OK
+                                : item.OKNOK === 2
+                                    ? { backgroundColor: 'red' } // Red background for NOK
+                                    : {}
+                        ]}>
                             <View style={styles.row1}>
                                 <Text style={styles.label}>Checklist Name</Text>
                                 <TextInput style={[styles.input1, { width: 400 }]} multiline={true}
@@ -149,24 +162,32 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
                             <View style={styles.row4}>
                                 <Text style={styles.label}>CheckPointItems</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-  numberOfLines={4} value={item.CheckPointItems} editable={false} />
+                                    numberOfLines={4} value={item.CheckPointItems} editable={false} />
 
                                 <Text style={styles.label}>CheckPointArea</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-  numberOfLines={4} value={item.CheckPointArea} editable={false} />
+                                    numberOfLines={4} value={item.CheckPointArea} editable={false} />
 
                                 <Text style={styles.label}>CheckingMethod</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-  numberOfLines={4} value={item.CheckingMethod} editable={false} />
+                                    numberOfLines={4} value={item.CheckingMethod} editable={false} />
 
                                 <Text style={styles.label}>CheckArea</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-  numberOfLines={4} value={item.CheckArea} editable={false} />
+                                    numberOfLines={4} value={item.CheckArea} editable={false} />
                             </View>
 
                             <View style={styles.row5}>
-                                <TouchableOpacity style={[styles.button, { marginRight: 10, }]}
-                                ><Text style={styles.buttonText}>Camera</Text></TouchableOpacity>
+
+
+                                {/* <TouchableOpacity style={[styles.iconButton, { marginRight: 10, }]} >
+                                    <Icon name="camera" size={24} color="white" />
+                                </TouchableOpacity> */}
+                                {item.CheckingMethod === 'Visual' && (
+                                    <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]}>
+                                        <Icon name="camera" size={24} color="white" />
+                                    </TouchableOpacity>
+                                )}
 
                                 <TouchableOpacity
                                     style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
@@ -179,7 +200,10 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
                                 <TouchableOpacity style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
                                     onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 2, index)}
                                     disabled={item.isDisabled}><Text style={styles.buttonText}>NOK</Text></TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => handleEdit(index)}><Text style={styles.buttonText}>Edit</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.iconButton} onPress={() => handleEdit(index)}>
+                                    {/* <Text style={styles.buttonText}>Edit</Text> */}
+                                    <Icon name="square-edit-outline" size={24} color="white"></Icon>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))}
@@ -192,7 +216,8 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button}
-                    onPress={() => navigation.goBack()}
+                    // onPress={() => navigation.goBack()}
+                    onPress={() => navigation.navigate('PMExecution', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>
