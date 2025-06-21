@@ -45,12 +45,12 @@ const HomePage = ({ setIsLoggedIn, username }) => {
         </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMMouldMonitoring')}>
-          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Image style={styles.icon} source={require('../assets/checklist.jpg')} />
           <Text style={styles.menuText}>PM Checklist</Text>
         </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HCMonitoring')}>
-          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Image style={styles.icon} source={require('..//assets/checklist.jpg')} />
           <Text style={styles.menuText}>HC Checklist</Text>
         </TouchableOpacity>
 
@@ -60,12 +60,12 @@ const HomePage = ({ setIsLoggedIn, username }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperatePMApproval')}>
-          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Image style={styles.icon} source={require('..//assets/Aprroval.jpeg')} />
           <Text style={styles.menuText}>Aprroval PM</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperateHCApproval')}>
-          <Image style={styles.icon} source={require('..//assets/BD.jpeg')} />
+          <Image style={styles.icon} source={require('..//assets/Aprroval.jpeg')} />
           <Text style={styles.menuText}>Approval HC</Text>
         </TouchableOpacity>
       </ScrollView>

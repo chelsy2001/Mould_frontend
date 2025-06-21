@@ -22,6 +22,7 @@ import HCExecution from './android/app/src/component/HC Checklist/HCExecution';
 import HCApprove from './android/app/src/component/HC Checklist/HCApprove';
 import SeperatePMApproval from './android/app/src/component/Approval/SeperatePMApproval';
 import SeperateHCApproval from './android/app/src/component/Approval/SeperateHCApproval';
+import PMApprovalCheckpoint from './android/app/src/component/Approval/PMApprovalCheckpoint';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -74,7 +75,6 @@ const App = () => {
               <Stack.Screen name="BreakDown"  options={{ headerShown: false }} >
               {(props) => <BreakDown setIsLoggedIn={undefined} {...props} username={username}/>}
               </Stack.Screen>
-              // pm checklist 
                <Stack.Screen name="PMMouldMonitoring" options={{ headerShown: false }} >
         {() => <PMMouldMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
@@ -87,7 +87,6 @@ const App = () => {
       <Stack.Screen name="PMApprove">
         {() => <PMApprove setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      //HC checklist
          <Stack.Screen name="HCMonitoring" options={{ headerShown: false }} >
         {() => <HCMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
@@ -103,6 +102,9 @@ const App = () => {
 
        <Stack.Screen name="SeperateHCApproval">
         {() => <SeperateHCApproval setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+       <Stack.Screen name="PMApprovalCheckpoint">
+        {() => <PMApprovalCheckpoint setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
             </>
           )}
