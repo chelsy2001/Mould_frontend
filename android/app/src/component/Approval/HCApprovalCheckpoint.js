@@ -12,13 +12,13 @@ import {
 } from 'react-native';
 import Header from '../header/header';
 import { useRoute } from '@react-navigation/native';
-import styles from './PMApprovalCheckpointStyle';
+import styles from './HCApprovalCheckpointStyle';
 import { BASE_URL } from '../config/config';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
+const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
     const { checklistID } = route.params;
     const [checkpoints, setCheckpoints] = useState([]);
@@ -58,7 +58,7 @@ const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
         }
 
         try {
-            const response = await fetch(`${BASE_URL}/SeperatePMApproval/UpdateCheckPoint`, {
+            const response = await fetch(`${BASE_URL}/SeperateHCApproval/UpdateCheckPoint`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
 
     return (
         <View style={styles.container}>
-            <Header username={username} title="PM Preparation" />
+            <Header username={username} title="HC Preparation" />
             <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
                 <View>
                     {checkpoints.map((item, index) => (
@@ -215,7 +215,7 @@ const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
 <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
      <TouchableOpacity style={styles.button}
                     // onPress={() => navigation.goBack()}
-                    onPress={() => navigation.navigate('SeperatePMApproval', { checklistID })}
+                    onPress={() => navigation.navigate('SeperateHCApproval', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Save</Text>
                 </TouchableOpacity>
@@ -223,4 +223,4 @@ const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
         </View>
     );
 }
-export default PMApprovalCheckpoint;
+export default HCApprovalCheckpoint;
