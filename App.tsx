@@ -23,6 +23,7 @@ import HCApprove from './android/app/src/component/HC Checklist/HCApprove';
 import SeperatePMApproval from './android/app/src/component/Approval/SeperatePMApproval';
 import SeperateHCApproval from './android/app/src/component/Approval/SeperateHCApproval';
 import PMApprovalCheckpoint from './android/app/src/component/Approval/PMApprovalCheckpoint';
+import HCApprovalCheckpoint from './android/app/src/component/Approval/HCApprovalCheckpoint';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -105,6 +106,9 @@ const App = () => {
       </Stack.Screen>
        <Stack.Screen name="PMApprovalCheckpoint">
         {() => <PMApprovalCheckpoint setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="HCApprovalCheckpoint">
+        {() => <HCApprovalCheckpoint setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
             </>
           )}
