@@ -92,7 +92,7 @@ const fetchChecklistData = () => {
                     <View>
                         <View key={item.UID} style={[
                             styles.Container1,
-                            item.PMStatus === 4 && { backgroundColor: '#00b050', borderColor: '#28a745', borderWidth: 1.5 }, // green background
+                            item.PMStatus === 6 && { backgroundColor: '#00b050', borderColor: '#28a745', borderWidth: 1.5 }, // green background
                         ]}>
                             <Text style={styles.boxHeader}>Checklist #{index + 1}</Text>
 
