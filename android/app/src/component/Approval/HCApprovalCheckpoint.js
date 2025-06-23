@@ -21,32 +21,35 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
     const { checklistID } = route.params;
+    console.log('Checklist ID from route:', checklistID);
     const [checkpoints, setCheckpoints] = useState([]);
     const navigation = useNavigation();
 
+    //fetch the HC Perartion data
     useEffect(() => {
-        console.log('Received checklistID:', checklistID);
-        // You can now fetch or use checklistID as needed
-    }, [checklistID]);
-    //fetch the PM Perartion data 
-    useEffect(() => {
-        fetch(`${BASE_URL}/SeperatePMApproval/GetCheckPoints/${checklistID}`)
-            .then(res => res.json())
-            .then(response => {
-                if (response.status === 200) {
-                    // setCheckpoints(response.data);
-                    const updatedData = response.data.map(item => ({
-                        ...item,
-                        ObservationInput: item.Observation ?? '',
-                        OKNOKInput: item.OKNOK ?? null,
-                        isDisabled: item.Observation !== null && item.Observation !== '' && item.OKNOK !== null
-                    }));
-                    setCheckpoints(updatedData);
-                } else {
-                    console.warn('API error:', response.message);
-                }
-            })
-            .catch(err => console.error('API fetch error:', err));
+        if (checklistID) {
+            const url = `${BASE_URL}/SeperateHCApproval/GetCheckPoints/${checklistID}`;
+            console.log('Fetching from URL:', url);
+            fetch(url)
+                .then(res => res.json())
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log('Fetched checkpoints:', response.data);
+                        // setCheckpoints(response.data);
+                        const updatedData = response.data.map(item => ({
+                            ...item,
+                            ObservationInput: item.Observation ?? '',
+                            OKNOKInput: item.OKNOK ?? null,
+                            isDisabled: item.Observation !== null && item.Observation !== '' && item.OKNOK !== null
+                        }));
+                        setCheckpoints(updatedData);
+                        console.log('Updated checkpoints:', updatedData);
+                    } else {
+                        console.warn('API error:', response.message);
+                    }
+                })
+                .catch(err => console.error('API fetch error:', err));
+        }
     }, [checklistID]);
 
     const handleUpdate = async (index) => {
@@ -94,7 +97,7 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
 
     return (
         <View style={styles.container}>
-            <Header username={username} title="HC Preparation" />
+            <Header username={username} title="HC Approval Checkpoints" />
             <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
                 <View>
                     {checkpoints.map((item, index) => (
@@ -117,9 +120,9 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
                             </View>
 
                             <View style={styles.row2}>
-                                <Text style={styles.label}>Judgement Criteria</Text>
+                                <Text style={styles.label}>Standard</Text>
                                 <TextInput style={[styles.input2, { width: 400, marginStart: '1' }]} multiline={true}
-                                    numberOfLines={4} value={item.JudgementCriteria} editable={false} />
+                                    numberOfLines={4} value={item.Standard} editable={false} />
 
                                 <Text style={styles.label}>Observation</Text>
 
@@ -169,21 +172,21 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
                             </View>
 
                             <View style={styles.row4}>
-                                <Text style={styles.label}>CheckPointItems</Text>
+                                <Text style={styles.label}>CheckPointName</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-                                    numberOfLines={4} value={item.CheckPointItems} editable={false} />
+                                    numberOfLines={4} value={item.CheckPointName} editable={false} />
 
-                                <Text style={styles.label}>CheckPointArea</Text>
-                                <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-                                    numberOfLines={4} value={item.CheckPointArea} editable={false} />
+                                <Text style={styles.label}>CheckPointType</Text>
+                                <TextInput style={[styles.input4, { width: 110 }]} multiline={true}
+                                    numberOfLines={4} value={item.CheckPointType} editable={false} />
 
                                 <Text style={styles.label}>CheckingMethod</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
                                     numberOfLines={4} value={item.CheckingMethod} editable={false} />
 
-                                <Text style={styles.label}>CheckArea</Text>
+                                <Text style={styles.label}>CheckPointValue</Text>
                                 <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-                                    numberOfLines={4} value={item.CheckArea} editable={false} />
+                                    numberOfLines={4} value={item.CheckPointValue} editable={false} />
                             </View>
 
                             <View style={styles.row5}>
