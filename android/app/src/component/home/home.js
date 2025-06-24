@@ -26,7 +26,7 @@ const HomePage = ({ setIsLoggedIn, username }) => {
         
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Pmconfg')}>
           <Image style={styles.icon} source={require('..//assets/pm.jpg')} />
-          <Text style={styles.menuText}>PreventiveMainten</Text>
+          <Text style={styles.menuText}>Preventive Maintenance</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SparePartScreen')}>
@@ -60,12 +60,12 @@ const HomePage = ({ setIsLoggedIn, username }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperatePMApproval')}>
-          <Image style={styles.icon} source={require('..//assets/Aprroval.jpeg')} />
+          <Image style={styles.icon} source={require('..//assets/app.jpg')} />
           <Text style={styles.menuText}>Aprroval PM</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperateHCApproval')}>
-          <Image style={styles.icon} source={require('..//assets/Aprroval.jpeg')} />
+          <Image style={styles.icon} source={require('..//assets/app.jpg')} />
           <Text style={styles.menuText}>Approval HC</Text>
         </TouchableOpacity>
       </ScrollView>

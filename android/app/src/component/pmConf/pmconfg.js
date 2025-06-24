@@ -175,7 +175,7 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
         Alert.alert('Success', 'Machine ready for operation.', [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('MouldHome'),
+            onPress: () => navigation.navigate('Home'),
           },
         ]);
         setMouldData(prev => ({ ...prev, MouldStatus: 3 ,}));
@@ -209,7 +209,6 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
     }
     return true;
   };
-
   const openCamera = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;

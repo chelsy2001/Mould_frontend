@@ -43,7 +43,7 @@ const App = () => {
        <SafeAreaView style={styles.container}>
       <Stack.Navigator initialRouteName="Login">
           {!isLoggedIn ? (
-            <Stack.Screen name="Login">
+            <Stack.Screen name="Login" options={{ headerShown: false }}>
               {(props) =>  <LoginScreen 
                 {...props} 
                 setIsLoggedIn={setIsLoggedIn} 
@@ -79,35 +79,35 @@ const App = () => {
                <Stack.Screen name="PMMouldMonitoring" options={{ headerShown: false }} >
         {() => <PMMouldMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="PMPreparation">
+      <Stack.Screen name="PMPreparation" options={{ headerShown: false }}>
         {() => <PMPreparation setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="PMExecution">
+      <Stack.Screen name="PMExecution" options={{ headerShown: false }}>
         {() => <PMExecution setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="PMApprove">
+      <Stack.Screen name="PMApprove" options={{ headerShown: false }}>
         {() => <PMApprove setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
          <Stack.Screen name="HCMonitoring" options={{ headerShown: false }} >
         {() => <HCMonitoring setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-       <Stack.Screen name="HCExecution">
+       <Stack.Screen name="HCExecution" options={{ headerShown: false }}>
         {() => <HCExecution setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="HCApprove">
+      <Stack.Screen name="HCApprove" options={{ headerShown: false }}>
         {() => <HCApprove setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-       <Stack.Screen name="SeperatePMApproval">
+       <Stack.Screen name="SeperatePMApproval" options={{ headerShown: false }}>
         {() => <SeperatePMApproval setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
 
-       <Stack.Screen name="SeperateHCApproval">
+       <Stack.Screen name="SeperateHCApproval" options={{ headerShown: false }}>
         {() => <SeperateHCApproval setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-       <Stack.Screen name="PMApprovalCheckpoint">
+       <Stack.Screen name="PMApprovalCheckpoint" options={{ headerShown: false }}>
         {() => <PMApprovalCheckpoint setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="HCApprovalCheckpoint">
+      <Stack.Screen name="HCApprovalCheckpoint" options={{ headerShown: false }}>
         {() => <HCApprovalCheckpoint setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
             </>
