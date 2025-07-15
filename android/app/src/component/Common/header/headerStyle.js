@@ -2,48 +2,58 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
+const scaleFont = (size) => size * (width / 375);
+const scaleSize = (size) => size * (width / 375);
+
 export default StyleSheet.create({
   header: {
+    paddingVertical: scaleSize(8),
+    paddingHorizontal: scaleSize(12),
+    borderRadius: scaleSize(12),
+    marginHorizontal: scaleSize(8),
+    marginTop: scaleSize(6),
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    backgroundColor: '#0059b3',
+  },
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 12,
-    borderRadius: 16,
-    margin: 10,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    backgroundColor: '#0059b3',
+    marginBottom: scaleSize(4),
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   sideIcon: {
-    width: 40,
+    width: scaleSize(32),
     alignItems: 'center',
     justifyContent: 'center',
   },
-  centerContent: {
-    flexDirection: 'row',
-    // alignItems: 'center',
-    gap: 10,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  logo: {
-    width: 60,
-    height: 60,
-    resizeMode: 'contain',
-  },
   title: {
     color: 'white',
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: scaleFont(16),
+    fontWeight: '600',
     textAlign: 'center',
+    flex: 1,
   },
   subTitle: {
     color: 'white',
-    fontSize: 20,
+    fontSize: scaleFont(12),
     fontWeight: '400',
-    textAlign: 'center',
+    textAlign: 'left',
+    
+  },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+     maxWidth: undefined,      // remove limit
+  flex: 1,                  // allow it to expand
+  justifyContent: 'flex-end',
   },
 });

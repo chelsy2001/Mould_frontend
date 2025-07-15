@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -24,7 +23,7 @@ const getCurrentDate = () => {
   return `${day} ${month} ${year}`;
 };
 
-const Header = ({ username, setIsLoggedIn ,title }) => {
+const Header = ({ username, setIsLoggedIn, title }) => {
   const navigation = useNavigation();
 
   const handleLogout = async () => {
@@ -51,23 +50,35 @@ const Header = ({ username, setIsLoggedIn ,title }) => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
     >
-      {/* Back Button */}
-      
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideIcon}>
-        <Icon name="arrow-left" size={26} color="#fff" />
-      </TouchableOpacity>
-      <Text style={styles.subTitle}> {getCurrentDate()}</Text>
-      {/* Centered Content */}
-      <View style={styles.centerContent}>
+      {/* Top row: back button + title */}
+      <View style={styles.topRow}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideIcon}>
+          <Icon name="arrow-left" size={22} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
+
+          <TouchableOpacity onPress={handleLogout} style={{ marginLeft: 8 }}>
+            <Icon name="logout" size={20} color="#fff" />
+          </TouchableOpacity>
+        {/* <View style={styles.sideIcon} />   */}
       </View>
 
-      {/* Logout Icon */}
-      {/* <Text style={styles.title}>👤 {username}</Text> */}
-      <Text style={styles.title}> {username}</Text>
-      <TouchableOpacity onPress={handleLogout} style={styles.sideIcon}>
-        <Icon name="logout" size={26} color="#fff" />
-      </TouchableOpacity>
+      {/* Bottom row: date and username/logout */}
+      <View style={styles.bottomRow}>
+        <Text style={styles.subTitle}>{getCurrentDate()}</Text>
+        <View style={styles.userContainer}>
+          <Text
+            style={styles.subTitle}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {username}
+          </Text>
+          {/* <TouchableOpacity onPress={handleLogout} style={{ marginLeft: 8 }}>
+            <Icon name="logout" size={20} color="#fff" />
+          </TouchableOpacity> */}
+        </View>
+      </View>
     </LinearGradient>
   );
 };
