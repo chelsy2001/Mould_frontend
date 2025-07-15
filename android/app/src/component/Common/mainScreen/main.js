@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import mainstyles from './mainStyle';
-import Header from '../header/header';
+import Header from '../../Common/header/header';
 
 const MainHome = ({ navigation, setIsLoggedIn, username,title }) => {
   return (

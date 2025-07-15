@@ -37,7 +37,7 @@ const MouldStack = ({ setIsLoggedIn, username }) => {
       <Stack.Screen name="SparePartScreen">
         {() => <SparePart setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="pmconfig">
+      <Stack.Screen name="Pmconfg">
         {() => <PmConfig setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
       <Stack.Screen name="MouldStatus">

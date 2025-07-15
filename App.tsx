@@ -43,7 +43,7 @@ function App() {
                 {(props) => <PerformanceStack {...props} username={username} setIsLoggedIn={setIsLoggedIn} />}
               </Stack.Screen>
               <Stack.Screen name="Maintenance" options={{ headerShown: false }}>
-                {(props) => <MouldStack setIsLoggedIn={undefined} username={undefined}  />}
+                {(props) => <MouldStack setIsLoggedIn={undefined} username={username}  />}
               </Stack.Screen>
             </>
           )}
