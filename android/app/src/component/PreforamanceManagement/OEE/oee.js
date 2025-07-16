@@ -22,7 +22,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   const [selectedShift, setSelectedShift] = useState('A');
   const [LineName, setLineName] = useState([]);
   const [loading, setLoading] = useState(true);
-  const lineName = route?.params?.lineName ?? 'No Line Selected';
+  const lineName = route?.params?.MachineName ?? 'No Line Selected';
 
 
   const [prodDate, setProdDate] = useState('');
@@ -177,12 +177,15 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+     <View style={{ flex: 1 }}>
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Overall line effectiveness​' />
+ <ScrollView contentContainerStyle={styles.container}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 20 }}>
-        <Text style={styles.headerBox}>Date : {prodDate}</Text>
+        {/* <Text style={styles.headerBox}>Date : {prodDate}</Text> */}
+
         <Text style={styles.headerBox}>{lineName}</Text>
-        <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
+        <Text style={styles.headerBox}>Shift : A</Text>
+        {/* <Text style={styles.headerBox}>Shift Name: {shiftName}</Text> */}
       </View>
       {/* Circular Progress Section */}
       <View style={styles.chartSection}>
@@ -212,74 +215,65 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 
           <Text>TotalDT</Text>
           <TextInput style={styles.input} value={totalDownTime} editable={false} />
+
+
+        </View>
+
+        <View style={styles.row3}>
           <Text>TotalTime</Text>
           <TextInput style={styles.input} value={totalTime} editable={false} />
           <TouchableOpacity style={styles.detailsBtn}
-          onPress={() => navigation.navigate('DTDetails', { lineName: lineName })}
+            onPress={() => navigation.navigate('DTDetails', { lineName: lineName })}
           >
             <Text style={{ color: 'white' }}>Details</Text>
           </TouchableOpacity>
-
         </View>
+
+
         <View style={styles.row2}>
-          <Text>UnAssigned Reason Count</Text>
+          <Text>UnAssigned Reason </Text>
           <TextInput
             style={styles.input2}
             value={unassignedReasonCount}
             editable={false}
           />
           <TouchableOpacity
-            style={[styles.assignBtn, { marginLeft:35 }]}
+            style={[styles.assignBtn, { marginLeft: 4 }]}
             onPress={() => navigation.navigate('Downtime', { lineName: lineName })}
           >
-            <Text style={{ color: 'white' }}>Assign Reason DT</Text>
+            <Text style={{ color: 'white' }}>Update Reason</Text>
           </TouchableOpacity>
-
-
         </View>
 
-      </View>
 
+      </View>
+      {/* Performance */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Performance {performance}%</Text>
         <View style={styles.row}>
           <Text>Expected Quntity</Text>
           <TextInput style={styles.input} value={expectedQty} editable={false} />
-          <Text>Actual Quntity</Text>
-          <TextInput style={styles.input} value={actualQty} editable={false} />
           <Text>Gap</Text>
           <TextInput style={styles.input} value={gap} editable={false} />
         </View>
-      </View>
 
+        <View style={styles.row2}>
+          <Text>Actual Quntity</Text>
+          <TextInput style={styles.input} value={actualQty} editable={false} />
+        </View>
+
+      </View>
+      {/* Quality */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Quality {quality}%</Text>
-        <View style={styles.row}>
-          <Text>Total Part</Text>
-          <TextInput style={styles.input} value={actualQty} editable={false} />
-          <Text>Good Part</Text>
-          <TextInput style={styles.input} value={goodQty} editable={false} />
-          <Text>Rework</Text>
-          <TextInput style={styles.input} value={rework} editable={false} />
-          <Text>Rejected</Text>
-          <TextInput style={styles.input} value={rejected} editable={false} />
-          <TouchableOpacity 
-           onPress={() => navigation.navigate('ReworkDetails', { lineName: lineName })}
-          style={styles.detailsBtn}>
-            <Text style={{ color: 'white' }}>Details</Text>
-          </TouchableOpacity>
 
-        </View>
-        <View style={styles.row2}>
-          <Text>UnAssigned Reason Count</Text>
-          <TextInput
-            style={styles.input2}
-            value={unassignedReworkReasonCount}
-            editable={false}
-          />
-          <TouchableOpacity       style={[styles.assignBtn, { marginLeft:35 }]}
-          onPress={() => navigation.navigate('Quality',{ lineName: lineName })}>
-            <Text style={{ color: 'white' }}>Assign Reason Qlt</Text>
+
+        <View style={styles.row4}>
+          <Text>Rejected Count</Text>
+          <TextInput style={styles.input} value={rejected} editable={false} />
+          <TouchableOpacity style={[styles.assignBtn, { marginLeft: 4 }]}
+            onPress={() => navigation.navigate('Quality', { lineName: lineName })}>
+            <Text style={{ color: 'white' }}>Rejection Entry </Text>
           </TouchableOpacity>
 
 
@@ -288,6 +282,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
       </View>
 
     </ScrollView>
+    </View>
   );
 }
 
