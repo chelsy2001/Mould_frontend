@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import { BASE_URL } from '../../Common/config/config';
 import BreakDown from '../BreakDown/breakDown';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
+const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
   const navigation = useNavigation();
   const [machineScan, setMachineScan] = useState('');
   const [mouldScan, setMouldScan] = useState('');
@@ -28,14 +28,14 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
   const [pmWarning, setPmWarning] = useState(null);
   const [healthCheckWarning, setHealthCheckWarning] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [isMouldNotInUse, setIsMouldNotInUse] = useState(false); 
+  const [isMouldNotInUse, setIsMouldNotInUse] = useState(false);
   const machineInputRef = useRef(null);
   const mouldInputRef = useRef(null);
   const [mouldPmStatus, setMouldPmstatus] = useState(null);
-  const [mouldHealthStatus ,setMouldHealthStatus] = useState(null);
-  const [mouldLife ,setMouldLife] = useState(null);
+  const [mouldHealthStatus, setMouldHealthStatus] = useState(null);
+  const [mouldLife, setMouldLife] = useState(null);
   const [fadeAnim] = useState(new Animated.Value(0));
-  
+
 
   useEffect(() => {
     // Focus on the machine scan input when the screen loads
@@ -45,27 +45,26 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
   }, []);
 
   useEffect(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }).start();
-    }, []);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   useEffect(() => {
     const fetchProductName = async () => {
       if (machineScan && mouldScan) {
         try {
           const response = await axios.get(`${BASE_URL}/mould/details/${machineScan}/${mouldScan}`);
-  
+
           if (response.status === 200 && response.data.data.length > 0) {
             const mouldData = response.data.data[0];
-            
+
             // Validate that Machine ID and Mould ID exist in the system and match the inputs
-            if (mouldData.MachineID == machineScan && mouldData.MouldID == mouldScan)
-              {
+            if (mouldData.MachineID == machineScan && mouldData.MouldID == mouldScan) {
               Alert.alert('Success', 'Mould Machine validation successful');
-              
+
               // Set the product name from the response
               setProductName(mouldData.ProductGroupName);
               setMouldActualLife(mouldData.MouldActualLife);
@@ -74,14 +73,14 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
               setMouldPmstatus(mouldData.MouldPMStatus);
               setMouldHealthStatus(mouldData.MouldHealthStatus)
               setMouldLife(mouldData.MouldLifeStatus)
-  
+
               // Check if the mould status is "Not in Use"
               if (mouldData.MouldStatus === 6) {
                 setIsMouldNotInUse(true);
                 setProductName(''); // Clear product name
                 Alert.alert('Warning', 'This mould is not in use.');
               } else {
-                setIsMouldNotInUse(false); 
+                setIsMouldNotInUse(false);
               }
             } else {
               // Show an error if Machine ID or Mould ID does not match
@@ -92,26 +91,26 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
             // Show an error if Machine ID or Mould ID is not found in the system
             Alert.alert('Error', 'Machine and Mould are not in the system.');
             setProductName('No data found');
-            setIsMouldNotInUse(false); 
+            setIsMouldNotInUse(false);
           }
         } catch (error) {
           console.error('Error fetching data:', error);
           setProductName('Error fetching data');
-          setIsMouldNotInUse(false); 
+          setIsMouldNotInUse(false);
         }
       } else {
         setProductName('');
-        setIsMouldNotInUse(false); 
+        setIsMouldNotInUse(false);
       }
     };
     fetchProductName();
   }, [machineScan, mouldScan]);
-  
+
 
 
   const handleConfirm = () => {
     if (mouldScan && machineScan) {
-      setModalVisible(true); 
+      setModalVisible(true);
     } else {
       Alert.alert('Info', 'This mould does not belong to this machine.');
     }
@@ -120,21 +119,21 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
   const handleStatusSelect = async (status) => {
     let lifeStatus = 1; // default life status
     let successMessage = ''; // Success message variable
-    
+
     // Check if the status is "Not in Use" or "Breakdown"
     if (status === 6) {
       lifeStatus = 2; // Set MouldLifeStatus to 2 for "Not in Use"
       successMessage = 'Mould is not in use'; // Set success message for "Not in Use"
-    } 
+    }
     else if (status === 1) {
       successMessage = 'Mould Unloading  Successfully'; // Set success message for "Normal"
-    } 
+    }
     else if (status === 4) {
       // Call the addBreakdownLog function for breakdown
       // await addBreakdownLog();
       successMessage = 'Mould in Breakdown state'; // Set success message for "Breakdown"
     }
-    
+
     if (status !== 6) {
       // For statuses other than "Not in Use," directly update
       updateMouldStatus(status, lifeStatus, successMessage);
@@ -162,7 +161,7 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
       );
     }
   };
-  
+
   // const addBreakdownLog = async (status) => {
   //   const data = {
   //     MouldID: mouldScan,
@@ -181,10 +180,10 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
   //     ParameterID: 4,
   //     ParameterValue:status ,
   //   };
-    
+
   //   try {
   //     const response = await axios.post(`${BASE_URL}/mould/addbreakdownlog`, data);
-      
+
   //     if (response.status === 200) {
   //       Alert.alert('Success', 'Mould in BreakDown state');
   //     } else {
@@ -195,8 +194,8 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
   //     Alert.alert('Error', 'Error creating breakdown state. Please try again.');
   //   }
   // };
-  
-  
+
+
   const updateMouldStatus = async (status, lifeStatus, successMessage) => {
     const data = {
       MouldStatus: status,
@@ -207,10 +206,10 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
       ParameterID: 4,
       ParameterValue: status,
     };
-  
+
     try {
       const response = await axios.post(`${BASE_URL}/mould/update`, data);
-  
+
       if (response.status === 200) {
         // Display the specific success message based on the mould status
         Alert.alert('Success', successMessage, [
@@ -227,12 +226,12 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
       Alert.alert('Error', 'Error updating mould. Please try again.');
     }
   };
-  
-  
-  
-  
-  
- const getColorMould = (value) => {
+
+
+
+
+
+  const getColorMould = (value) => {
     switch (value) {
       case 1: return '#27ae60';
       case 2: return '#f1c40f';
@@ -256,7 +255,7 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
     }
   };
 
-   const getColorHC = (value) => {
+  const getColorHC = (value) => {
     switch (value) {
       case 1: return '#27ae60'; // GREEN it is in normal state
       case 2: return '#f1c40f'; // YELLOW it is in warning state
@@ -272,126 +271,129 @@ const MouldUnLoadingScreen = ({ username , setIsLoggedIn}) => {
   const isConfirmEnabled = machineScan && mouldScan && productName && mouldActualLife !== null && pmWarning !== null && !isMouldNotInUse;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}> 
-        <View style={styles.container}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Mould UnLoading Screen"></Header>
-      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 ,paddingRight:30,paddingLeft:30}} showsVerticalScrollIndicator={false}>
-      <View style={styles.inputContainer}>
-        <View style={{flexDirection:'row'}}>
-        <Text style={styles.label}>Machine Scan</Text>
-        <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
-        </View>
-       
-        <TextInput
-          style={styles.input}
-          ref={machineInputRef}  
-          keyboardType = 'numeric'
-          placeholder="Machine QR Code"
-          placeholderTextColor={'black'}
-          value={machineScan}
-          onChangeText={setMachineScan}
-          returnKeyType="next" // Show "Next" button on the keyboard
-          onSubmitEditing={() => {
-            // When the user submits the machineScan input, focus on mouldScan
-            if (mouldInputRef.current) {
-              mouldInputRef.current.focus();
-            }
-          }}
-          blurOnSubmit={false} 
-        />
-      </View>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View style={styles.container}>
+        <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Mould UnLoading Screen"></Header>
+        <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+          <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingRight: '-10%', paddingLeft: '-10%' }} showsVerticalScrollIndicator={false} >
+            <View style={styles.inputContainer}>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.label}>Machine Scan</Text>
+                <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
+              </View>
 
-      <View style={styles.inputContainer}>
-        <View style={{flexDirection:'row'}}>
-        <Text style={styles.label}>Mould Scan</Text>
-        <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
-        </View>
-     
-        <TextInput
-          style={styles.input}
-          ref={mouldInputRef} // Set the ref for auto-focus
-          placeholder="Mould QR Code"
-          keyboardType = 'numeric'
-          placeholderTextColor={'black'}
-          value={mouldScan}
-          onChangeText={setMouldScan}
-          returnKeyType="done" // Show "Done" button on the keyboard
-        />
-      </View>
+              <TextInput
+                style={styles.input}
+                ref={machineInputRef}
+                keyboardType='numeric'
+                placeholder="Machine QR Code"
+                placeholderTextColor={'black'}
+                value={machineScan}
+                onChangeText={setMachineScan}
+                returnKeyType="next" // Show "Next" button on the keyboard
+                onSubmitEditing={() => {
+                  // When the user submits the machineScan input, focus on mouldScan
+                  if (mouldInputRef.current) {
+                    mouldInputRef.current.focus();
+                  }
+                }}
+                blurOnSubmit={false}
+              />
+            </View>
 
-      {/* Hide Product Name if mould is not in use */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Product Name</Text>
-           <View style={[styles.input, { borderWidth: 1, borderColor: '#ccc', justifyContent: 'center' }]}> 
-                          <Text style={{ fontSize: 16, color: '#333' }}>{productName}</Text>
-                        </View>
-        </View>
+            <View style={styles.inputContainer}>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.label}>Mould Scan</Text>
+                <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
+              </View>
 
-      <View style={styles.statusContainer}>
-        <View style={[styles.statusButton, { backgroundColor: getColorMould(mouldLife) }]}>
-          <Text style={styles.statusText}>⚙️ Mould Life</Text>
-                       </View>
-                       <View style={[styles.statusButton, { backgroundColor: getColorPM(mouldPmStatus) }]}>  
-                         <Text style={styles.statusText}>🔧 PM Status</Text>
-                       </View>
-                       <View style={[styles.statusButton, { backgroundColor: getColorHC(mouldHealthStatus) }]}>  
-                         <Text style={styles.statusText}>🩺 Health Status</Text>
-        </View>
-      </View>
+              <TextInput
+                style={styles.input}
+                ref={mouldInputRef} // Set the ref for auto-focus
+                placeholder="Mould QR Code"
+                keyboardType='numeric'
+                placeholderTextColor={'black'}
+                value={mouldScan}
+                onChangeText={setMouldScan}
+                returnKeyType="done" // Show "Done" button on the keyboard
+              />
+            </View>
 
-      <TouchableOpacity
-        style={[styles.confirmButton, { opacity: isConfirmEnabled ? 1 : 0.5 }]}
-        onPress={isConfirmEnabled ? handleConfirm : null}
-        disabled={!isConfirmEnabled}
-      >
-        <Text style={styles.confirmText}>🚀 CONFIRM</Text>
-      </TouchableOpacity>
+            {/* Hide Product Name if mould is not in use */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Product Name</Text>
+              <View style={[styles.input, { borderWidth: 1, borderColor: '#ccc', justifyContent: 'center' }]}>
+                <Text style={{ fontSize: 16, color: '#333' }}>{productName}</Text>
+              </View>
+            </View>
 
-      {/* Modal for selecting mould status */}
-      <Modal
-        visible={modalVisible}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Select Mould Status</Text>
-            <Text style={styles.modalSubtitle}>Please choose a mould status option</Text>
+            <View style={styles.statusContainer}>
+              <View style={[styles.statusButton, { backgroundColor: getColorMould(mouldLife) }]}>
+                <Text style={styles.statusText}>⚙️</Text>
+                                <Text style={styles.statusText}>Mould Life</Text>              
+              </View>
+              <View style={[styles.statusButton, { backgroundColor: getColorPM(mouldPmStatus) }]}>
+                <Text style={styles.statusText}>🔧</Text>
+                <Text style={styles.statusText}>PM Status</Text>
+              </View>
+              <View style={[styles.statusButton, { backgroundColor: getColorHC(mouldHealthStatus) }]}>
+                <Text style={styles.statusText}>🩺</Text>
+              <Text style={styles.statusText}>Health Status</Text>
+              </View>
+            </View>
+
             <TouchableOpacity
-              style={[styles.button, styles.breakdownButton]}
-              onPress={() => navigation.navigate(BreakDown)}
+              style={[styles.confirmButton, { opacity: isConfirmEnabled ? 1 : 0.5 }]}
+              onPress={isConfirmEnabled ? handleConfirm : null}
+              disabled={!isConfirmEnabled}
             >
-              <Text style={styles.buttonText}>Breakdown</Text>
+              <Text style={styles.confirmText}>🚀 CONFIRM</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.notInUseButton]}
-              onPress={() => handleStatusSelect(6)}
+
+            {/* Modal for selecting mould status */}
+            <Modal
+              visible={modalVisible}
+              animationType="fade"
+              transparent={true}
+              onRequestClose={() => setModalVisible(false)}
             >
-              <Text style={styles.buttonText}>Not in Use</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.normalButton]}
-              onPress={() => handleStatusSelect(1)}
-            >
-              <Text style={styles.buttonText}>Normal</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-  style={styles.closeButton}
-  onPress={() => setModalVisible(false)}
->
-  <Text style={styles.closeButtonText}>Cancel</Text>
-</TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-      </ScrollView>
-      </Animated.View>
-     
-    </View>
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                  <Text style={styles.modalTitle}>Select Mould Status</Text>
+                  <Text style={styles.modalSubtitle}>Please choose a mould status option</Text>
+                  <TouchableOpacity
+                    style={[styles.button, styles.breakdownButton]}
+                    onPress={() => navigation.navigate(BreakDown)}
+                  >
+                    <Text style={styles.buttonText}>Breakdown</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.notInUseButton]}
+                    onPress={() => handleStatusSelect(6)}
+                  >
+                    <Text style={styles.buttonText}>Not in Use</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.normalButton]}
+                    onPress={() => handleStatusSelect(1)}
+                  >
+                    <Text style={styles.buttonText}>Normal</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.closeButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </ScrollView>
+        </Animated.View>
+
+      </View>
     </KeyboardAvoidingView>
-  
+
   );
 };
 

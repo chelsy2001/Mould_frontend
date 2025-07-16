@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     elevation: 2,
-    // width:'60%',
+    width:'88%',
     shadowColor: '#ffff',
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
@@ -122,14 +122,14 @@ const styles = StyleSheet.create({
   statusText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize:18
+    fontSize:13
   },
   confirmButton: {
     backgroundColor: '#2980b9',
-    padding: 15,
+    padding: 12,
     borderRadius: 12,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
     elevation: 3,
   },
   confirmText: {

@@ -179,7 +179,7 @@ const MouldLoadingScreen = ({ username }) => {
     }
   };
 
-   const getColorHC = (value) => {
+  const getColorHC = (value) => {
     switch (value) {
       case 1: return '#27ae60'; // GREEN it is in normal state
       case 2: return '#f1c40f'; // YELLOW it is in warning state
@@ -197,20 +197,20 @@ const MouldLoadingScreen = ({ username }) => {
       <View style={styles.container}>
         <Header username={username} title="Mould Loading Screen" date="05-10-2024" />
         <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-          <ScrollView contentContainerStyle={{ paddingBottom: 40 ,paddingRight:30,paddingLeft:30}} showsVerticalScrollIndicator={false}>
+          <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingRight: '-10%', paddingLeft: '-10%' }} showsVerticalScrollIndicator={false}>
             <View style={styles.inputContainer}>
-              <View style={{flexDirection:'row'}}>
-              <Text style={styles.label}>Machine Scan</Text>
-              <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.label}>Machine Scan</Text>
+                <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
               </View>
-              
+
               <View style={styles.inputRow}>
                 <TextInput
                   ref={machineInputRef}
                   style={styles.input}
                   placeholder="Machine QR Code"
                   placeholderTextColor={'black'}
-                  keyboardType = 'numeric'
+                  keyboardType='numeric'
                   value={machineScan}
                   onChangeText={setMachineScan}
                   returnKeyType="next"
@@ -221,19 +221,19 @@ const MouldLoadingScreen = ({ username }) => {
             </View>
 
             <View style={styles.inputContainer}>
-              <View style={{flexDirection:'row'}}>
-              <Text style={styles.label}>Mould Scan</Text>
-              <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.label}>Mould Scan</Text>
+                <Icon name="qrcode-scan" size={20} color="#666" style={styles.icon} />
               </View>
-        
+
               <View style={styles.inputRow}>
-               
+
                 <TextInput
                   ref={mouldInputRef}
                   style={styles.input}
                   placeholder="Mould QR Code"
                   value={mouldScan}
-                  keyboardType = 'numeric'
+                  keyboardType='numeric'
                   placeholderTextColor={'black'}
                   onChangeText={setMouldScan}
                   returnKeyType="done"
@@ -243,23 +243,26 @@ const MouldLoadingScreen = ({ username }) => {
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Product Name</Text>
-              <View style={[styles.input, { borderWidth: 1, borderColor: '#ccc', justifyContent: 'center' }]}> 
+              <View style={[styles.input, { borderWidth: 1, borderColor: '#ccc', justifyContent: 'center' }]}>
                 <Text style={{ fontSize: 16, color: '#333' }}>{productName}</Text>
               </View>
             </View>
-
+            {/* lower buttons */}
             <View style={styles.statusContainer}>
-              <View style={[styles.statusButton, { backgroundColor: getColorMould(mouldLife) }]}>  
-                <Text style={styles.statusText}>⚙️ Mould Life</Text>
+              <View style={[styles.statusButton, { backgroundColor: getColorMould(mouldLife) }]}>
+                <Text style={styles.statusText}>⚙️</Text>
+                <Text style={styles.statusText}>Mould Life</Text>
               </View>
-              <View style={[styles.statusButton, { backgroundColor: getColorPM(mouldPmStatus) }]}>  
-                <Text style={styles.statusText}>🔧 PM Status</Text>
+              <View style={[styles.statusButton, { backgroundColor: getColorPM(mouldPmStatus) }]}>
+                <Text style={styles.statusText}>🔧</Text>
+                <Text style={styles.statusText}>PM Status</Text>
               </View>
-              <View style={[styles.statusButton, { backgroundColor: getColorHC(mouldHealthStatus) }]}>  
-                <Text style={styles.statusText}>🩺 Health Status</Text>
+              <View style={[styles.statusButton, { backgroundColor: getColorHC(mouldHealthStatus) }]}>
+                <Text style={styles.statusText}>🩺</Text>
+                <Text style={styles.statusText}>Health Status</Text>
               </View>
             </View>
-
+            {/* confirm button */}
             <TouchableOpacity
               style={[styles.confirmButton, { opacity: isConfirmButtonEnabled() ? 1 : 0.5 }]}
               onPress={handleConfirm}

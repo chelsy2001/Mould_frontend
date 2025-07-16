@@ -16,26 +16,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 15,
   },
-  menuItem: {
-    width: width > 400 ? '30%' : '45%', // Adjusting based on screen width
-    height: width > 400 ? 120 : 100, // Adjust height based on screen size
-    marginVertical: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000080',
-    borderRadius: 10,
-    padding: 15,
-  },
+menuItem: {
+  width: width > 400 ? '30%' : '45%',
+  height: 130, // slightly increased to accommodate image and text
+  marginVertical: 15,
+  justifyContent: 'flex-start', // align from top
+  alignItems: 'center',
+  backgroundColor: '#000080',
+  borderRadius: 10,
+  paddingVertical: 10,
+  paddingHorizontal: 5,
+  overflow: 'hidden',
+},
   menuText: {
     marginTop: 10,
     fontSize: width > 400 ? 16 : 14, // Adjust font size for smaller screens
+    height: 50, 
     fontWeight: '500',
     color: 'white',
+    alignItems:'center'
   },
-  icon: {
-    width: width > 400 ? 80 : 60, // Adjust icon size based on screen width
-    height: width > 400 ? 80 : 60,
-  },
+icon: {
+  width: 50,
+  height: 50,
+  resizeMode: 'contain',
+  marginBottom: 8,
+},
+labelWrapper: {
+  height: 40,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
 });
 
 export default styles;
