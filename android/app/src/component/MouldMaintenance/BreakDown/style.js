@@ -1,106 +1,109 @@
 import { StyleSheet } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // Adjust path
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#eaf3fb',
-    paddingHorizontal: 20,
-    paddingTop: 10,
   },
+
   section: {
     backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 10,
-    alignContent:'center',
-    alignItems:'center',
-    marginHorizontal:30,
-    marginVertical: 10,
+    borderRadius: moderateScale(16),
+    padding: moderateScale(10),
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(5) },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowRadius: moderateScale(2),
+    // elevation: 4,
   },
-  dropdownsection:{
+
+  dropdownsection: {
     backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 5,
-    // marginHorizontal:30,
-    marginVertical: 5,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(8),
+    marginVertical: verticalScale(10),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowRadius: moderateScale(4),
   },
+
   sectionTitle: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
-    color: '#1f3b73',
-    marginBottom: 10,
+    color: 'black',
+    marginBottom: verticalScale(8),
   },
+
   dropdown: {
-    borderRadius: 10,
+    borderRadius: moderateScale(10),
     borderWidth: 1,
     borderColor: '#cbd5e1',
     backgroundColor: '#f8fafc',
-    // padding: 5,
   },
+
   inputGroup: {
-    marginTop: 5,
-    gap:30
+    marginTop: verticalScale(5),
+    gap: scale(24),
   },
-  inputview:{flexDirection:'row' , gap :20 ,alignContent:'center' , alignItems:'center'},
+
+  inputview: {
+    flexDirection: 'row',
+    gap: scale(16),
+    alignItems: 'center',
+  },
+
   input: {
     backgroundColor: '#f1f5f9',
     borderColor: '#d1d5db',
     borderWidth: 1,
-    borderRadius: 10,
-    // padding: 14,
-    // marginBottom: 14,
-    marginRight:10,
-    marginLeft:20,
-    fontSize: 16,
-    color: '#1e293b',
-    width:'70%',
-    alignItems:'center',
-    alignContent:'center',
-    justifyContent:'center'
+    borderRadius: moderateScale(10),
+    fontSize: moderateScale(12),
+    color: '#101111ff',
+    width: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+
   label: {
-    fontSize: 18,
+    fontSize: moderateScale(12),
     fontWeight: '600',
     color: '#2563eb',
-    // marginBottom: 6,
-    marginTop: 2,
+    marginTop: verticalScale(2),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 20,
+    marginTop: verticalScale(20),
   },
+
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#3b82f6',
-    paddingVertical: 12,
-    width:'40%',
-    justifyContent:'center',
-    // paddingHorizontal: 25,
-    borderRadius: 12,
-    elevation: 5,
+    paddingVertical: verticalScale(12),
+    width: '40%',
+    justifyContent: 'center',
+    borderRadius: moderateScale(12),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowRadius: moderateScale(4),
   },
+
   buttonIcon: {
-    marginRight: 8,
+    marginRight: scale(6),
   },
+
   buttonText: {
     color: '#ffffff',
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: moderateScale(14),
   },
 });
 

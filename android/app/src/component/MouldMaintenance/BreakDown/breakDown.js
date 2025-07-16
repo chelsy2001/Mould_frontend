@@ -227,7 +227,7 @@ console.log("Time",currentStartTime);
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{padding:20}}>
         <View style={styles.dropdownsection}>
           <Text style={styles.sectionTitle}>
-            <Icon name="cog-outline" size={24} color="#003f7d" /> Select Mould
+            <Icon name="cog-outline" size={20} color="#000000ff" /> Select Mould
           </Text>
           <View style={styles.dropdown}>
             <SelectList
@@ -242,7 +242,7 @@ console.log("Time",currentStartTime);
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            <Icon name="tools" size={24} color="#003f7d" /> Breakdown Details
+            <Icon name="tools" size={20} color="#003f7d" /> Breakdown Details
           </Text>
           //Reason
           <View style={styles.inputGroup}>

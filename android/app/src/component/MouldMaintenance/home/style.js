@@ -22,7 +22,7 @@ menuItem: {
   marginVertical: 15,
   justifyContent: 'flex-start', // align from top
   alignItems: 'center',
-  backgroundColor: '#000080',
+  backgroundColor: '#003366',
   borderRadius: 10,
   paddingVertical: 10,
   paddingHorizontal: 5,
@@ -34,7 +34,9 @@ menuItem: {
     height: 50, 
     fontWeight: '500',
     color: 'white',
-    alignItems:'center'
+    alignItems:'center',
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 icon: {
   width: 50,

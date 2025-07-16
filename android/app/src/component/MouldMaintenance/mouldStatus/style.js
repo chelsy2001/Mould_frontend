@@ -1,107 +1,127 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // adjust path if needed
+
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 12,
+    padding: moderateScale(2),
     backgroundColor: '#f0f4f8',
   },
+
   label: {
-    fontSize: 18,
+    fontSize: moderateScale(12),
     fontWeight: '600',
     color: '#222',
-    // marginBottom: 5,
   },
+
   dataRow: {
     flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    // alignItems: 'center',
-    // marginVertical: 6,
   },
+
   text: {
-    fontSize: 16,
+    fontSize: moderateScale(10),
     color: '#333',
-    gap:20,
-    // paddingVertical: 2,
+    gap: moderateScale(10),
   },
+
   text1: {
-    fontSize: 14,
+    fontSize: moderateScale(10),
     fontWeight: '500',
-    // paddingVertical: 2,
   },
+
   inputContainer: {
-    marginVertical: 2,
+    backgroundColor: '#fff',
+    borderRadius: moderateScale(10),
+    padding: scale(5),
+    marginRight: scale(15),
+    marginLeft: scale(15),
+    marginVertical: verticalScale(12),
+    // elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 5 },
   },
+
   dataLabel: {
-    fontSize: 16,
+    fontSize: moderateScale(12),
     fontWeight: 'bold',
     color: '#1e293b',
-    width: '20%',
+    width:'40%',
   },
-  
+
   dataValue: {
-    fontSize: 16,
+    fontSize: moderateScale(12),
     color: '#334155',
-    flexShrink: 2,
-    // textAlign: 'right',
+    width: '50%',
+    textAlign: 'right',
   },
-  input: {
-    backgroundColor: '#fff',
-    padding: 8,
-    margin: 10,
-    borderRadius: 10,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    fontSize: 16,
-    elevation: 1,
+ input: {
+    backgroundColor: '#f0f0f0',
+    // borderRadius: moderateScale(8),
+    // padding: moderateScale(10),
+    fontSize: moderateScale(10),
+    color: '#333',
   },
+
   dropdown: {
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: moderateScale(10),
     borderColor: '#ccc',
     borderWidth: 1,
-    margin: 10,
-    padding: 8,
+    margin: moderateScale(10),
+    paddingRight: moderateScale(10),
+    paddingLeft: moderateScale(10),
+    padding: moderateScale(2),
+    paddingBottom: moderateScale(10),
   },
+
   dropdownText: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
   },
+
   mouldData: {
     backgroundColor: '#fff',
-    marginRight:20,
-    marginLeft:200,
-    width:'60%',
-    alignContent:'center',
-    justifyContent:'center',
-    borderRadius: 16,
-    padding: 12,
-    paddingTop:10,
-    marginVertical: 10,
+    alignSelf: 'center',
+    width: '90%',
+    borderRadius: moderateScale(16),
+    padding: moderateScale(12),
+    paddingTop: verticalScale(10),
+    marginVertical: verticalScale(10),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 4,
   },
-  confirmButton: {
-    backgroundColor: '#4a90e2',
-    paddingVertical: 12,
-    borderRadius: 10,
+
+   confirmButton: {
+    backgroundColor: '#2980b9',
+    borderRadius: moderateScale(12),
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(10),
+    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 14,
+    width: '85%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    // elevation: 3,
   },
+
   confirmText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: moderateScale(12),
     fontWeight: 'bold',
     letterSpacing: 0.5,
   },
-  separator: {
-    height: 1,
+
+   separator: {
+    height: 2,
+    width: '90%',
     backgroundColor: '#d1d5db',
-    alignSelf: 'stretch',
-    marginVertical: 1,
-    opacity: 0.6,
+    alignSelf: 'center',
+    opacity: 0.10,
   },
 });
 
