@@ -169,9 +169,10 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
   return (
     <View style={styles.container}>
       <Header username={username}  setIsLoggedIn={setIsLoggedIn} title = 'Mould Monitoring Screen' />
-      {/* <Text style={styles.label}>Mould ID dropdown</Text> */}
+      
       <ScrollView>
         <View style={styles.dropdown}>
+          <Text style={styles.label}>Select Mould  dropdown</Text>
           <SelectList 
             setSelected={(val) => setSelectedMouldId(val)} 
             data={mouldOptions} 
@@ -227,7 +228,7 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
 
     <View style={styles.dataRow}>
     <Text style={[styles.dataLabel, { color: getColorHC(healthCheckWarning) }]}>
-      🧪   Health Check: 
+      🧪 Health Check: 
     </Text>
     <Text style={[styles.dataValue, { color: getColorHC(healthCheckWarning) }]}>{getHealthCheckStatusText(filteredMould.MouldHealthStatus)}</Text>
     </View>
@@ -246,13 +247,13 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
-    <Text style={styles.dataLabel}>📅   Next PM Due: </Text>
+    <Text style={styles.dataLabel}>📅 Next PM Due: </Text>
     <Text style={styles.dataValue}>{filteredMould.NextPMDue}</Text>
     </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
-    <Text style={styles.dataLabel }>⚙️   HC Threshold: </Text>
+    <Text style={styles.dataLabel }>⚙️ HC Threshold: </Text>
     <Text style={styles.dataValue}>{filteredMould.HealthCheckThreshold}</Text>
     </View>
     <View style={styles.separator} />
