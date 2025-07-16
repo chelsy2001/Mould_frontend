@@ -236,7 +236,6 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
   return (
     <View style={styles.container}>
       <Header username={username} title="Preventive Maintenance Screen" setIsLoggedIn={setIsLoggedIn}/>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 ,paddingRight:30,paddingLeft:30}} showsVerticalScrollIndicator={false}>
 
         <Animated.View style={{ flex:1 ,opacity: fadeAnim }}>
           <View style={styles.inputContainer}>
@@ -257,6 +256,7 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
           </View>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      <ScrollView contentContainerStyle={{ paddingBottom: 30 ,paddingRight:30,paddingLeft:30 }} showsVerticalScrollIndicator={false}>
 
           {mouldData && (
             <View style={styles.mouldData}>
@@ -356,8 +356,9 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
               <Icon name="image" size={24} color="white" />
             </TouchableOpacity> */}
           </View>
+           </ScrollView>
         </Animated.View>
-      </ScrollView>
+     
     </View>
   );
 };

@@ -305,7 +305,6 @@ const handleConfirm = async () => {
   return (
     <View style={styles.container}>
       <Header username={username} title = 'Health Check Screen' />
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 ,paddingRight:30,paddingLeft:30}} showsVerticalScrollIndicator={false}>
 
         <Animated.View style={{ flex:1 ,opacity: fadeAnim }}>
           <View style={styles.inputContainer}>
@@ -326,6 +325,9 @@ const handleConfirm = async () => {
           </View>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      <ScrollView contentContainerStyle={{ paddingBottom: 30 ,paddingRight:30,paddingLeft:30}} showsVerticalScrollIndicator={false}>
+
 
           {mouldData && (
             <View style={styles.mouldData}>
@@ -426,8 +428,9 @@ const handleConfirm = async () => {
               <Icon name="image" size={24} color="white" />
             </TouchableOpacity> */}
           </View>
+           </ScrollView>
         </Animated.View>
-      </ScrollView>
+     
     </View>
   );
 };
