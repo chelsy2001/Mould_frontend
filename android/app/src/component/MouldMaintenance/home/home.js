@@ -2,10 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../Common/header/header';
+import { Dimensions } from 'react-native';
 import styles from './style';
 
 const HomePage = ({ setIsLoggedIn, username }) => {
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get('window');
+  const isLargeScreen = width >= 768; // typical for tablets (10", 11", 12")
+
 
   return (
     <View style={styles.container}>
@@ -60,6 +64,15 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           </View>
         </TouchableOpacity>
 
+         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('BreakDown')}>
+          <Image style={styles.icon} source={require('../../Common/assets/BD.jpeg')} />
+          <View style={styles.labelWrapper}>
+            <Text style={styles.menuText}>BreakDown</Text>
+          </View>
+        </TouchableOpacity>
+
+        { isLargeScreen && (
+          <>
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMMouldMonitoring')}>
           <Image style={styles.icon} source={require('../../Common/assets/checklist.jpg')} />
           <View style={styles.labelWrapper}>
@@ -71,13 +84,6 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           <Image style={styles.icon} source={require('../../Common/assets/checklist.jpg')} />
           <View style={styles.labelWrapper}>
             <Text style={styles.menuText}>HC Checklist</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('BreakDown')}>
-          <Image style={styles.icon} source={require('../../Common/assets/BD.jpeg')} />
-          <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>BreakDown</Text>
           </View>
         </TouchableOpacity>
 
@@ -94,8 +100,8 @@ const HomePage = ({ setIsLoggedIn, username }) => {
             <Text style={styles.menuText}>Approval HC</Text>
           </View>
         </TouchableOpacity>
-
-
+</>
+        )}
       </ScrollView>
     </View>
   );

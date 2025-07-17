@@ -1,17 +1,14 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // adjust path if needed
 
-const { width } = Dimensions.get('window');
-
-const scaleFont = (size) => size * (width / 375);
-const scaleSize = (size) => size * (width / 375);
 
 export default StyleSheet.create({
   header: {
-    paddingVertical: scaleSize(8),
-    paddingHorizontal: scaleSize(12),
-    borderRadius: scaleSize(12),
-    marginHorizontal: scaleSize(8),
-    marginTop: scaleSize(6),
+    paddingVertical: moderateScale(8),
+    paddingHorizontal: moderateScale(12),
+    borderRadius: verticalScale(12),
+    marginHorizontal: verticalScale(8),
+    marginTop: verticalScale(6),
     elevation: 6,
     shadowColor: '#000',
     shadowOpacity: 0.15,
@@ -23,7 +20,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: scaleSize(4),
+    marginBottom: verticalScale(4),
   },
   bottomRow: {
     flexDirection: 'row',
@@ -31,20 +28,20 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   sideIcon: {
-    width: scaleSize(32),
+    width: verticalScale(32),
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     color: 'white',
-    fontSize: scaleFont(16),
+    fontSize: scale(16),
     fontWeight: '600',
     textAlign: 'center',
     flex: 1,
   },
   subTitle: {
     color: 'white',
-    fontSize: scaleFont(12),
+    fontSize: scale(12),
     fontWeight: '400',
     textAlign: 'left',
     
