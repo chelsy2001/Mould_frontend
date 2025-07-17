@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // Adjust path as needed
 import { SelectList } from 'react-native-dropdown-select-list';
 import Header from '../../Common/header/header';
 import DTDetailsstyles from './DTDetailsStyle';
@@ -74,14 +75,11 @@ const DTDetails = ({ route, navigation, username, setIsLoggedIn }) =>{
           <TextInput style={DTDetailsstyles.input} value={lineName} editable={false} />
      </View>
       </View>
-
-
           <View
           style={{
             backgroundColor: 'white',
-            // borderRadius: 20,
             marginHorizontal: 20,
-            width: '97.4%',
+            width: scale(375),
             marginTop: 10
           }}
         >
@@ -109,21 +107,21 @@ const DTDetails = ({ route, navigation, username, setIsLoggedIn }) =>{
               backgroundColor: 'white',
               marginHorizontal: 20,
 
-              width: '97.4%',
+             width: scale(375),
             }}
           >
             {tableData.length > 0 ? (
               tableData.map((row) => (
                 <DataTable.Row key={row.id} onPress={() => handleRowPress(row)} >
-                  <DataTable.Cell style={{ width: 120, justifyContent: 'center' }}>{row.downtimeID}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>{row.LossName}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>{row.subLossName}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 100, justifyContent: 'center' }}>{row.prodShift}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>{row.downtimeStartTime}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>{row.downtimeEndTime}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>{row.prodDate}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>{row.duration}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 200, justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(120), justifyContent: 'center' }}>{row.downtimeID}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(150), justifyContent: 'center' }}>{row.LossName}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(150), justifyContent: 'center' }}>{row.subLossName}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' }}>{row.prodShift}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(130), justifyContent: 'center' }}>{row.downtimeStartTime}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(130), justifyContent: 'center' }}>{row.downtimeEndTime}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(150), justifyContent: 'center' }}>{row.prodDate}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(130), justifyContent: 'center' }}>{row.duration}</DataTable.Cell>
+                  <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
                 </DataTable.Row>
               ))
             ) : (

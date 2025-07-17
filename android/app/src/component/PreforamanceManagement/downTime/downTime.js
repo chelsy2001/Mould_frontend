@@ -8,6 +8,7 @@ import { Modal } from 'react-native';
 import styles from './style';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // Adjust path as needed
 
 const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -205,8 +206,6 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     }
   };
 
-
-
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -216,35 +215,21 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
           <View style={styles.row}>
             <Text style={styles.label}>Line Name</Text>
             <View style={styles.pickerContainer}>
-              <Text style={{ marginBottom: 15, alignContent: 'center' }}>{lineName}</Text>
+              <Text style={{ padding: scale(10), alignContent: 'center' }}>{lineName}</Text>
             </View>
           </View>
 
           <View style={styles.row}>
             <Text style={styles.label}>Loss Name</Text>
-            {/* <View style={styles.pickerContainer}> */}
             <SelectList
               boxStyles={{
-                width: 478,
+                width: verticalScale(150),
                 backgroundColor: 'white',
               }}
               dropdownStyles={{
                 backgroundColor: '#f0f8ff'// Replace with your desired color
 
               }}
-              // data={lossData.map((item) => ({
-              //   key: item.LossID.toString(),
-              //   value: item.LossName || "Unnamed Loss",
-              // }))}
-              // setSelected={setSelectedLoss}
-              // save="key"
-              // placeholder="Select Loss"
-              // defaultOption={
-              //   formData.LossName
-              //     ? { key: formData.LossName, value: formData.LossName }
-              //     : null
-              // }
-
               data={lossData.map((item) => ({
                 key: item.LossID.toString(),
                 value: item.LossName || "Unnamed Loss",
@@ -259,14 +244,15 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
               }
             />
 
-            {/* </View> */}
+
+          </View>
+
+          <View style={styles.row}>
             <Text style={styles.label}>Subloss Name</Text>
             {/* <View style={styles.pickerContainer}> */}
             <SelectList
               boxStyles={{
-                marginLeft: 15,
-                marginRight: 8.2,
-                width: 478,
+                width: verticalScale(150),
                 backgroundColor: 'white',
               }}
               dropdownStyles={{
@@ -283,77 +269,71 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
               }
             />
 
-            {/* </View> */}
           </View>
-          <View style={styles.remarkRow}>
-            <Text style={styles.label}>Remark</Text>
-            <TextInput style={styles.remarkInput} value={formData.reason} onChangeText={(text) => handleInputChange('reason', text)} />
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/* </View> */}
-        <View
-          style={{
-            backgroundColor: 'white',
-            // borderRadius: 20,
-            marginHorizontal: 20,
-            width: '97.4%',
-            marginTop: 10
-          }}
-        >
-          <DataTable >
-            <DataTable.Header>
-              <DataTable.Title style={{ width: 120, justifyContent: 'center' }}>Downtime ID</DataTable.Title>
-              <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>Loss Name</DataTable.Title>
-              <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>Sub Loss Name</DataTable.Title>
-              <DataTable.Title style={{ width: 100, justifyContent: 'center' }}>Shift</DataTable.Title>
-              <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>Start Time</DataTable.Title>
-              <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>End Time</DataTable.Title>
-              <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>Prod Date</DataTable.Title>
-              <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>Duration</DataTable.Title>
-              <DataTable.Title style={{ width: 200, justifyContent: 'center' }}>Remark</DataTable.Title>
-            </DataTable.Header>
-          </DataTable>
+
+          <Text style={[styles.label, { marginLeft: 12 }]}>Remark</Text>
+          <TextInput
+            style={[styles.remarkInput1]}
+            value={formData.reason}
+            onChangeText={(text) => handleInputChange('reason', text)}
+            multiline={true}
+            placeholder="Enter your remark"
+          />
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+
         </View>
 
-        <ScrollView
-          nestedScrollEnabled={true}
-          style={{ maxHeight: 400, marginBottom: 30 }}
-        >
-          <DataTable
-            style={{
-              backgroundColor: 'white',
-              marginHorizontal: 20,
-
-              width: '97.4%',
-            }}
+        <View style={{ flex: 1, marginTop: verticalScale(10) }}>
+          <ScrollView
+            nestedScrollEnabled={true}
+            style={{ maxHeight: 500, marginBottom: 30, backgroundColor: 'white' }}
           >
-            {tableData.length > 0 ? (
-              tableData.map((row) => (
-                <DataTable.Row key={row.id} onPress={() => handleRowPress(row)} style={selectedRow === row.id ? styles.selectedRow : null}>
-                  <DataTable.Cell style={{ width: 120, justifyContent: 'center' }}>{row.downtimeID}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>{row.LossName}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>{row.subLossName}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 100, justifyContent: 'center' }}>{row.prodShift}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>{row.downtimeStartTime}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>{row.downtimeEndTime}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>{row.prodDate}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>{row.duration}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: 200, justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
-                </DataTable.Row>
-              ))
-            ) : (
-              <Text style={{ padding: 10 }}>No data available</Text>
-            )}
-          </DataTable>
-          {/* </View>  */}
-        </ScrollView>
+
+            <ScrollView horizontal={true}>
+              <DataTable style={{ minWidth: scale(1100) }}>
+                <DataTable.Header>
+                  <DataTable.Title style={{ width: scale(120), justifyContent: 'center' }}>Downtime ID</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(150), justifyContent: 'center' }}>Loss Name</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(150), justifyContent: 'center' }}>Sub Loss Name</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(100), justifyContent: 'center' }}>Shift</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(130), justifyContent: 'center' }}>Start Time</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(130), justifyContent: 'center' }}>End Time</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(150), justifyContent: 'center' }}>Prod Date</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(130), justifyContent: 'center' }}>Duration</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
+                </DataTable.Header>
+
+                {tableData.length > 0 ? (
+                  tableData.map((row) => (
+                    <DataTable.Row
+                      key={row.id}
+                      onPress={() => handleRowPress(row)}
+                      style={selectedRow === row.id ? styles.selectedRow : null}
+                    >
+                      <DataTable.Cell style={{ width: scale(120) }}>{row.downtimeID}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(160) }}>{row.LossName}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(160) }}>{row.subLossName}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(100) }}>{row.prodShift}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(140) }}>{row.downtimeStartTime}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(140) }}>{row.downtimeEndTime}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(160) }}>{row.prodDate}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(130) }}>{row.duration}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(200) }}>{row.reason}</DataTable.Cell>
+                    </DataTable.Row>
+                  ))
+                ) : (
+                  <Text style={{ padding: 10 }}>No data available</Text>
+                )}
+              </DataTable>
+
+            </ScrollView>
+
+          </ScrollView>
+        </View>
       </View>
     </ScrollView>
-
-
   );
 };
 export default Downtime;
