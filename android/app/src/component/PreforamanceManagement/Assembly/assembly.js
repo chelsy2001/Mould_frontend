@@ -10,27 +10,27 @@ const Assembly = ({ setIsLoggedIn, username }) => {
   const route = useRoute();
   const { shopId } = route.params;
 
-  const [lines, setLines] = useState([]);
+  const [Machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/Common/Lines?shopId=${shopId}`)
+    fetch(`${BASE_URL}/Common/Machine?shopId=${shopId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data) {
-          setLines(data.data);
+          setMachines(data.data);
         } else {
           console.error('Unexpected API response:', data);
         }
       })
       .catch((error) => {
-        console.error('Error fetching lines:', error);
+        console.error('Error fetching Machines:', error);
       })
       .finally(() => setLoading(false));
   }, [shopId]);
 
-  const handleLinePress = (lineName) => {
-    navigation.navigate('OEE', { lineName });
+  const handleLinePress = (MachineName) => {
+    navigation.navigate('OEE', { MachineName });
   };
 
 
@@ -47,18 +47,18 @@ const Assembly = ({ setIsLoggedIn, username }) => {
 
   return (
     <LinearGradient colors={['#f5f7fa', '#c3cfe2']} style={styles.gradient}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Line Screen' />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Machine Screen' />
 
       <ScrollView contentContainerStyle={styles.container}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          lines.map((line, index) => (
-            <TouchableOpacity key={line.LineID} style={styles.cardButton} 
+          Machines.map((Machine, index) => (
+            <TouchableOpacity key={Machine.MachineID} style={styles.cardButton} 
             
-            onPress={() => handleLinePress(line.LineName)}>
+            onPress={() => handleLinePress(Machine.MachineName)}>
               <Image source={getLineIcon(index)} style={styles.icon} />
-              <Text style={styles.cardText}>{line.LineName.trim()}</Text>
+              <Text style={styles.cardText}>{Machine.MachineName.trim()}</Text>
             </TouchableOpacity>
           ))
         )}

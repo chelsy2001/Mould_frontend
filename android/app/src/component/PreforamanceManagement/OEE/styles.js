@@ -53,21 +53,30 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     fontWeight: 'bold',
-    minWidth: 250,
+    minWidth: '10%',
     textAlign: 'center',
   },
 
   assignBtn: {
     backgroundColor: '#28a745',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
     borderRadius: 10,
     justifyContent: 'center',
     alignSelf: 'center',
     elevation: 3,
-    
+    maxWidth: 150,
   },
-
+  detailsBtn: {
+    backgroundColor: 'black',
+    color: 'white',
+    paddingVertical: 6,
+    paddingHorizontal: 37,
+    borderRadius: 10,
+    alignSelf: 'center',
+    elevation: 3,
+      marginLeft:40
+  },
   section: {
     backgroundColor: '#ffffff',
     padding: 15,
@@ -91,7 +100,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 6,
     padding: 6,
-    width: 90,
+    width: '22%',
+    
     marginHorizontal: 9,
   },
   input2:{
@@ -99,13 +109,14 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 6,
     padding: 6,
-    width: "70%",
+    width: "20%",
     marginHorizontal: 4,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+     marginTop: 4
   },
   row2: {
     flexDirection: 'row',
@@ -113,17 +124,19 @@ const styles = StyleSheet.create({
     marginTop: 4
     // justifyContent: 'space-between',
   },
-  detailsBtn: {
-    backgroundColor: 'black',
-    color: 'white',
-    paddingVertical: 8,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-   // marginTop: 2,
-    alignSelf: 'center',
-    elevation: 3,
+   row3: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4
+    // justifyContent: 'space-between',
   },
-  
+  row4: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+     justifyContent: 'space-between',
+  },
+
 });
 
 export default styles;
