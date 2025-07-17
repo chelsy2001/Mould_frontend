@@ -20,7 +20,7 @@ export default StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
   },
   label: {
-    fontSize: scale(14),
+    fontSize: scale(10),
     color: '#333',
     marginBottom: verticalScale(6),
     // fontWeight: '600',
@@ -30,7 +30,7 @@ export default StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: moderateScale(8),
     padding: moderateScale(10),
-    fontSize: scale(16),
+    fontSize: scale(10),
     color: '#333',
   },
   statusContainer: {
@@ -49,7 +49,7 @@ export default StyleSheet.create({
   statusText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize:scale(13)
+    fontSize:scale(10)
   },
   confirmButton: {
     backgroundColor: '#2980b9',
@@ -61,7 +61,7 @@ export default StyleSheet.create({
   },
   confirmText: {
     color: '#fff',
-    fontSize: scale(18),
+    fontSize: scale(10),
     fontWeight: 'bold',
   },
   icon:{
