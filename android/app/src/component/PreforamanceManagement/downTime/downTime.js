@@ -1,40 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { BASE_URL } from '../../Common/config/config';
 import Header from '../../Common/header/header';
-import { Modal } from 'react-native';
 import styles from './style';
-import { LineChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
-import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // Adjust path as needed
+import { scale, verticalScale } from '../../Common/utils/scale';
 
 const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedLineName, setselectedLineName] = useState('');
   const [LineName, setLineName] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const lineName = route?.params?.lineName ?? 'No Line Selected';
-
-
   const [lossData, setLossData] = useState([]);
   const [selectedLoss, setSelectedLoss] = useState('');
   const [subLossData, setSubLossData] = useState([]);
   const [selectedSubLoss, setSelectedSubLoss] = useState('');
+  const lineName = route?.params?.lineName ?? 'No Line Selected';
 
-  const screenWidth = Dimensions.get("window").width;
-
-  const data = {
-    labels: ["8AM", "9AM", "10AM", "11AM", "12PM", "1PM"],
-    datasets: [
-      {
-        data: [60, 70, 65, 80, 75, 90],
-        strokeWidth: 2,
-      }
-    ],
-  };
+  const COLUMN_WIDTHS = [
+    scale(60), scale(100), scale(100), scale(50),
+    scale(80), scale(80), scale(80), scale(80), scale(200),
+  ];
 
   const [formData, setFormData] = useState({
     downtimeID: '',
@@ -47,46 +34,21 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     duration: '',
     reason: ''
   });
-  //line name
-  // Fetch Line Names from API
-  useEffect(() => {
-    const fetchLineName = async () => {
-      // try {
-      //   const response = await fetch(`${BASE_URL}/rework/Line`);
-      //   const json = await response.json();
-      //   if (json.status === 200) {
-      //     const formattedData = json.data.map(item => ({ key: item.LineID.toString(), value: item.LineName }));
-      //     setLineName(formattedData);
-      //   }
-      // } catch (error) {
-      //   console.error('Error fetching LineName:', error);
-      // } finally {
-      //   setLoading(false);
-      // }
-    };
-    fetchLineName();
-  }, []);
 
   useEffect(() => {
     if (lineName) {
       setselectedLineName(lineName);
-      console.log('Line Name:', LineName);
     }
   }, [lineName]);
 
-  // Fetch Loss Names
   useEffect(() => {
     const fetchLossData = async () => {
       try {
         const response = await fetch(`${BASE_URL}/downtime/loss`);
         const result = await response.json();
-        console.log("Loss API Response:", result);
-
-        // Check if data exists
         if (result?.data) {
-          setLossData(result.data); // Correct way
+          setLossData(result.data);
         } else {
-          console.warn("No data in loss API response.");
           setLossData([]);
         }
       } catch (error) {
@@ -97,11 +59,6 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     fetchLossData();
   }, []);
 
-
-  console.log("Loss Data:", lossData);
-  console.log("Sub Loss Data:", subLossData);
-
-  // Fetch Subloss Names when Loss is selected
   useEffect(() => {
     if (!selectedLoss) return;
     const fetchSubLossData = async () => {
@@ -118,18 +75,6 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     fetchSubLossData();
   }, [selectedLoss]);
 
-
-  const handleRowPress = (row) => {
-    setSelectedRow(row.id);
-    setFormData(row);
-    setSelectedLoss(row.LossName);  // Update loss selection
-    setSelectedSubLoss(row.subLossName)
-  };
-
-  const handleInputChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
   useEffect(() => {
     if (!selectedLineName) return;
     fetchTableData();
@@ -138,7 +83,6 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
   const fetchTableData = async () => {
     try {
       const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${encodeURIComponent(selectedLineName)}`);
-      // const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${LineName}`);
       const json = await response.json();
       if (json.status === 200) {
         setTableData(json.data.map(item => ({
@@ -161,28 +105,32 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     }
   };
 
+  const handleRowPress = (row) => {
+    setSelectedRow(row.id);
+    setFormData(row);
+    setSelectedLoss(row.LossName);
+    setSelectedSubLoss(row.subLossName);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
   const handleSave = async () => {
     if (!selectedRow) {
       alert("Please select a row to update.");
       return;
     }
 
-    // Extract selected LossName and SubLossName from dropdowns
-    // const selectedLossName = lossData.find(item => item.key === selectedLoss)?.value || formData.LossName;
     const selectedLossName = selectedLoss;
-
     const selectedSubLossName = subLossData.find(item => item.key === selectedSubLoss)?.value || formData.subLossName;
-
-    console.log("Selected Loss Name:", selectedLossName);
 
     const requestBody = {
       DowntimeID: formData.downtimeID,
-      LossName: selectedLossName,  // Ensure it's a string
-      SubLossName: selectedSubLossName,  // Ensure it's a string
+      LossName: selectedLossName,
+      SubLossName: selectedSubLossName,
       Reason: formData.reason,
     };
-
-    console.log("Sending Request Body:", JSON.stringify(requestBody, null, 2));
 
     try {
       const response = await fetch(`${BASE_URL}/downtime/downtime/update`, {
@@ -192,7 +140,6 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
       });
 
       const json = await response.json();
-      console.log("Parsed Response:", json);
 
       if (json.status === 200) {
         alert("Update successful");
@@ -222,53 +169,39 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
           <View style={styles.row}>
             <Text style={styles.label}>Loss Name</Text>
             <SelectList
-              boxStyles={{
-                width: verticalScale(150),
-                backgroundColor: 'white',
-              }}
-              dropdownStyles={{
-                backgroundColor: '#f0f8ff'// Replace with your desired color
-
-              }}
-              data={lossData.map((item) => ({
+              boxStyles={{ width: verticalScale(150), backgroundColor: 'white' }}
+              dropdownStyles={{ backgroundColor: '#f0f8ff' }}
+              data={lossData.map(item => ({
                 key: item.LossID.toString(),
-                value: item.LossName || "Unnamed Loss",
+                value: item.LossName || "Unnamed Loss"
               }))}
               setSelected={setSelectedLoss}
-              save={"value"}
+              save="value"
               placeholder="Select Loss"
               defaultOption={
-                formData.LossName
-                  ? { key: formData.LossName, value: formData.LossName }
-                  : null
+                formData.LossName ? { key: formData.LossName, value: formData.LossName } : null
               }
             />
-
-
           </View>
 
           <View style={styles.row}>
             <Text style={styles.label}>Subloss Name</Text>
-            {/* <View style={styles.pickerContainer}> */}
             <SelectList
-              boxStyles={{
-                width: verticalScale(150),
-                backgroundColor: 'white',
-              }}
-              dropdownStyles={{
-                backgroundColor: '#f0f8ff'// Replace with your desired color
-              }}
+              boxStyles={{ width: verticalScale(150), backgroundColor: 'white' }}
+              dropdownStyles={{ backgroundColor: '#f0f8ff' }}
               setSelected={setSelectedSubLoss}
               data={subLossData}
               save="key"
               placeholder="Select SubLoss"
               defaultOption={
                 selectedSubLoss
-                  ? { key: selectedSubLoss, value: subLossData.find(item => item.key === selectedSubLoss)?.value || selectedSubLoss }
+                  ? {
+                    key: selectedSubLoss,
+                    value: subLossData.find(item => item.key === selectedSubLoss)?.value || selectedSubLoss
+                  }
                   : null
               }
             />
-
           </View>
 
           <Text style={[styles.label, { marginLeft: 12 }]}>Remark</Text>
@@ -282,58 +215,88 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
           <TouchableOpacity style={styles.button} onPress={handleSave}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
-
         </View>
 
+        {/* Table Section */}
         <View style={{ flex: 1, marginTop: verticalScale(10) }}>
           <ScrollView
             nestedScrollEnabled={true}
-            style={{ maxHeight: 500, marginBottom: 30, backgroundColor: 'white' }}
+            style={{
+              maxHeight: '50%',
+              marginBottom: scale(30),
+              backgroundColor: '#dcdcdc',
+              borderRadius: scale(10)
+            }}
           >
+            <ScrollView horizontal={true} style={{ backgroundColor: '#dcdcdc' }}>
+              <View style={{
+                backgroundColor: '#dcdcdc',
+                minWidth: COLUMN_WIDTHS.reduce((a, b) => a + b, 0)
+              }}>
+                <DataTable>
+                  <DataTable.Header>
+                    {["Downtime ID", "Loss Name", "Sub Loss Name", "Shift", "Start Time", "End Time", "Prod Date", "Duration", "Remark"].map((title, index) => (
+                      <DataTable.Title
+                        key={index}
+                        style={{
+                          width: COLUMN_WIDTHS[index],
+                          justifyContent: 'center',
+                          borderRightWidth: 1,
+                          borderRightColor: '#ccc',
+                          backgroundColor: '#dcdcdc'
+                        }}
+                      >
+                        {title}
+                      </DataTable.Title>
+                    ))}
+                  </DataTable.Header>
 
-            <ScrollView horizontal={true}>
-              <DataTable style={{ minWidth: scale(1100) }}>
-                <DataTable.Header>
-                  <DataTable.Title style={{ width: scale(120), justifyContent: 'center' }}>Downtime ID</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(150), justifyContent: 'center' }}>Loss Name</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(150), justifyContent: 'center' }}>Sub Loss Name</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(100), justifyContent: 'center' }}>Shift</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(130), justifyContent: 'center' }}>Start Time</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(130), justifyContent: 'center' }}>End Time</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(150), justifyContent: 'center' }}>Prod Date</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(130), justifyContent: 'center' }}>Duration</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
-                </DataTable.Header>
-
-                {tableData.length > 0 ? (
-                  tableData.map((row) => (
-                    <DataTable.Row
-                      key={row.id}
-                      onPress={() => handleRowPress(row)}
-                      style={selectedRow === row.id ? styles.selectedRow : null}
-                    >
-                      <DataTable.Cell style={{ width: scale(120) }}>{row.downtimeID}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(160) }}>{row.LossName}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(160) }}>{row.subLossName}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(100) }}>{row.prodShift}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(140) }}>{row.downtimeStartTime}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(140) }}>{row.downtimeEndTime}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(160) }}>{row.prodDate}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(130) }}>{row.duration}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(200) }}>{row.reason}</DataTable.Cell>
-                    </DataTable.Row>
-                  ))
-                ) : (
-                  <Text style={{ padding: 10 }}>No data available</Text>
-                )}
-              </DataTable>
-
+                  {tableData.length > 0 ? (
+                    tableData.map((row) => (
+                      <DataTable.Row
+                        key={row.id}
+                        onPress={() => handleRowPress(row)}
+                        style={[
+                          selectedRow === row.id ? styles.selectedRow : null,
+                          { borderBottomWidth: 1, borderColor: '#ddd', backgroundColor: 'white' }
+                        ]}
+                      >
+                        {[
+                          row.downtimeID,
+                          row.LossName,
+                          row.subLossName,
+                          row.prodShift,
+                          row.downtimeStartTime,
+                          row.downtimeEndTime,
+                          row.prodDate,
+                          row.duration,
+                          row.reason
+                        ].map((cell, index) => (
+                          <DataTable.Cell
+                            key={index}
+                            style={{
+                              width: COLUMN_WIDTHS[index],
+                              justifyContent: 'center',
+                              borderRightWidth: 1,
+                              borderRightColor: '#eee'
+                            }}
+                          >
+                            {cell}
+                          </DataTable.Cell>
+                        ))}
+                      </DataTable.Row>
+                    ))
+                  ) : (
+                    <Text style={{ padding: 10 }}>No data available</Text>
+                  )}
+                </DataTable>
+              </View>
             </ScrollView>
-
           </ScrollView>
         </View>
       </View>
     </ScrollView>
   );
 };
+
 export default Downtime;
