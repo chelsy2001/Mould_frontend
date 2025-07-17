@@ -203,10 +203,16 @@ const handleConfirm = async () => {
     const result = await response.json();
 
     if (result.status === 200) {
-      Alert.alert("Success", "Spare part used and updated successfully.");
-      // Optionally reset values
-      setQuantity('');
-      setSpareLocationScan('');
+      Alert.alert("Success", "Spare part used and updated successfully.", [
+    {
+      text: "OK",
+      onPress: () => {
+        setQuantity('');
+        setSpareLocationScan('');
+        navigation.navigate('MouldHome'); 
+      },
+    },
+  ]);
     } else {
       Alert.alert("Error", result.message || "Failed to update.");
     }
@@ -242,8 +248,9 @@ const handleConfirm = async () => {
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Spare Part Screen" />
-      <ScrollView contentContainerStyle={{ paddingBottom: 30, padding: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 30, padding: 30}}>
 
+        <View style={styles.mouldData}>
         {/* MOULD SCAN AND SPARE PART CATEGORY */}
         <View style={styles.row}>
           <View style={styles.inputContainer}>
@@ -262,21 +269,26 @@ const handleConfirm = async () => {
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
-              <Icon name="shape-outline" size={18} color="#003366" /> Select Spare Part Category
+              <Icon name="shape-outline" size={15} color="#003366" /> Spare Part Category
             </Text>
            <SelectList
   key={sparePartOptions.length} // ⚠️ Add this to force update
   setSelected={setSparePartCategoryId}
+  style={styles.dropdown}
   data={sparePartOptions}
   save="key"
-  placeholder="Select Spare Part Category"
+  placeholder=""
   dropdownTextStyle={{ color: '#003366' }}
   dropdownItemStyle={{ backgroundColor: '#e6f0ff' }}
   boxStyles={{
     backgroundColor: '#fff',
-    borderColor: '#b3c6ff',
-    borderWidth: 1.5,
-    borderRadius: 12,
+    // borderColor: '#b3c6ff',
+    borderWidth: 0.5,
+    borderRadius: 25,
+    fontSize:10,
+    paddingVertical: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   }}
 />
 
@@ -298,8 +310,9 @@ const handleConfirm = async () => {
             </Text>
             <Text style={styles.currentqty}>{String(prefferdSparePart || '--')}</Text>
           </View>
+        </View>
 
-          <View style={styles.inputContainer}>
+         <View style={styles.inputContainer}>
             <Text style={styles.label}>
               <Icon name="cog-outline" size={18} color="#003366" /> Select Part Name
             </Text>
@@ -308,18 +321,20 @@ const handleConfirm = async () => {
               data={partNameOptions}
               save="key" // ✅ This ensures you get SparePartID
               placeholder="Select Spare Part"
-              dropdownTextStyle={{ color: '#003366' }}
-              dropdownItemStyle={{ backgroundColor: '#e6f0ff' }}
+              dropdownTextStyle={{ color: '#003366', fontSize: 5 }}
+              dropdownItemStyle={{ backgroundColor: '#e6f0ff'  }}
               boxStyles={{
-                backgroundColor: '#fff',
-                borderColor: '#b3c6ff',
-                borderWidth: 1.5,
-                borderRadius: 12,
+                 backgroundColor: '#fff',
+    // borderColor: '#b3c6ff',
+    borderWidth: 0.5,
+    borderRadius: 25,
+    fontSize:10,
+    paddingVertical: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
               }}
             />
-
           </View>
-        </View>
 
         {/* REQUIRED QUANTITY AND FIND BUTTON */}
         <View style={styles.row}>
@@ -340,7 +355,7 @@ const handleConfirm = async () => {
           <View style={styles.inputContainer}>
            <TouchableOpacity style={styles.findButton} onPress={handleFind}>
   <Text style={styles.confirmText}>
-    <Icon name="magnify" size={20} color="#fff" /> Find
+    <Icon name="magnify" size={18} color="#fff" /> Find
   </Text>
 </TouchableOpacity>
           </View>
@@ -373,7 +388,7 @@ const handleConfirm = async () => {
         <View style={styles.row}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
-              <Icon name="qrcode-scan" size={18} color="#003366" /> Scan Spare Part Location
+              <Icon name="qrcode-scan" size={18} color="#003366" /> ScanSparePartLoc
             </Text>
             <TextInput
               style={styles.input}
@@ -399,7 +414,7 @@ const handleConfirm = async () => {
             />
           </View>
         </View>
-
+     </View> 
         {/* CONFIRM BUTTON */}
        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
   <Text style={styles.confirmText}>

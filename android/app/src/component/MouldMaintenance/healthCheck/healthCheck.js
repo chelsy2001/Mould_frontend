@@ -210,7 +210,7 @@ const handleConfirm = async () => {
              
                        await uploadImage(); 
                        Alert.alert('Success', 'Machine ready to operate', [
-                         { text: 'OK', onPress: () => navigation.navigate('Home') },
+                         { text: 'OK', onPress: () => navigation.navigate('MouldHome') },
                        ]);
       setMouldData((prev) => ({ ...prev, MouldHealthStatus: 4 })); // Update local state
     } else {

@@ -278,7 +278,7 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
 )}
 
 
-        <TouchableOpacity style={styles.confirmButton} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.confirmButton} onPress={() => navigation.navigate('MouldHome')}>
           <Text style={styles.confirmText}>CLOSE</Text>
         </TouchableOpacity>
       </ScrollView>

@@ -175,7 +175,7 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
         Alert.alert('Success', 'Machine ready for operation.', [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('Home'),
+            onPress: () => navigation.navigate('MouldHome'),
           },
         ]);
         setMouldData(prev => ({ ...prev, MouldStatus: 3 ,}));
