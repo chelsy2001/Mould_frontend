@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 
   dropdown: {
     borderRadius: moderateScale(10),
-    borderWidth: 1,
+    borderWidth: moderateScale(1),
     borderColor: '#cbd5e1',
     backgroundColor: '#f8fafc',
   },
@@ -57,12 +57,13 @@ const styles = StyleSheet.create({
 
   input: {
     backgroundColor: '#f1f5f9',
+    // backgroundColor:'red',
     borderColor: '#d1d5db',
-    borderWidth: 1,
+    borderWidth: moderateScale(1),
     borderRadius: moderateScale(10),
     fontSize: moderateScale(12),
     color: '#101111ff',
-    width: '60%',
+    width:'70%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#3b82f6',
     paddingVertical: verticalScale(12),
-    width: '40%',
+    width: '45%',
     justifyContent: 'center',
     borderRadius: moderateScale(12),
     shadowColor: '#000',

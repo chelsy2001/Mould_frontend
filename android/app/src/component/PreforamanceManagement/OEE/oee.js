@@ -266,8 +266,6 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
       {/* Quality */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Quality {quality}%</Text>
-
-
         <View style={styles.row4}>
           <Text>Rejected Count</Text>
           <TextInput style={styles.input} value={rejected} editable={false} />
@@ -275,11 +273,25 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
             onPress={() => navigation.navigate('Quality', { lineName: lineName })}>
             <Text style={{ color: 'white' }}>Rejection Entry </Text>
           </TouchableOpacity>
-
-
         </View>
-
       </View>
+
+      {/* Calls Section */}
+<View style={styles.section}>
+  <View style={styles.row4}>
+    <TouchableOpacity style={styles.callBtn}>
+      <Text style={styles.callText}>Maintenance</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.callBtn}>
+      <Text style={styles.callText}>Production</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.callBtn}>
+      <Text style={styles.callText}>Quality</Text>
+    </TouchableOpacity>
+  </View>
+</View>
 
     </ScrollView>
     </View>

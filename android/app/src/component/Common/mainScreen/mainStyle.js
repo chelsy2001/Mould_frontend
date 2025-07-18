@@ -1,15 +1,14 @@
 import { StyleSheet, Dimensions } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // Adjust path
 
 const baseCard = {
-  width: width > 400 ? '40%' : '85%',
+  width: scale('85%'),
   maxWidth: 300,
-  marginVertical: 15,
+  marginVertical: moderateScale(15),
   backgroundColor: '#fff',
-  borderRadius: 20,
-  paddingVertical: 25,
-  paddingHorizontal: 16,
+  borderRadius: verticalScale(20),
+  paddingVertical: verticalScale(25),
+  paddingHorizontal: verticalScale(16),
   alignItems: 'center',
   shadowColor: '#000',
   shadowOpacity: 0.1,
@@ -24,16 +23,16 @@ const mainstyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    marginTop: 30,
-    paddingBottom: 20,
+    marginTop: moderateScale(30),
+    paddingBottom: verticalScale(20),
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: '700',
     color: '#2c3e50',
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: verticalScale(20),
+    marginBottom: verticalScale(10),
   },
   cardButton: {
     ...baseCard,
@@ -44,22 +43,22 @@ const mainstyles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
   },
   cardText: {
-    marginTop: 12,
-    fontSize: 16,
+    marginTop: moderateScale(12),
+    fontSize: scale(16),
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
   },
   cardTextDisabled: {
-    marginTop: 12,
-    fontSize: 15,
+    marginTop: moderateScale(12),
+    fontSize: scale(15),
     fontWeight: '500',
     color: '#7f8c8d',
     textAlign: 'center',
   },
   icon: {
-    width: 60,
-    height: 60,
+    width: scale(60),
+    height: scale(60),
     resizeMode: 'contain',
   },
 });
