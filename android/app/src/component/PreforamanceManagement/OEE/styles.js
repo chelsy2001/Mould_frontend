@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   alignItems: 'center',
   flex: 1,
-  marginHorizontal: moderateScale(4),
+  marginHorizontal: moderateScale(2),
   marginVertical: verticalScale(2),
   elevation: 3,
   minHeight: verticalScale(30),

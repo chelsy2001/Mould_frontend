@@ -13,55 +13,55 @@ import Header from '../../Common/header/header';
 import DTDetailsstyles from './DTDetailsStyle';
 import { DataTable } from 'react-native-paper';
 import { BASE_URL } from '../../Common/config/config';
-const DTDetails = ({ route, navigation, username, setIsLoggedIn }) =>{
- const { lineName } = route.params || {};
+const DTDetails = ({ route, navigation, username, setIsLoggedIn }) => {
+  const { lineName } = route.params || {};
 
-   const [LineName, setLineName] = useState([]);
-   const [tableData, setTableData] = useState([]);
- const [selectedLineName, setselectedLineName] = useState('');
+  const [LineName, setLineName] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [selectedLineName, setselectedLineName] = useState('');
 
 
-   useEffect(() => {
-     if (lineName) {
-       setselectedLineName(lineName);
-       console.log('Line Name:', LineName);
-     }
-   }, [lineName]);
+  useEffect(() => {
+    if (lineName) {
+      setselectedLineName(lineName);
+      console.log('Line Name:', LineName);
+    }
+  }, [lineName]);
 
-     useEffect(() => {
-       if (!selectedLineName) return;
-       fetchTableData();
-     }, [selectedLineName]);
+  useEffect(() => {
+    if (!selectedLineName) return;
+    fetchTableData();
+  }, [selectedLineName]);
 
-       const fetchTableData = async () => {
-         try {
-           const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${encodeURIComponent(selectedLineName)}`);
-           // const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${LineName}`);
-           const json = await response.json();
-           if (json.status === 200) {
-             setTableData(json.data.map(item => ({
-               id: item.DowntimeID,
-               downtimeID: item.DowntimeID.toString(),
-               prodDate: item.ProdDate?.split("T")[0] || '',
-               prodShift: item.ProdShift,
-               LossName: item.LossName,
-               subLossName: item.SubLossName,
-               downtimeStartTime: new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-               downtimeEndTime: new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-               reason: item.Reason || '',
-               duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A"
-             })));
-           } else {
-             setTableData([]);
-           }
-         } catch (error) {
-           console.error("Error fetching table data:", error);
-         }
-       };
+  const fetchTableData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${encodeURIComponent(selectedLineName)}`);
+      // const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${LineName}`);
+      const json = await response.json();
+      if (json.status === 200) {
+        setTableData(json.data.map(item => ({
+          id: item.DowntimeID,
+          downtimeID: item.DowntimeID.toString(),
+          prodDate: item.ProdDate?.split("T")[0] || '',
+          prodShift: item.ProdShift,
+          LossName: item.LossName,
+          subLossName: item.SubLossName,
+          downtimeStartTime: new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          downtimeEndTime: new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          reason: item.Reason || '',
+          duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A"
+        })));
+      } else {
+        setTableData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+    }
+  };
 
-    return(
-        <ScrollView style={DTDetailsstyles.container}>
-          <Header 
+  return (
+    <ScrollView style={DTDetailsstyles.container}>
+      <Header
         username={username}
         setIsLoggedIn={setIsLoggedIn}
         title="Downtime Details Screen"
@@ -71,67 +71,74 @@ const DTDetails = ({ route, navigation, username, setIsLoggedIn }) =>{
 
       <View style={DTDetailsstyles.Container1}>
         <View style={DTDetailsstyles.row}>
-          <Text style={DTDetailsstyles.label}>Line Name</Text>
+          <Text style={DTDetailsstyles.label}>Machine Name</Text>
           <TextInput style={DTDetailsstyles.input} value={lineName} editable={false} />
-     </View>
-      </View>
-          <View
-          style={{
-            backgroundColor: 'white',
-            marginHorizontal: 20,
-            width: scale(375),
-            marginTop: 10
-          }}
-        >
-          <DataTable >
-            <DataTable.Header>
-              <DataTable.Title style={{ width: 120, justifyContent: 'center' }}>Downtime ID</DataTable.Title>
-              <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>Loss Name</DataTable.Title>
-              <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>Sub Loss Name</DataTable.Title>
-              <DataTable.Title style={{ width: 100, justifyContent: 'center' }}>Shift</DataTable.Title>
-              <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>Start Time</DataTable.Title>
-              <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>End Time</DataTable.Title>
-              <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>Prod Date</DataTable.Title>
-              <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>Duration</DataTable.Title>
-              <DataTable.Title style={{ width: 200, justifyContent: 'center' }}>Remark</DataTable.Title>
-            </DataTable.Header>
-          </DataTable>
         </View>
+      </View>
+  
+<View style={{ flex: 1, marginTop: verticalScale(10) }}>
+  {/* Outer Horizontal ScrollView to enable horizontal scroll for both header + rows */}
+  <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+    <View>
+      {/* Sticky Header (rendered outside vertical scroll) */}
+      <DataTable style={{ backgroundColor: '#dcdcdc', minWidth: scale(1200) }}>
+        <DataTable.Header>
+          <DataTable.Title style={{ width: scale(60), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff' }}>Downtime ID</DataTable.Title>
+          <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Loss Name</DataTable.Title>
+          <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Sub Loss Name</DataTable.Title>
+          <DataTable.Title style={{ width: scale(50), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#aa9c9cff' }}>Shift</DataTable.Title>
+          <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Start Time</DataTable.Title>
+          <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>End Time</DataTable.Title>
+          <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Prod Date</DataTable.Title>
+          <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Duration</DataTable.Title>
+          <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
+        </DataTable.Header>
+      </DataTable>
 
-        <ScrollView
-          nestedScrollEnabled={true}
-          style={{ maxHeight: 400, marginBottom: 30 }}
-        >
-          <DataTable
-            style={{
-              backgroundColor: 'white',
-              marginHorizontal: 20,
-
-             width: scale(375),
-            }}
-          >
-            {tableData.length > 0 ? (
-              tableData.map((row) => (
-                <DataTable.Row key={row.id} onPress={() => handleRowPress(row)} >
-                  <DataTable.Cell style={{ width: scale(120), justifyContent: 'center' }}>{row.downtimeID}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(150), justifyContent: 'center' }}>{row.LossName}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(150), justifyContent: 'center' }}>{row.subLossName}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' }}>{row.prodShift}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(130), justifyContent: 'center' }}>{row.downtimeStartTime}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(130), justifyContent: 'center' }}>{row.downtimeEndTime}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(150), justifyContent: 'center' }}>{row.prodDate}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(130), justifyContent: 'center' }}>{row.duration}</DataTable.Cell>
-                  <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
-                </DataTable.Row>
-              ))
-            ) : (
-              <Text style={{ padding: 10 }}>No data available</Text>
-            )}
-          </DataTable>
-          {/* </View>  */}
-        </ScrollView>
-   
+      {/* Vertically scrollable body */}
+      <ScrollView
+        style={{
+          maxHeight: verticalScale(400),
+          backgroundColor: 'white',
+        }}
+        showsVerticalScrollIndicator={true}
+        nestedScrollEnabled
+      >
+        <DataTable style={{ minWidth: scale(1200) }}>
+          {tableData.length > 0 ? (
+            tableData.map((row) => (
+              <DataTable.Row key={row.id}  onPress={() => handleRowPress(row)}>
+                <DataTable.Cell style={{ width: scale(60), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.downtimeID}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.LossName}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.subLossName}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(50), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.prodShift}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeStartTime}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeEndTime}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.prodDate}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.duration}</DataTable.Cell>
+                <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
+              </DataTable.Row>
+            ))
+          ) : (
+            <Text
+              style={{
+                padding: verticalScale(10),
+                textAlign: 'center',
+                fontSize: moderateScale(14),
+              }}
+            >
+              No data available
+            </Text>
+          )}
+        </DataTable>
       </ScrollView>
-    );
+    </View>
+  </ScrollView>
+</View>
+
+
+
+    </ScrollView>
+  );
 }
 export default DTDetails;

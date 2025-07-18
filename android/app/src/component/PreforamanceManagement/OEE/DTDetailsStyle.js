@@ -1,46 +1,45 @@
-import { StyleSheet ,Dimensions} from 'react-native';
-// Scaling utilities
-const { width, height } = Dimensions.get('window');
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
+// DTDetailsStyle.js
+import { StyleSheet } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
 
 const DTDetailsstyles = StyleSheet.create({
-
-      container: {
-    padding: 20,
+  container: {
+    padding: scale(16),
     backgroundColor: '#f0f4f8',
+    flex: 1,
   },
-    Container1:{
- backgroundColor: '#003366',
-width:'98%',
-marginLeft:15,
-padding:10,
-borderRadius: 10
+  Container1: {
+    backgroundColor: '#003366',
+    width: '95%',
+    alignSelf: 'center',
+    padding: scale(10),
+    borderRadius: scale(10),
+    marginVertical: verticalScale(10),
   },
-    row: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // backgroundColor:'blue',
-    width:'30%',
-    marginLeft:'2%'
-    
+    width: '100%',
+    marginVertical: verticalScale(5),
   },
-    label: {
+  label: {
     color: 'white',
+    fontSize: moderateScale(14),
+    flex: 1,
   },
-   input: {
+  input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'white',
-color:'black',
-    borderRadius: 6,
-    padding: 3,
-    width: 1000,
-    height:40,
-    marginHorizontal: 9,
+    backgroundColor: 'white',
+    color: 'black',
+    borderRadius: scale(6),
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(6),
+    flex: 3,
+    height: verticalScale(40),
+
   }
-})
+});
+
 export default DTDetailsstyles;
