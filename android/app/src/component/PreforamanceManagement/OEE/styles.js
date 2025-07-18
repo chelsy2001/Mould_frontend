@@ -149,15 +149,15 @@ const styles = StyleSheet.create({
   callBtn: {
   backgroundColor: '#003366',
   paddingVertical: verticalScale(8),
-  paddingHorizontal: scale(16),
+  // paddingHorizontal: scale(16),
   borderRadius: scale(8),
   justifyContent: 'center',
   alignItems: 'center',
   flex: 1,
-  marginHorizontal: moderateScale(40),
+  marginHorizontal: moderateScale(4),
   marginVertical: verticalScale(2),
   elevation: 3,
-  minHeight: verticalScale(45),
+  minHeight: verticalScale(30),
 },
 
 callText: {
