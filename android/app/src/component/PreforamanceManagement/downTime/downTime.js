@@ -5,7 +5,7 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import { BASE_URL } from '../../Common/config/config';
 import Header from '../../Common/header/header';
 import styles from './style';
-import { scale, verticalScale } from '../../Common/utils/scale';
+import { scale, verticalScale,moderateScale } from '../../Common/utils/scale';
 
 const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -218,7 +218,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
         </View>
 
         {/* Table Section */}
-        <View style={{ flex: 1, marginTop: verticalScale(10) }}>
+        {/* <View style={{ flex: 1, marginTop: verticalScale(10) }}>
           <ScrollView
             nestedScrollEnabled={true}
             style={{
@@ -293,7 +293,68 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
               </View>
             </ScrollView>
           </ScrollView>
+        </View> */}
+
+        <View style={{ flex: 1, marginTop: verticalScale(10) }}>
+          {/* Outer Horizontal ScrollView to enable horizontal scroll for both header + rows */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+            <View>
+              {/* Sticky Header (rendered outside vertical scroll) */}
+              <DataTable style={{ backgroundColor: '#dcdcdc', minWidth: scale(1200) }}>
+                <DataTable.Header>
+                  <DataTable.Title style={{ width: scale(60), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff' }}>Downtime ID</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Loss Name</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Sub Loss Name</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(50), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#aa9c9cff' }}>Shift</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Start Time</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>End Time</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Prod Date</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Duration</DataTable.Title>
+                  <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
+                </DataTable.Header>
+              </DataTable>
+        
+              {/* Vertically scrollable body */}
+              <ScrollView
+                style={{
+                  maxHeight: verticalScale(400),
+                  backgroundColor: 'white',
+                }}
+                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled
+              >
+                <DataTable style={{ minWidth: scale(1200) }}>
+                  {tableData.length > 0 ? (
+                    tableData.map((row) => (
+                      <DataTable.Row key={row.id}  onPress={() => handleRowPress(row)}>
+                        <DataTable.Cell style={{ width: scale(60), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.downtimeID}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.LossName}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.subLossName}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(50), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.prodShift}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeStartTime}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeEndTime}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.prodDate}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.duration}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
+                      </DataTable.Row>
+                    ))
+                  ) : (
+                    <Text
+                      style={{
+                        padding: verticalScale(10),
+                        textAlign: 'center',
+                        fontSize: moderateScale(14),
+                      }}
+                    >
+                      No data available
+                    </Text>
+                  )}
+                </DataTable>
+              </ScrollView>
+            </View>
+          </ScrollView>
         </View>
+        
       </View>
     </ScrollView>
   );

@@ -11,8 +11,10 @@ import Header from '../../Common/header/header';
 import styles from './style';
 import { DataTable } from 'react-native-paper';
 import { BASE_URL } from '../../Common/config/config';
-
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/FontAwesome'; // or MaterialIcons, Ionicons, etc.
 
 const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
   const { lineName } = route.params || {};
@@ -168,75 +170,56 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
       alert('Something went wrong while updating.');
     }
   };
-//-----------------fecth the table data--------
+  //-----------------fecth the table data--------
 
 
-const fetchTableData = async (lineID) => {
-  try {
-    const response = await fetch(`${BASE_URL}/REWORK/rework-genealogy/${lineID}`);
-    const json = await response.json();
-    if (json && json.data) {
-      setTableData(json.data);
-      setLoading(false);
-    } else {
-      setTableData([]);
+  const fetchTableData = async (lineID) => {
+    try {
+      const response = await fetch(`${BASE_URL}/REWORK/rework-genealogy/${lineID}`);
+      const json = await response.json();
+      if (json && json.data) {
+        setTableData(json.data);
+        setLoading(false);
+      } else {
+        setTableData([]);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error fetching rework genealogy data:', error);
       setLoading(false);
     }
-  } catch (error) {
-    console.error('Error fetching rework genealogy data:', error);
-    setLoading(false);
-  }
-};
+  };
 
-useEffect(() => {
-  if (lineID) {
-    fetchTableData(lineID);
-  }
-}, [lineID]);
+  useEffect(() => {
+    if (lineID) {
+      fetchTableData(lineID);
+    }
+  }, [lineID]);
 
-
-  //------------fetch the rework,rejected.... parts from cycletime data ---
-
-  // const fetchCycleTimeData = (lineID) => {
-  //   fetch(`${BASE_URL}/rework/cycletime/${lineID}`)
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       if (data?.data?.length > 0) {
-  //         const cycleData = data.data[0];
-  //         setRejectedCount(cycleData.RejectedCount?.toString() || '0');
-  //         setRework(cycleData.Rework?.toString() || '0');
-  //         setScrap(cycleData.Scrap?.toString() || '0');
-  //         setGoodPart(cycleData.GoodPart?.toString() || '0');
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error fetching cycle time data:", err);
-  //     });
-  // };
 
   const fetchCycleTimeData = (lineID) => {
-  fetch(`${BASE_URL}/rework/cycletime/${lineID}`)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("API Data Response:", data);  // 🔍 Add this line
-      if (data?.data?.length > 0) {
-        const cycleData = data.data[0];
-        console.log("Parsed cycleData:", cycleData);  // 🔍 Add this line
-        setRejectedCount(cycleData.RejectedCount?.toString() || '0');
-        setRework(cycleData.Rework?.toString() || '0');
-        setScrap(cycleData.Scrap?.toString() || '0');
-        setGoodPart(cycleData.GoodPart?.toString() || '0');
-      } else {
-        console.log("No data received or data is empty.");
-      }
-    })
-    .catch((err) => {
-      console.error("Error fetching cycle time data:", err);
-    });
-};
-useEffect(() => {
-  fetchCycleTimeData(1); // or dynamic lineID
-}, []);
+    fetch(`${BASE_URL}/rework/cycletime/${lineID}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API Data Response:", data);  // 🔍 Add this line
+        if (data?.data?.length > 0) {
+          const cycleData = data.data[0];
+          console.log("Parsed cycleData:", cycleData);  // 🔍 Add this line
+          setRejectedCount(cycleData.RejectedCount?.toString() || '0');
+          setRework(cycleData.Rework?.toString() || '0');
+          setScrap(cycleData.Scrap?.toString() || '0');
+          setGoodPart(cycleData.GoodPart?.toString() || '0');
+        } else {
+          console.log("No data received or data is empty.");
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching cycle time data:", err);
+      });
+  };
+  useEffect(() => {
+    fetchCycleTimeData(1); // or dynamic lineID
+  }, []);
   //-----------------test values-----------------------
   useEffect(() => {
     console.log("Selected Rework Reason:", selectedReason);
@@ -245,7 +228,25 @@ useEffect(() => {
   useEffect(() => {
     console.log("Selected Action:", selectedAction);
   }, [selectedAction]);
-  
+
+  const [selectedDate, setSelectedDate] = useState('');
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    setSelectedDate(formattedDate);
+    hideDatePicker();
+  };
+
+
   //-------------------------------------------------
 
   return (
@@ -260,53 +261,46 @@ useEffect(() => {
 
       <View style={styles.Container1}>
         <View style={styles.row1}>
-          <Text style={styles.label}>Rejected</Text>
-          <TextInput style={styles.input1} value={rejectedCount} editable={false} />
+          <Text style={styles.label}>ProdDate</Text>
+          <View style={styles.inputWithIcon}>
+            <TextInput
+              style={styles.input12}
+              value={selectedDate}
+              editable={false}
+              placeholder="Select Date"
+            />
+            <TouchableOpacity onPress={showDatePicker} style={styles.iconContainer}>
+              <Icon name="calendar" size={20} color="#555" />
+            </TouchableOpacity>
+          </View>
 
-          <Text style={styles.label}>Rework</Text>
+          <Text style={styles.label}>Shift</Text>
           <TextInput style={styles.input1} value={rework} editable={false} />
 
-          <Text style={styles.label}>Scrap</Text>
-          <TextInput style={styles.input1} value={scrap} editable={false} />
-
-          <Text style={styles.label}>Ok Part</Text>
-          <TextInput style={styles.input1} value={goodPart} editable={false} />
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+          />
         </View>
 
         <View style={styles.row2}>
-          <Text style={styles.label}>Action</Text>
-          <SelectList
-            setSelected={setSelectedAction}
-            data={actionList}
-            save="value"
-            placeholder="Select Action"
-            boxStyles={{
-              marginRight: '4%',
-              width: 250,
-              backgroundColor: 'white',
-            }}
-            dropdownStyles={{
-              backgroundColor: '#f0f8ff',
-            }}
-            defaultOption={{ key: '', value: '' }}
-          />
+          <Text style={styles.label}>Machine Name</Text>
+          <TextInput style={styles.input2} value={rejectedCount} editable={false} />
 
+        </View>
 
-          <Text style={styles.label}>Count</Text>
-          <TextInput style={styles.input2}
-            value={count}
-            onChangeText={setCount}
-            keyboardType="numeric" />
-
-          <Text style={styles.label}>Reason</Text>
+        <View>
+          <Text style={styles.label}>Rework Reason</Text>
           <SelectList
             setSelected={setSelectedReason}
             data={reasonList}
             save="value"
             placeholder="Select Reason"
             boxStyles={{
-              marginRight: 7,
-              width: 350,
+              marginRight: scale(7),
+              width: scale(243),
               backgroundColor: 'white',
             }}
             dropdownStyles={{
@@ -314,116 +308,130 @@ useEffect(() => {
             }}
             defaultOption={{ key: '', value: '' }}
           />
-
         </View>
 
-        <View style={styles.row3}>
+        <View style={styles.row4}>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Total Qty</Text>
+            <TextInput
+              style={styles.input3}
+              value={count}
+              onChangeText={setCount}
+              keyboardType="numeric"
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Ok Qty</Text>
+            <TextInput
+              style={styles.input3}
+              value={count}
+              onChangeText={setCount}
+              keyboardType="numeric"
+            />
+          </View>
+        </View>
+        <View style={styles.row4}>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Total NOK Qty</Text>
+            <TextInput
+              style={styles.input3}
+              value={count}
+              onChangeText={setCount}
+              keyboardType="numeric"
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>NOT OK Entry</Text>
+            <TextInput
+              style={styles.input3}
+              value={count}
+              onChangeText={setCount}
+              keyboardType="numeric"
+            />
+          </View>
+        </View>
+
+        <View style={styles.row5}>
           <Text style={styles.label}>Remark</Text>
-          <TextInput
-            style={styles.input3}
-            placeholder="Remark"
-            value={remark}
-            onChangeText={setRemark}
-          />
-          <TouchableOpacity style={styles.button} onPress={handleUpdateRework}>
-            <Text style={styles.buttonText}>Update</Text>
-          </TouchableOpacity>
+
+          <View style={styles.inputWithButton}>
+            <TextInput
+              style={styles.remarkInput}
+              placeholder="Remark"
+              value={remark}
+              onChangeText={setRemark}
+              multiline={true}
+            />
+
+            <TouchableOpacity style={styles.button} onPress={handleUpdateRework}>
+              <Text style={styles.buttonText}>Update</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
-      <View
-        style={{
-          backgroundColor: 'white',
-          // borderRadius: 20,
-          marginHorizontal: 20,
-          width: '97.4%',
-          marginTop: 10
-        }}
-      >
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title style={{ width: 120, justifyContent: 'center' }}>
-              Line ID
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>
-              Line Name
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>
-              User
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 100, justifyContent: 'center' }}>
-              ProdDate
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>
-              PrdoShift
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>
-              SKUName
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 150, justifyContent: 'center' }}>
-              QTY
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 130, justifyContent: 'center' }}>
-              Reason
-            </DataTable.Title>
-            <DataTable.Title style={{ width: 200, justifyContent: 'center' }}>
-              Remark
-            </DataTable.Title>
-          </DataTable.Header>
-        </DataTable>
+      <View style={{ flex: 1, marginTop: verticalScale(10) }}>
+        {/* Outer Horizontal ScrollView to enable horizontal scroll for both header + rows */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+          <View>
+            {/* Sticky Header (rendered outside vertical scroll) */}
+            <DataTable style={{ backgroundColor: '#dcdcdc', minWidth: scale(1200) }}>
+              <DataTable.Header>
+                <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Line ID</DataTable.Title>
+                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Line Name</DataTable.Title>
+                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>User</DataTable.Title>
+                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>ProdDate</DataTable.Title>
+                <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>PrdoShift</DataTable.Title>
+                <DataTable.Title style={{ width: scale(40), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>SKUName</DataTable.Title>
+                <DataTable.Title style={{ width: scale(10), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>QTY</DataTable.Title>
+                <DataTable.Title style={{ width: scale(50), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Reason</DataTable.Title>
+                <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
+              </DataTable.Header>
+            </DataTable>
+
+            {/* Vertically scrollable body */}
+            <ScrollView
+              style={{
+                maxHeight: verticalScale(400),
+                backgroundColor: 'white',
+              }}
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled
+            >
+              <DataTable style={{ minWidth: scale(1200) }}>
+                {tableData.length > 0 ? (
+                  tableData.map((row) => (
+                    <DataTable.Row key={row.id} onPress={() => handleRowPress(row)}>
+                      <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.LineID}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.LineName}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.User}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.ProdDate}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.PrdoShift}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(40), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.SKUName}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(10), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.QTY}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(50), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.Reason}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.Remark}</DataTable.Cell>
+                    </DataTable.Row>
+                  ))
+                ) : (
+                  <Text
+                    style={{
+                      padding: verticalScale(10),
+                      textAlign: 'center',
+                      fontSize: moderateScale(14),
+                    }}
+                  >
+                    No data available
+                  </Text>
+                )}
+              </DataTable>
+            </ScrollView>
+          </View>
+        </ScrollView>
       </View>
 
-      <ScrollView
-        nestedScrollEnabled={true}
-        style={{ maxHeight: 400, marginBottom: 30 }}
-      >
-        <DataTable
-          style={{
-            backgroundColor: 'white',
-            marginHorizontal: 20,
-
-            width: '97.4%',
-          }}
-        >
-          {loading ? (
-            <Text style={{ padding: 10 }}>Loading...</Text>
-          ) : tableData.length === 0 ? (
-            <Text style={{ padding: 10 }}>No data available</Text>
-          ) : (
-            tableData.map((item, index) => (
-              <DataTable.Row key={index}>
-                <DataTable.Cell style={{ width: 120, justifyContent: 'center' }}>
-                  {item.LineID}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>
-                  {item.LineName}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>
-                  {item.User}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 100, justifyContent: 'center' }}>
-                  {item.ProdDate?.split('T')[0]}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>
-                  {item.ProdShift}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>
-                  {item.SKUName}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 150, justifyContent: 'center' }}>
-                  {item.Qty}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 130, justifyContent: 'center' }}>
-                  {item.Reason}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ width: 200, justifyContent: 'center' }}>
-                  {item.Remark}
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))
-          )}
-        </DataTable>
-      </ScrollView>
     </ScrollView>
   );
 };

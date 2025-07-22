@@ -1,151 +1,145 @@
-import { StyleSheet ,Dimensions} from 'react-native';
-// Scaling utilities
-const { width, height } = Dimensions.get('window');
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
+import { StyleSheet } from 'react-native';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'
+
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: scale(20),
     backgroundColor: '#f0f4f8',
   },
-label:{
-  color: 'white'
-},
-  Container1:{
- backgroundColor: '#003366',
-width:'98%',
-marginLeft:15,
-padding:10,
-borderRadius: 10
+  label: {
+    color: 'white',
+    fontSize: scale(12),
+  },
+  Container1: {
+    backgroundColor: '#003366',
+    width: '98%',
+    marginLeft: scale(5),
+    padding: scale(10),
+    borderRadius: scale(10),
+    marginTop:scale(6),
   },
   title: {
-    fontSize: 22,
+    fontSize: scale(22),
     fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: verticalScale(16),
     color: '#004aad',
   },
-  statusBox: {
+  row1: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '35%',
+   // marginLeft: '1%',
   },
-  statText: {
-    fontSize: 16,
-  },
-  bold: {
-    fontWeight: 'bold',
+    row2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '97%',
+   // marginLeft: '2%',
+    marginTop:'2%'
   },
 
-    row1: {
+    row4: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    //backgroundColor:'blue',
-    width:'97%',
-    marginLeft:'2%'
-    
+    width: '97%',
+   // marginLeft: '2%',
+    marginTop:'2%'
   },
-     row2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-   // backgroundColor:'red',
-    width:'97%',
-    marginLeft:'2%',
-    marginTop:'5'
-    
-  },
-   row3: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-   // backgroundColor:'green',
-    width:'95%',
-    marginLeft:'2%',
-   // marginRight:-20,
-    marginTop:'-8'
-    
-  },
-   input1: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor:'white',
-color:'black',
-    borderRadius: 6,
-    padding: 3,
-    width: 200,
-    height:40,
-    marginHorizontal: 9,
-  },
+row5: {
+  width: '97%',
+  //marginLeft: '2%',
+  marginTop: '2%',
+},
 
-  input2: {
-   borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 3,
-    width: 200,
-    height:42,
-    color:'black',
-   // marginHorizontal: 9,
-     backgroundColor:'white' 
-    //marginRight:20
-  },
-  input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginVertical: 6,
-    fontSize: 16,
-  },
-    input3: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 3,
-    width: 952,
-     height:40,
-    marginHorizontal: 9,
-    marginLeft:30,
-     backgroundColor:'white'
-   // marginRight:20
-  },
-  dropdown: {
-    marginVertical: 6,
-    borderRadius: 8,
-    borderColor: '#ccc',
-  },
-  button: {
-    backgroundColor: '#4a90e2',
-  paddingVertical: verticalScale(10),
-  paddingHorizontal: scale(7),
-   borderRadius: scale(2),
-    alignItems: 'center',
-    marginTop: 14,
-    marginBottom: 16,
-    marginRight:2,
-    width:"10%"
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-  },
+inputWithButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: 5,
+},
+
+remarkInput: {
+  flex: 1,
+  backgroundColor: 'white',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 6,
+  padding: 8,
+  marginRight: 10,
+},
+inputWithIcon: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  backgroundColor: 'white',
+  marginLeft:scale(6),
+marginRight:scale(4)
+},
+
+iconContainer: {
+  paddingHorizontal: 2,
+  position: 'absolute',
+  right: scale(1),
+  top: 6,
+  zIndex: 1,
+
+},
+
+input12: {
+  flex: 1,
+  height:verticalScale(28),
+  backgroundColor: '#fff',
   
-  tableRow: {
-    flexDirection: 'row',
-    paddingVertical: 6,
-    backgroundColor: '#fff',
-    marginVertical: 2,
-    borderRadius: 4,
+},
+
+  input1: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: 'white',
+    color: 'black',
+    borderRadius: scale(6),
+    padding: scale(3),
+    width: scale(70),
+    height: verticalScale(30),
+    marginHorizontal: scale(9),
   },
-  cell: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 14,
+  input2: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: scale(6),
+    padding: scale(3),
+    width: scale(150),
+    height: verticalScale(30),
+    color: 'black',
+    backgroundColor: 'white',
+    marginHorizontal: scale(9),
   },
+  input3: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: scale(6),
+    padding: scale(3),
+    width: scale(100), // Consider using a percentage or adjusting to a lower value for smaller screens
+    height: verticalScale(30),
+    marginHorizontal: scale(9),
+    backgroundColor: 'white',
+  },
+button: {
+  backgroundColor: '#007bff',
+  paddingVertical: 10,
+  paddingHorizontal: 16,
+  borderRadius: 6,
+},
+
+buttonText: {
+  color: 'white',
+  fontWeight: 'bold',
+}
 });
 
 export default styles;

@@ -39,7 +39,7 @@ const navigation = useNavigation();
       <Header username={username} title="HC Mould Monitoring" />
   <ScrollView
         nestedScrollEnabled={true}
-        style={{ maxHeight: 700, marginBottom: 30 }}
+        style={{ maxHeight: 700, marginBottom: 30,marginTop:20 }}
       >
       {checklistData.map((item, index) => (
         <View>
