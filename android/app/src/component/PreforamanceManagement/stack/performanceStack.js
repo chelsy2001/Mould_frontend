@@ -7,6 +7,8 @@ import Downtime from '../downTime/downTime';
 import Quality from '../quality/quality';
 import DTDetails from '../OEE/DT Details';
 import ReworkDetails from '../OEE/Rework Details';
+import ZoneScreen from '../zone/zone';
+import StationScreen from '../station/station';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +18,14 @@ const PerformanceStack = ({ setIsLoggedIn, username }) => {
       <Stack.Screen 
         name="PerformanceHome" 
         children={(props) => <PerformanceScreen {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
+      />
+      <Stack.Screen 
+        name="Zone" 
+        children={(props) => <ZoneScreen {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
+      />
+      <Stack.Screen 
+        name="Station" 
+        children={(props) => <StationScreen {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
       />
       <Stack.Screen 
         name="Assembly" 

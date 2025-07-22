@@ -48,7 +48,7 @@ const PerformanceScreen = ({ setIsLoggedIn, username }) => {
             <TouchableOpacity
               key={shop.ShopID}
               style={styles.menuItem}
-              onPress={() => navigation.navigate('Assembly', { shopId: shop.ShopID })}
+              onPress={() => navigation.navigate('Zone', { shopId: shop.ShopID })}
             >
               <Image
                 source={shopIcons[index % shopIcons.length]} // Rotate icons if more shops than icons
