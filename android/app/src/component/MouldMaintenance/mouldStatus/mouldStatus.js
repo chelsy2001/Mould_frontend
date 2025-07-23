@@ -236,7 +236,7 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>🛠   Machine ID: </Text>
-    <Text style={styles.dataValue}>{filteredMould.MachineID}</Text>
+    <Text style={styles.dataValue}>{filteredMould.EquipmentID}</Text>
     </View> 
     <View style={styles.separator} />
 
