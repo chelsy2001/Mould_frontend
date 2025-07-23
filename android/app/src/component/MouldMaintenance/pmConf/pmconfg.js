@@ -300,9 +300,10 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
           
             <View style={styles.dataRow}>
               <Text style={styles.dataLabel}>Machine ID</Text>
-              <Text style={styles.dataValue}>{mouldData.MachineID}</Text>
+              <Text style={styles.dataValue}>{mouldData.EquipmentID}</Text>
             </View>
             <View style={styles.separator} />
+            
           
             <View style={styles.dataRow}>
               <Text style={styles.dataLabel}>Next PM</Text>

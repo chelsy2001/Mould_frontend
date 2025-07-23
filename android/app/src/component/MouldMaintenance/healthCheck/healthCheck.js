@@ -371,7 +371,7 @@ const handleConfirm = async () => {
           
             <View style={styles.dataRow}>
               <Text style={styles.dataLabel}>Machine ID</Text>
-              <Text style={styles.dataValue}>{mouldData.MachineID}</Text>
+              <Text style={styles.dataValue}>{mouldData.EquipmentID}</Text>
             </View>
             <View style={styles.separator} />
           
