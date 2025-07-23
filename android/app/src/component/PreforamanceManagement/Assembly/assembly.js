@@ -8,13 +8,13 @@ import { BASE_URL } from '../../Common/config/config';
 const Assembly = ({ setIsLoggedIn, username }) => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { shopId } = route.params;
+  const { StationID } = route.params;
 
   const [Machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/Common/Machine?shopId=${shopId}`)
+    fetch(`${BASE_URL}/Common/Machine?StationID=${StationID}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data) {
@@ -27,7 +27,7 @@ const Assembly = ({ setIsLoggedIn, username }) => {
         console.error('Error fetching Machines:', error);
       })
       .finally(() => setLoading(false));
-  }, [shopId]);
+  }, [StationID]);
 
   const handleLinePress = (MachineName) => {
     navigation.navigate('OEE', { MachineName });
