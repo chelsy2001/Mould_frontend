@@ -16,8 +16,13 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [selectedLoss, setSelectedLoss] = useState('');
   const [subLossData, setSubLossData] = useState([]);
   const [selectedSubLoss, setSelectedSubLoss] = useState('');
-  const lineName = route?.params?.lineName ?? 'No Line Selected';
 
+
+  const lineName = route?.params?.lineName ?? 'No Line Selected';
+ const { equipmentName } = route.params;
+
+
+ 
   const COLUMN_WIDTHS = [
     scale(60), scale(100), scale(100), scale(50),
     scale(80), scale(80), scale(80), scale(80), scale(200),

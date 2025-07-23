@@ -10,27 +10,27 @@ const Assembly = ({ setIsLoggedIn, username }) => {
   const route = useRoute();
   const { StationID } = route.params;
 
-  const [Machines, setMachines] = useState([]);
+  const [Equipment, setEquipment] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/Common/Machine?StationID=${StationID}`)
+    fetch(`${BASE_URL}/Common/Equipment?StationID=${StationID}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data) {
-          setMachines(data.data);
+          setEquipment(data.data);
         } else {
           console.error('Unexpected API response:', data);
         }
       })
       .catch((error) => {
-        console.error('Error fetching Machines:', error);
+        console.error('Error fetching Equipment:', error);
       })
       .finally(() => setLoading(false));
   }, [StationID]);
 
-  const handleLinePress = (MachineName) => {
-    navigation.navigate('OEE', { MachineName });
+  const handleLinePress = (equipmentName) => {
+    navigation.navigate('OEE', { equipmentName });
   };
 
 
@@ -47,18 +47,19 @@ const Assembly = ({ setIsLoggedIn, username }) => {
 
   return (
     <LinearGradient colors={['#f5f7fa', '#c3cfe2']} style={styles.gradient}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Machine Screen' />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Machine' />
 
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.menuContainer}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          Machines.map((Machine, index) => (
-            <TouchableOpacity key={Machine.MachineID} style={styles.cardButton} 
+          Equipment.map((Equipment, index) => (
+            <TouchableOpacity key={Equipment.EquipmentID} style={styles.cardButton} 
             
-            onPress={() => handleLinePress(Machine.MachineName)}>
+onPress={() => handleLinePress(Equipment.EquipmentName.trim())}
+>
               <Image source={getLineIcon(index)} style={styles.icon} />
-              <Text style={styles.cardText}>{Machine.MachineName.trim()}</Text>
+              <Text style={styles.cardText}>{Equipment.EquipmentName.trim()}</Text>
             </TouchableOpacity>
           ))
         )}

@@ -26,14 +26,14 @@ const mainstyles = StyleSheet.create({
     marginTop: moderateScale(30),
     paddingBottom: verticalScale(20),
   },
-  sectionTitle: {
-    fontSize: scale(24),
-    fontWeight: '700',
-    color: '#2c3e50',
-    textAlign: 'center',
-    marginTop: verticalScale(20),
-    marginBottom: verticalScale(10),
-  },
+  // sectionTitle: {
+  //   fontSize: scale(24),
+  //   fontWeight: '700',
+  //   color: '#2c3e50',
+  //   textAlign: 'center',
+  //   marginTop: verticalScale(20),
+  //   marginBottom: verticalScale(10),
+  // },
   cardButton: {
     ...baseCard,
     backgroundColor:'#004080',

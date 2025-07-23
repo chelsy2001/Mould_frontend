@@ -2,34 +2,37 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const baseCard = {
+
 //   width: width > 400 ? '40%' : '85%',
-width: '70%',
-//   maxWidth: 300,
+const baseCard = {
+  width: width > 400 ? '38%' : '80%',
+  maxWidth: 500,
+  height: width > 400 ? 160 : 140,
   marginVertical: 15,
-  backgroundColor: '#fff',
-  borderRadius: 20,
-  paddingVertical: 25,
-  paddingHorizontal: 16,
+  borderRadius: 16,
+  backgroundColor: '#ffffff',
+  padding: 20,
+  justifyContent: 'center',
   alignItems: 'center',
   shadowColor: '#000',
   shadowOpacity: 0.1,
   shadowRadius: 10,
-  shadowOffset: { width: 0, height: 5 },
-  elevation: 8,
+  shadowOffset: { width: 0, height: 6 },
+  elevation: 10,
 };
 
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  container: {
-    flexDirection: 'column',
-    // flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 30,
-    paddingBottom: 20,
+ 
+    menuContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   cardButton: {
     ...baseCard,

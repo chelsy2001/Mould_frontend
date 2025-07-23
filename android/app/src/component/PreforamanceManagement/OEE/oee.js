@@ -21,10 +21,14 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   const navigation = useNavigation();
   const [selectedShift, setSelectedShift] = useState('A');
   const [LineName, setLineName] = useState([]);
+   const [EquipmentName, setEquipmentName] = useState([]);
   const [loading, setLoading] = useState(true);
-  const lineName = route?.params?.MachineName ?? 'No Line Selected';
 
 
+  //const lineName = route?.params?.MachineName ?? 'No Line Selected';
+
+  //const lineName = route?.params?.EquipmentName ?? 'No Machine Selected';
+ const { equipmentName } = route.params;
   const [prodDate, setProdDate] = useState('');
   const [shiftName, setShiftName] = useState('');
   // const getRandomPercent = () => Math.floor(Math.random() * 50) + 50;
@@ -62,12 +66,12 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 
   const currentDate = new Date().toLocaleDateString();
 
-  useEffect(() => {
-    if (lineName) {
-      setselectedLineName(lineName);
-      console.log('Line Name:', LineName);
-    }
-  }, [lineName]);
+  // useEffect(() => {
+  //   if (lineName) {
+  //     setselectedLineName(lineName);
+  //     console.log('Line Name:', LineName);
+  //   }
+  // }, [lineName]);
   //----------fetch prodate and shiftname 
 
 
@@ -98,14 +102,14 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   useEffect(() => {
     const fetchLineIdAndOEE = async () => {
       try {
-        if (!lineName) return;
+        if (!equipmentName) return;
 
         // Step 1: Get LineID from lineName
-        const lineIdResponse = await axios.get(`${BASE_URL}/oee/getLineID/${lineName}`);
-        const lineId = lineIdResponse.data.LineID;
+        const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
+        const EquipmentID = equipmentIdResponse.data.EquipmentID;
 
         // Step 2: Fetch OEE details using LineID
-        const oeeResponse = await axios.get(`${BASE_URL}/oee/OEEDetails/${lineId}`);
+        const oeeResponse = await axios.get(`${BASE_URL}/oee/OEEDetails/${EquipmentID}`);
 
         if (oeeResponse.data?.status === 200 && oeeResponse.data.data?.length > 0) {
           const oeeData = oeeResponse.data.data[0];
@@ -134,7 +138,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
     };
 
     fetchLineIdAndOEE();
-  }, [lineName]);
+  }, [equipmentName]);
 
   //-----------------fetch the unassigned drowntime count
 
@@ -173,7 +177,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
     };
 
     fetchData();
-  }, [lineName]);
+  }, [equipmentName]);
 
 
   return (
@@ -183,9 +187,9 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 20 }}>
         {/* <Text style={styles.headerBox}>Date : {prodDate}</Text> */}
 
-        <Text style={styles.headerBox}>{lineName}</Text>
-        <Text style={styles.headerBox}>Shift : A</Text>
-        {/* <Text style={styles.headerBox}>Shift Name: {shiftName}</Text> */}
+        <Text style={styles.headerBox}>{equipmentName}</Text>
+        {/* //<Text style={styles.headerBox}>Shift : A</Text> */}
+        <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
       </View>
       {/* Circular Progress Section */}
       <View style={styles.chartSection}>
@@ -239,7 +243,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
           />
           <TouchableOpacity
             style={[styles.assignBtn, { marginLeft: 4 }]}
-            onPress={() => navigation.navigate('Downtime', { lineName: lineName })}
+            onPress={() => navigation.navigate('Downtime', { equipmentName: equipmentName })}
           >
             <Text style={{ color: 'white' }}>Update Reason</Text>
           </TouchableOpacity>
