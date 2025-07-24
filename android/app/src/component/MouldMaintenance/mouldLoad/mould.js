@@ -48,52 +48,82 @@ const MouldLoadingScreen = ({ username }) => {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchProductName = async () => {
-      if (machineScan && mouldScan) {
-        try {
-          const response = await axios.get(`${BASE_URL}/mould/details/${machineScan}/${mouldScan}`);
-          if (response.status === 200) {
-            const mouldData = response.data.data;
-            if (Array.isArray(mouldData) && mouldData.length > 0) {
-              const data = mouldData[0];
-              if (
-                String(data.EquipmentID) === String(machineScan) &&
-                String(data.MouldID) === String(mouldScan)
-              ) {
-                if (data.ProductGroupID == null) {
-                  Alert.alert('Error', 'Machine and Mould validation failed — ProductGroupID is missing.');
-                  resetFields();
-                  return;
-                }
-                setProductName(data.ProductGroupName || 'No Product Name');
-                setMouldActualLife(data.MouldActualLife);
-                setPmWarning(data.PMWarning);
-                setHealthCheckWarning(data.HealthCheckWarning);
-                setMouldStatus(data.MouldStatus);
-                setMouldPmstatus(data.MouldPMStatus);
-                setMouldHealthStatus(data.MouldHealthStatus);
-                setMouldLife(data.MouldLifeStatus);
-                Alert.alert('Success', 'Mould Machine Validation successful');
-              } else {
-                Alert.alert('Error', 'Machine and Mould not in system.');
+ useEffect(() => {
+  const fetchProductName = async () => {
+    if (machineScan && mouldScan) {
+      try {
+        const response = await axios.get(`${BASE_URL}/mould/details/${machineScan}/${mouldScan}`);
+        if (response.status === 200) {
+          const mouldData = response.data.data;
+          if (Array.isArray(mouldData) && mouldData.length > 0) {
+            const data = mouldData[0];
+            if (
+              String(data.EquipmentID) === String(machineScan) &&
+              String(data.MouldID) === String(mouldScan)
+            ) {
+              if (data.ProductGroupID == null) {
+                Alert.alert('Error', 'Machine and Mould validation failed — ProductGroupID is missing.');
                 resetFields();
+                return;
               }
+
+              // ✅ Set all states
+              setProductName(data.ProductGroupName || 'No Product Name');
+              setMouldActualLife(data.MouldActualLife);
+              setPmWarning(data.PMWarning);
+              setHealthCheckWarning(data.HealthCheckWarning);
+              setMouldStatus(data.MouldStatus);
+              setMouldPmstatus(data.MouldPMStatus);
+              setMouldHealthStatus(data.MouldHealthStatus);
+              setMouldLife(data.MouldLifeStatus);
+
+              // ✅ Show Success Alert and call updateValidationStatus on OK
+              Alert.alert('Success', 'Mould Machine Validation successful', [
+                {
+                  text: 'OK',
+                  onPress: async () => {
+                    console.log('Calling updateValidationStatus API with:', machineScan, mouldScan);
+                    try {
+                      const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatus`, {
+                        EquipmentID: machineScan,
+                        mouldID: mouldScan,
+                      });
+
+                      if (updateRes.status === 200) {
+                        console.log('✅ ValidationStatus updated successfully');
+                      } else {
+                        console.warn('⚠️ Validation status update failed', updateRes.data);
+                      }
+
+                      setValidation('Mould Machine Validation successful');
+                    } catch (err) {
+                      console.error('❌ Error calling updateValidationStatus:', err.response?.data || err.message);
+                    }
+                  }
+                }
+              ]);
+
             } else {
-              Alert.alert('Error', 'No data found for this combination.');
+              Alert.alert('Error', 'Machine and Mould not in system.');
               resetFields();
             }
+          } else {
+            Alert.alert('Error', 'No data found for this combination.');
+            resetFields();
           }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setProductName('Error fetching data');
         }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setProductName('Error fetching data');
       }
-    };
-    if (machineScan && mouldScan) {
-      fetchProductName();
     }
-  }, [machineScan, mouldScan]);
+  };
+
+  if (machineScan && mouldScan) {
+    fetchProductName();
+  }
+}, [machineScan, mouldScan]);
+
 
   const resetFields = () => {
     setProductName('');
