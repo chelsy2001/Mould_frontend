@@ -63,7 +63,30 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
 
             // Validate that Machine ID and Mould ID exist in the system and match the inputs
             if (mouldData.EquipmentID == machineScan && mouldData.MouldID == mouldScan) {
-              Alert.alert('Success', 'Mould Machine validation successful');
+              Alert.alert('Success', 'Mould Machine Validation successful', [
+                {
+                  text: 'OK',
+                  onPress: async () => {
+                    console.log('Calling updateValidationStatus API with:', machineScan, mouldScan);
+                    try {
+                      const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatus`, {
+                        EquipmentID: machineScan,
+                        mouldID: mouldScan,
+                      });
+
+                      if (updateRes.status === 200) {
+                        console.log('✅ ValidationStatus updated successfully');
+                      } else {
+                        console.warn('⚠️ Validation status update failed', updateRes.data);
+                      }
+
+                      setValidation('Mould Machine Validation successful');
+                    } catch (err) {
+                      console.error('❌ Error calling updateValidationStatus:', err.response?.data || err.message);
+                    }
+                  }
+                }
+              ]);
 
               // Set the product name from the response
               setProductName(mouldData.ProductGroupName);

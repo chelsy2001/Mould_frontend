@@ -66,5 +66,82 @@ export default StyleSheet.create({
   },
   icon:{
     paddingLeft:verticalScale(10),
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContainer: {
+    width: scale(320),
+    maxWidth: '90%',
+    backgroundColor: '#fff',
+    borderRadius: moderateScale(20),
+    padding: moderateScale(20),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+
+  modalTitle: {
+    fontSize: scale(16),
+    fontWeight: '700',
+    marginBottom: verticalScale(10),
+    textAlign: 'center',
+    color: '#333',
+  },
+
+  modalSubtitle: {
+    fontSize: scale(12),
+    marginBottom: verticalScale(15),
+    textAlign: 'center',
+    color: '#666',
+  },
+
+  button: {
+    paddingVertical: verticalScale(12),
+    borderRadius: moderateScale(12),
+    alignItems: 'center',
+    marginVertical: verticalScale(6),
+    elevation: 2,
+  },
+
+  breakdownButton: {
+    backgroundColor: '#e74c3c',
+  },
+
+  notInUseButton: {
+    backgroundColor: '#f1c40f',
+  },
+
+  normalButton: {
+    backgroundColor: '#2ecc71',
+  },
+
+  buttonText: {
+    color: '#fff',
+    fontSize: scale(12),
+    fontWeight: '600',
+  },
+
+  closeButton: {
+    marginTop: verticalScale(10),
+    alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ecf0f1',
+    width: scale(100),
+    paddingVertical: verticalScale(8),
+    borderRadius: moderateScale(8),
+    elevation: 4,
+  },
+
+  closeButtonText: {
+    color: '#2980b9',
+    fontSize: scale(12),
+    fontWeight: '600',
+  },
 });
