@@ -9,6 +9,7 @@ const HomePage = ({ setIsLoggedIn, username }) => {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get('window');
   const isLargeScreen = width >= 768; // typical for tablets (10", 11", 12")
+  const isSmallScreen = width < 720; // typical for tablets (10", 11", 12")
 
 
   return (
@@ -18,7 +19,8 @@ const HomePage = ({ setIsLoggedIn, username }) => {
 
       {/* Scrollable Menu Section */}
       <ScrollView contentContainerStyle={styles.menuContainer}>
-
+{        isSmallScreen && (
+  <>
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('MouldLoadingScreen')}>
           <Image style={styles.icon} source={require('../../Common/assets/mouldloading.jpg')} />
           <View style={styles.labelWrapper}>
@@ -70,6 +72,8 @@ const HomePage = ({ setIsLoggedIn, username }) => {
             <Text style={styles.menuText}>BreakDown</Text>
           </View>
         </TouchableOpacity>
+        </>
+        )}
 
         { isLargeScreen && (
           <>
