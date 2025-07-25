@@ -34,6 +34,19 @@ const MouldLoadingScreen = ({ username }) => {
   const machineInputRef = useRef(null);
   const mouldInputRef = useRef(null);
 
+  const callFailedValidationAPI = async () => {
+  try {
+    await axios.post(`${BASE_URL}/mould/updateValidationStatusFailed`, {
+      EquipmentID: machineScan,
+      mouldID: mouldScan
+    });
+    console.log('❗Failed validation status updated in DB.');
+  } catch (error) {
+    console.error('❌ Error calling updateValidationStatusFailed:', error.response?.data || error.message);
+  }
+};
+
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -47,6 +60,7 @@ const MouldLoadingScreen = ({ username }) => {
       machineInputRef.current.focus();
     }
   }, []);
+
 
  useEffect(() => {
   const fetchProductName = async () => {
@@ -63,6 +77,7 @@ const MouldLoadingScreen = ({ username }) => {
             ) {
               if (data.ProductGroupID == null) {
                 Alert.alert('Error', 'Machine and Mould validation failed — ProductGroupID is missing.');
+                await callFailedValidationAPI(); // 🛑 Call on ProductGroupID null
                 resetFields();
                 return;
               }
@@ -77,7 +92,6 @@ const MouldLoadingScreen = ({ username }) => {
               setMouldHealthStatus(data.MouldHealthStatus);
               setMouldLife(data.MouldLifeStatus);
 
-              // ✅ Show Success Alert and call updateValidationStatus on OK
               Alert.alert('Success', 'Mould Machine Validation successful', [
                 {
                   text: 'OK',
@@ -105,16 +119,19 @@ const MouldLoadingScreen = ({ username }) => {
 
             } else {
               Alert.alert('Error', 'Machine and Mould not in system.');
+              await callFailedValidationAPI(); // 🛑 Call on mismatch
               resetFields();
             }
           } else {
             Alert.alert('Error', 'No data found for this combination.');
+            await callFailedValidationAPI(); // 🛑 Call on empty data
             resetFields();
           }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
         setProductName('Error fetching data');
+        await callFailedValidationAPI(); // 🛑 Call on API failure
       }
     }
   };
@@ -123,6 +140,7 @@ const MouldLoadingScreen = ({ username }) => {
     fetchProductName();
   }
 }, [machineScan, mouldScan]);
+
 
 
   const resetFields = () => {
