@@ -15,6 +15,7 @@ import Header from '../../Common/header/header';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // adjust path if needed
 
 const OEE = ({ route, username, setIsLoggedIn }) => {
   const [selectedLineName, setselectedLineName] = useState('');
@@ -175,11 +176,10 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
     <View style={{ flex: 1 }}>
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Overall line effectiveness​' />
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 20 }}>
-          {/* <Text style={styles.headerBox}>Date : {prodDate}</Text> */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: scale(16), marginTop: scale(20) }}>
+       
 
           <Text style={styles.headerBox}>{equipmentName}</Text>
-          {/* //<Text style={styles.headerBox}>Shift : A</Text> */}
           <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
         </View>
         {/* Circular Progress Section */}
@@ -187,8 +187,8 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
           {metrics.map((metric, index) => (
             <View key={index} style={styles.progressContainer}>
               <AnimatedCircularProgress
-                size={100}
-                width={10}
+                size={scale(90)}
+                width={scale(10)}
                 fill={metric.value}
                 tintColor={getColor(metric.value)}
                 backgroundColor="#e0e0e0"
@@ -233,10 +233,10 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
               editable={false}
             />
             <TouchableOpacity
-              style={[styles.assignBtn, { marginLeft: 4 }]}
+              style={[styles.assignBtn]}
               onPress={() => navigation.navigate('Downtime', { equipmentName: equipmentName })}
             >
-              <Text style={{ color: 'white' }}>Update Reason</Text>
+              <Text style={{ color: 'white',fontSize:moderateScale(10) }}>Update Reason</Text>
             </TouchableOpacity>
           </View>
 
@@ -246,14 +246,14 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Performance {performance}%</Text>
           <View style={styles.row}>
-            <Text>Expected Quntity</Text>
+            <Text>Expected Qty</Text>
             <TextInput style={styles.input} value={expectedQty} editable={false} />
             <Text>Gap</Text>
             <TextInput style={styles.input} value={gap} editable={false} />
           </View>
 
           <View style={styles.row2}>
-            <Text>Actual Quntity</Text>
+            <Text>Actual Qty</Text>
             <TextInput style={styles.input} value={actualQty} editable={false} />
           </View>
 
