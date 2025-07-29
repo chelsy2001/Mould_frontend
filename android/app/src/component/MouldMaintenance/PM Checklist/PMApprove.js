@@ -17,6 +17,7 @@ import { BASE_URL,REPORT_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Linking } from 'react-native';
 
 const PMApprove = ({ username, setIsLoggedIn }) => {
   const route = useRoute();
@@ -31,10 +32,11 @@ const PMApprove = ({ username, setIsLoggedIn }) => {
 
   //Fetch the PM Perartion data
   useEffect(() => {
-    fetch(`${BASE_URL}/PMApproval/GetCheckPoints/${checklistID}`)
+    fetch(`${BASE_URL}/PMMouldApproval/GetCheckPoints/${checklistID}`)
       .then(res => res.json())
       .then(response => {
         if (response.status === 200) {
+          console.log('test errors -: ',response.data)
           // setCheckpoints(response.data);
           const updatedData = response.data.map(item => ({
             ...item,
@@ -46,7 +48,7 @@ const PMApprove = ({ username, setIsLoggedIn }) => {
           console.warn('API error:', response.message);
         }
       })
-      .catch(err => console.error('API fetch error:', err));
+      .catch(err => console.error('API fetch error test:', err));
   }, [checklistID]);
 
   return (

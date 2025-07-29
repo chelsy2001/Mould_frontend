@@ -17,6 +17,7 @@ import { BASE_URL,REPORT_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Linking } from 'react-native';
 
 const HCApprove = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
@@ -32,7 +33,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
 
     //fetch the HC Execution Data
     useEffect(() => {
-        fetch(`${BASE_URL}/HCApproval/GetCheckPoints/${checklistID}`)
+        fetch(`${BASE_URL}/HCMouldApproval/GetCheckPoints/${checklistID}`)
             .then(res => res.json())
             .then(response => {
                 if (response.status === 200) {

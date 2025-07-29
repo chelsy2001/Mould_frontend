@@ -19,7 +19,7 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Modal } from 'react-native';
 import { Linking } from 'react-native';
-
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
 
 
 const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
@@ -50,9 +50,11 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
 
     //Get the users who's role quality supervisor
     useEffect(() => {
+        console.log("Fetching user list...");
         fetch(`${BASE_URL}/SeperatePMApproval/Users`)
             .then((res) => res.json())
             .then((data) => {
+                   console.log("User fetch response:", data); 
                 if (data.status === 200) {
                     // Convert user list into format required by SelectList
                     const formattedUsers = data.data.map((user, index) => ({
@@ -69,18 +71,18 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
 
     //For refresh data
 
-const fetchChecklistData = () => {
-  fetch(`${BASE_URL}/SeperatePMApproval/PMChecklistForApproval`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === 200) {
-        setChecklistData(data.data);
-      } else {
-        console.log('Error:', data.message);
-      }
-    })
-    .catch(error => console.error('API fetch error:', error));
-};
+    const fetchChecklistData = () => {
+        fetch(`${BASE_URL}/SeperatePMApproval/PMChecklistForApproval`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    setChecklistData(data.data);
+                } else {
+                    console.log('Error:', data.message);
+                }
+            })
+            .catch(error => console.error('API fetch error:', error));
+    };
 
 
     return (
@@ -88,7 +90,7 @@ const fetchChecklistData = () => {
             <Header username={username} title="PM Aproval" />
             <ScrollView
                 nestedScrollEnabled={true}
-                style={{ maxHeight: 700, marginBottom: 30 }}
+                style={{ maxHeight: 700, marginBottom: 30, marginTop: 10 }}
             >
                 {checklistData.map((item, index) => (
                     <View>
@@ -130,21 +132,21 @@ const fetchChecklistData = () => {
 
                             <View style={styles.row3}>
                                 <TouchableOpacity
-  style={[styles.button, { marginRight: 10, width: '14%' }]}
-  onPress={() => {
-    // const reportUrl = `http://192.168.1.15:8083`;
-    const reportUrl = `${REPORT_URL}`
-    // 👆 Replace with your actual report path and query param
+                                    style={[styles.button, { marginRight: 10, width: '14%' }]}
+                                    onPress={() => {
+                                        // const reportUrl = `http://192.168.1.15:8083`;
+                                        const reportUrl = `${REPORT_URL}`
+                                        // 👆 Replace with your actual report path and query param
 
-    Linking.openURL(reportUrl)
-      .catch(err => {
-        console.error('Failed to open browser:', err);
-        Alert.alert('Error', 'Failed to open report in browser');
-      });
-  }}
->
-  <Text style={styles.buttonText}>View Reports</Text>
-</TouchableOpacity>
+                                        Linking.openURL(reportUrl)
+                                            .catch(err => {
+                                                console.error('Failed to open browser:', err);
+                                                Alert.alert('Error', 'Failed to open report in browser');
+                                            });
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>View Reports</Text>
+                                </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={[styles.button, { marginRight: 10 }]}
@@ -250,7 +252,7 @@ const fetchChecklistData = () => {
                                                             'Content-Type': 'application/json',
                                                         },
                                                         body: JSON.stringify({
-                                                            CheckListID: selectedChecklist.UID // or another unique identifier
+                                                            CheckListID: selectedChecklist.CheckListID // or another unique identifier
                                                         }),
                                                     })
                                                         .then(res => res.json())

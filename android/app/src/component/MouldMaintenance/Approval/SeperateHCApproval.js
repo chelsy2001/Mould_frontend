@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Modal } from 'react-native';
+import { Linking } from 'react-native';
 
 
 const SeperateHCApproval = ({ username, setIsLoggedIn }) => {

@@ -2,12 +2,13 @@ import { StyleSheet } from 'react-native';
 
 import { Dimensions } from 'react-native';
 // Scaling utilities
-const { width, height } = Dimensions.get('window');
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
-const moderateScale = (size, factor = 0.5) =>
-    size + (scale(size) - size) * factor;
+// const { width, height } = Dimensions.get('window');
+// const scale = (size) => (width / 375) * size;
+// const verticalScale = (size) => (height / 812) * size;
+// const moderateScale = (size, factor = 0.5) =>
+//     size + (scale(size) - size) * factor;
 
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; 
 
 const SeperatePMApprovalStyle = StyleSheet.create({
 
@@ -89,8 +90,8 @@ const SeperatePMApprovalStyle = StyleSheet.create({
 
     button: {
     backgroundColor: '#0059b3',
-  paddingVertical: verticalScale(10),
-  paddingHorizontal: scale(7),
+  paddingVertical: verticalScale(6),
+  paddingHorizontal: scale(4),
    borderRadius: scale(2),
     alignItems: 'center',
     width:"10%"

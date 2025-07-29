@@ -80,28 +80,28 @@ const HomePage = ({ setIsLoggedIn, username }) => {
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMMouldMonitoring')}>
           <Image style={styles.icon} source={require('../../Common/assets/checklist.jpg')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>PM Checklist</Text>
+            <Text style={styles.menuText}>Preventive Maintenance Execution</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HCMonitoring')}>
           <Image style={styles.icon} source={require('../../Common/assets/checklist.jpg')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>HC Checklist</Text>
+            <Text style={styles.menuText}>Health Check Execution</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperatePMApproval')}>
           <Image style={styles.icon} source={require('../../Common/assets/app.jpg')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>Aprroval PM</Text>
+            <Text style={styles.menuText}>Preventive Maintenance Approval</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SeperateHCApproval')}>
           <Image style={styles.icon} source={require('../../Common/assets/app.jpg')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>Approval HC</Text>
+            <Text style={styles.menuText}>Health CheckApproval</Text>
           </View>
         </TouchableOpacity>
 </>

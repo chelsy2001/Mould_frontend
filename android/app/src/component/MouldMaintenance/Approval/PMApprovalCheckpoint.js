@@ -16,11 +16,13 @@ import styles from './PMApprovalCheckpointStyle';
 import { BASE_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; 
 
 const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
-    const { checklistID } = route.params;
+    // const { checklistID } = route.params;
+    const { checklist } = route.params;
+const checklistID = checklist?.CheckListID;
     const [checkpoints, setCheckpoints] = useState([]);
     const navigation = useNavigation();
 
@@ -95,7 +97,7 @@ const PMApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
     return (
         <View style={styles.container}>
             <Header username={username} title="PM Preparation" />
-            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
+            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30,marginTop:scale(10) }}>
                 <View>
                     {checkpoints.map((item, index) => (
                         <View key={index} style={[
