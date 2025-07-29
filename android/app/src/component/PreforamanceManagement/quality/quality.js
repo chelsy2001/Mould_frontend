@@ -15,13 +15,15 @@ import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/FontAwesome'; // or MaterialIcons, Ionicons, etc.
+import axios from 'axios';
 
 const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
   const { lineName } = route.params || {};
-
+  const { equipmentName } = route.params;
   const [lineID, setLineID] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedShift, setSelectedShift] = useState('');
 
   const [role, setRole] = useState('');
   const [rejectedCount, setRejectedCount] = useState('');
@@ -37,6 +39,14 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
 
   const [count, setCount] = useState('');
   const [remark, setRemark] = useState('');
+
+const [totalCount, setTotalCount] = useState('');
+
+  const shiftList = [
+    { key: '1', value: 'A' },
+    { key: '2', value: 'B' },
+    { key: '3', value: 'C' },
+  ];
 
   ///-----------set the role to quality supervisor
   useEffect(() => {
@@ -62,25 +72,8 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
     }
   };
 
-  // -------------------role is store in variable {role}----------
-  // =======================================
-  //----------fetch the lineid on the basis of lineName which is coming from previous screen
-  useEffect(() => {
-    if (lineName) {
-      fetch(`${BASE_URL}/oee/getLineID/${lineName}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.LineID) {
-            setLineID(data.LineID);
-            fetchReworkData(data.LineID);
-            fetchCycleTimeData(data.LineID);
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching LineID:", err);
-        });
-    }
-  }, [lineName]);
+
+  
   //-----------fetch the reason-------
   useEffect(() => {
     fetch(`${BASE_URL}/rework/ReworkReason`)
@@ -99,127 +92,152 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
       });
   }, []);
 
-  //--------------fecth the action
 
-  useEffect(() => {
-    const fetchActions = async () => {
-      try {
-        const role = await AsyncStorage.getItem('Role');
-        const res = await fetch(`${BASE_URL}/rework/get-actions/${role}`);
-        const data = await res.json();
 
-        if (data && data.data) {
-          const formattedActions = data.data.map((item, index) => ({
-            key: index.toString(),
-            value: item.Action,
-          }));
-          setActionList(formattedActions);
-        }
-      } catch (err) {
-        console.error('Error fetching actions:', err);
-      }
-    };
-
-    fetchActions();
-  }, []);
   //================update api
-  const handleUpdateRework = async () => {
-    if (!lineID || !selectedAction || !selectedReason || !count || !remark) {
-      alert('Please fill all required fields.');
+const handleUpdateRework = async () => {
+  if (!selectedDate || !selectedShift || !selectedReason || !remark || !count) {
+    alert('Please fill all required fields.');
+    return;
+  }
+
+  const payload = {
+    ProdDate: selectedDate,
+    ProdShift: selectedShift,
+    ReworkReason: selectedReason,
+    Remark: remark,
+    NOTOKQuantity: parseInt(count),
+    EquipmentName: equipmentName,
+    UserName: username || 'admin',
+  };
+
+  console.log('🚀 Sending payload to update-rework-cycle-summary:', payload);
+
+  try {
+    const response = await fetch(`${BASE_URL}/rework/update-rework-cycle-summary`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    console.log('✅ API Response:', result);
+
+    if (response.ok && result.status === 200) {
+      alert(result.message || 'Rework updated successfully.');
+
+      // Update UI values with the response
+    //   setCount(result.data.TotalCount?.toString() || '0');
+      setGoodPart(result.data.GoodPart?.toString() || '0');
+      setRejectedCount(result.data.RejectedCount?.toString() || '0');
+
+      // Clear inputs
+      setSelectedReason('');
+      setRemark('');
+    } else {
+      console.warn('⚠️ Update failed:', result);
+      alert(result.message || 'Failed to update.');
+    }
+  } catch (error) {
+    console.error('❌ Error during API call:', error);
+    alert('Error occurred while updating rework.');
+  }
+};
+  //-----------------fecth the table data--------
+  const fetchEquipmentIdAndReworkDetails = async () => {
+    try {
+      if (!equipmentName) return;
+
+      const equipmentRes = await fetch(`${BASE_URL}/oee/getEquipmentID/${encodeURIComponent(equipmentName)}`);
+      const equipmentData = await equipmentRes.json();
+
+      const EquipmentID = equipmentData?.EquipmentID;
+      if (!EquipmentID) {
+        console.warn("EquipmentID not found");
+        return;
+      }
+
+      console.log("Fetched EquipmentID:", EquipmentID);
+
+      const dtRes = await fetch(`${BASE_URL}/rework/ReworkGenelogy/${EquipmentID}`);
+      const dtData = await dtRes.json();
+
+      console.log("Rework API Response:", dtData);
+
+      if (dtData.status === 200 && Array.isArray(dtData.data)) {
+        setTableData(
+          dtData.data.map(item => ({
+            id: item.EquipmentID,
+            EquipmentID: item.EquipmentID ? item.EquipmentID.toString() : '',
+            EquipmentName: item.EquipmentName || '',
+            ProdDate: item.ProdDate?.split("T")[0] || '',
+            ProdShift: item.ProdShift,
+            UserName: item.UserName,
+            NOKQuantity: item.NOKQuantity,
+            Remark: item.Remark || '',
+            Reason: item.Reason || '',
+          }))
+        );
+      } else {
+        setTableData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching downtime data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchEquipmentIdAndReworkDetails();
+  }, [equipmentName]);
+//------------------------ APi to fetch the qty's from cycle time table
+
+
+const fetchCycleSummary = async (prodDate, shift, equipmentName) => {
+  if (!prodDate || !shift || !equipmentName) return;
+
+  try {
+    // Step 1: Get EquipmentID from EquipmentName
+    const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
+    const EquipmentID = equipmentIdResponse.data.EquipmentID;
+
+    if (!EquipmentID) {
+      console.warn("No EquipmentID found for:", equipmentName);
       return;
     }
 
-    const payload = {
-      LineID: lineID,
-      UserRole: role || 'Quality Supervisor',
-      Action: selectedAction,
-      Count: parseInt(count),
-      Reason: selectedReason,
-      Remark: remark,
-    };
+    // Step 2: Call CycleSummary API with EquipmentID
+    const response = await fetch(
+      `${BASE_URL}/rework/CycleSummary?ProdDate=${encodeURIComponent(prodDate)}&ProdShift=${encodeURIComponent(shift)}&EquipmentID=${encodeURIComponent(EquipmentID)}`
+    );
+    const data = await response.json();
 
-    console.log('🚀 Payload being sent to update-rework API:', payload);
+    console.log("CycleSummary API Response:", data);
 
-    try {
-      const response = await fetch(`${BASE_URL}/rework/update-rework`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+    if (data.status === 200 && data.data.length > 0) {
+      const cycle = data.data[0];
+      setRejectedCount(cycle.RejectedCount?.toString() || '0');
+      setGoodPart(cycle.GoodPart?.toString() || '0');
+ setTotalCount(cycle.TotalCount?.toString() || '0');
 
-      const result = await response.json();
-
-      console.log('✅ API Response:', result);
-
-      if (response.ok && result.status === 200) {
-        alert(result.message || 'Updated successfully');
-
-        // Optionally clear fields
-        setCount('');
-        setRemark('');
-        setSelectedAction('');
-        setSelectedReason('');
-      } else {
-        alert('Failed to update: ' + (result.message || 'Unknown error'));
-        console.warn('⚠️ Update failed response:', result);
-      }
-    } catch (error) {
-      console.error('❌ Error updating rework:', error);
-      alert('Something went wrong while updating.');
+    } else {
+      console.warn("No cycle data found.");
+      setRejectedCount('0');
+      setGoodPart('0');
+      setTotalCount('0');
     }
-  };
-  //-----------------fecth the table data--------
+  } catch (error) {
+    console.error("Error fetching cycle summary:", error);
+  }
+};
+useEffect(() => {
+  if (selectedDate && selectedShift && equipmentName) {
+    fetchCycleSummary(selectedDate, selectedShift, equipmentName);
+  }
+}, [selectedDate, selectedShift, equipmentName]);
 
 
-  const fetchTableData = async (lineID) => {
-    try {
-      const response = await fetch(`${BASE_URL}/REWORK/rework-genealogy/${lineID}`);
-      const json = await response.json();
-      if (json && json.data) {
-        setTableData(json.data);
-        setLoading(false);
-      } else {
-        setTableData([]);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching rework genealogy data:', error);
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    if (lineID) {
-      fetchTableData(lineID);
-    }
-  }, [lineID]);
-
-
-  const fetchCycleTimeData = (lineID) => {
-    fetch(`${BASE_URL}/rework/cycletime/${lineID}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("API Data Response:", data);  // 🔍 Add this line
-        if (data?.data?.length > 0) {
-          const cycleData = data.data[0];
-          console.log("Parsed cycleData:", cycleData);  // 🔍 Add this line
-          setRejectedCount(cycleData.RejectedCount?.toString() || '0');
-          setRework(cycleData.Rework?.toString() || '0');
-          setScrap(cycleData.Scrap?.toString() || '0');
-          setGoodPart(cycleData.GoodPart?.toString() || '0');
-        } else {
-          console.log("No data received or data is empty.");
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching cycle time data:", err);
-      });
-  };
-  useEffect(() => {
-    fetchCycleTimeData(1); // or dynamic lineID
-  }, []);
   //-----------------test values-----------------------
   useEffect(() => {
     console.log("Selected Rework Reason:", selectedReason);
@@ -240,11 +258,15 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (date) => {
-    const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
-    setSelectedDate(formattedDate);
-    hideDatePicker();
-  };
+const handleConfirm = (date) => {
+  const formattedDate = date.toISOString().split('T')[0];
+  setSelectedDate(formattedDate);
+  hideDatePicker();
+
+  if (selectedShift && equipmentName) {
+    fetchCycleSummary(formattedDate, selectedShift, equipmentName);
+  }
+};
 
 
   //-------------------------------------------------
@@ -273,10 +295,26 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
               <Icon name="calendar" size={20} color="#555" />
             </TouchableOpacity>
           </View>
-
+       
           <Text style={styles.label}>Shift</Text>
-          <TextInput style={styles.input1} value={rework} editable={false} />
+          <View>
 
+            <SelectList
+              setSelected={setSelectedShift}
+              data={shiftList}
+              save="value"
+              placeholder="Select "
+              boxStyles={{
+                marginLeft: scale(2),
+                //marginRight: scale(9),
+                width: scale(75), // Adjust as needed
+                backgroundColor: 'white',
+              }}
+              dropdownStyles={{
+                backgroundColor: '#f0f8ff',
+              }}
+            />
+          </View>
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
@@ -287,7 +325,7 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
 
         <View style={styles.row2}>
           <Text style={styles.label}>Machine Name</Text>
-          <TextInput style={styles.input2} value={rejectedCount} editable={false} />
+          <TextInput style={styles.input2} value={equipmentName} editable={false} />
 
         </View>
 
@@ -315,8 +353,8 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
             <Text style={styles.label}>Total Qty</Text>
             <TextInput
               style={styles.input3}
-              value={count}
-              onChangeText={setCount}
+              value={totalCount}
+      editable={false} // If read-only
               keyboardType="numeric"
             />
           </View>
@@ -325,8 +363,8 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
             <Text style={styles.label}>Ok Qty</Text>
             <TextInput
               style={styles.input3}
-              value={count}
-              onChangeText={setCount}
+              value={goodPart}
+              editable={false}
               keyboardType="numeric"
             />
           </View>
@@ -336,8 +374,8 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
             <Text style={styles.label}>Total NOK Qty</Text>
             <TextInput
               style={styles.input3}
-              value={count}
-              onChangeText={setCount}
+              value={rejectedCount}
+              editable={false}
               keyboardType="numeric"
             />
           </View>
@@ -379,15 +417,15 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
             {/* Sticky Header (rendered outside vertical scroll) */}
             <DataTable style={{ backgroundColor: '#dcdcdc', minWidth: scale(1200) }}>
               <DataTable.Header>
-                <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Line ID</DataTable.Title>
-                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Line Name</DataTable.Title>
-                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>User</DataTable.Title>
+                <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>EquipmentID</DataTable.Title>
+                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Equipment Name</DataTable.Title>
+                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>UserName</DataTable.Title>
                 <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>ProdDate</DataTable.Title>
-                <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>PrdoShift</DataTable.Title>
-                <DataTable.Title style={{ width: scale(40), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>SKUName</DataTable.Title>
-                <DataTable.Title style={{ width: scale(10), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>QTY</DataTable.Title>
-                <DataTable.Title style={{ width: scale(50), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Reason</DataTable.Title>
-                <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
+                <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>ProdShift</DataTable.Title>
+                <DataTable.Title style={{ width: scale(40), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>NOKQuantity</DataTable.Title>
+                <DataTable.Title style={{ width: scale(10), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Remark</DataTable.Title>
+                <DataTable.Title style={{ width: scale(200), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Reason</DataTable.Title>
+
               </DataTable.Header>
             </DataTable>
 
@@ -404,15 +442,15 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
                 {tableData.length > 0 ? (
                   tableData.map((row) => (
                     <DataTable.Row key={row.id} onPress={() => handleRowPress(row)}>
-                      <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.LineID}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.LineName}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.User}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.EquipmentID}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.EquipmentName}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.UserName}</DataTable.Cell>
                       <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.ProdDate}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.PrdoShift}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(40), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.SKUName}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(10), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.QTY}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(50), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.Reason}</DataTable.Cell>
-                      <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.Remark}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.ProdShift}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(40), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.NOKQuantity}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(10), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.Remark}</DataTable.Cell>
+                      <DataTable.Cell style={{ width: scale(200), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.Reason}</DataTable.Cell>
+
                     </DataTable.Row>
                   ))
                 ) : (

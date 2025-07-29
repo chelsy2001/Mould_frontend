@@ -80,35 +80,57 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     fetchSubLossData();
   }, [selectedLoss]);
 
-  useEffect(() => {
-    if (!selectedLineName) return;
-    fetchTableData();
-  }, [selectedLineName]);
+  // useEffect(() => {
+  //   if (!selectedLineName) return;
+  //   fetchTableData();
+  // }, [selectedLineName]);
 
-  const fetchTableData = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${encodeURIComponent(selectedLineName)}`);
-      const json = await response.json();
-      if (json.status === 200) {
-        setTableData(json.data.map(item => ({
+const fetchEquipmentIdAndDT = async () => {
+  try {
+    if (!equipmentName) return;
+
+    const equipmentRes = await fetch(`${BASE_URL}/oee/getEquipmentID/${encodeURIComponent(equipmentName)}`);
+    const equipmentData = await equipmentRes.json();
+
+    const EquipmentID = equipmentData?.EquipmentID;
+    if (!EquipmentID) {
+      console.warn("EquipmentID not found");
+      return;
+    }
+
+    console.log("Fetched EquipmentID:", EquipmentID);
+
+    const dtRes = await fetch(`${BASE_URL}/downtime/Getdowntime/unassigned/${EquipmentID}`);
+    const dtData = await dtRes.json();
+
+    console.log("Downtime API Response:", dtData);
+
+    if (dtData.status === 200 && Array.isArray(dtData.data)) {
+      setTableData(
+        dtData.data.map(item => ({
           id: item.DowntimeID,
-          downtimeID: item.DowntimeID.toString(),
+          downtimeID: item.DowntimeID ? item.DowntimeID.toString() : '',
           prodDate: item.ProdDate?.split("T")[0] || '',
           prodShift: item.ProdShift,
           LossName: item.LossName,
           subLossName: item.SubLossName,
-          downtimeStartTime: new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          downtimeEndTime: new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+          downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           reason: item.Reason || '',
           duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A"
-        })));
-      } else {
-        setTableData([]);
-      }
-    } catch (error) {
-      console.error("Error fetching table data:", error);
+        }))
+      );
+    } else {
+      setTableData([]);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching downtime data:", error);
+  }
+};
+
+useEffect(() => {
+  fetchEquipmentIdAndDT();
+}, [equipmentName]);
 
   const handleRowPress = (row) => {
     setSelectedRow(row.id);
@@ -165,9 +187,9 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
         <View style={styles.Container1}>
 
           <View style={styles.row}>
-            <Text style={styles.label}>Line Name</Text>
+            <Text style={styles.label}>Machine Name</Text>
             <View style={styles.pickerContainer}>
-              <Text style={{ padding: scale(10), alignContent: 'center' }}>{lineName}</Text>
+              <Text style={{ padding: scale(10), alignContent: 'center' }}>{ equipmentName }</Text>
             </View>
           </View>
 

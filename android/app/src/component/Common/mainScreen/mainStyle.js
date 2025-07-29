@@ -1,22 +1,22 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // Adjust path
-
+const { width, height } = Dimensions.get('window');
 const baseCard = {
-  width: scale('85%'),
-  maxWidth: 300,
-  marginVertical: moderateScale(15),
-  backgroundColor: '#fff',
-  borderRadius: verticalScale(20),
-  paddingVertical: verticalScale(25),
-  paddingHorizontal: verticalScale(16),
+  width: width > 400 ? '38%' : '80%',
+  maxWidth: 500,
+  height: width > 400 ? 160 : 140,
+  marginVertical: 15,
+  borderRadius: 16,
+  backgroundColor: '#ffffff',
+  padding: 20,
+  justifyContent: 'center',
   alignItems: 'center',
   shadowColor: '#000',
   shadowOpacity: 0.1,
   shadowRadius: 10,
-  shadowOffset: { width: 0, height: 5 },
-  elevation: 8,
+  shadowOffset: { width: 0, height: 6 },
+  elevation: 10,
 };
-
 const mainstyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -44,7 +44,7 @@ const mainstyles = StyleSheet.create({
   },
   cardText: {
     marginTop: moderateScale(12),
-    fontSize: scale(16),
+    fontSize: scale(14),
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',

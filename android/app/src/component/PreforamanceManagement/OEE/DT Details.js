@@ -15,6 +15,7 @@ import { DataTable } from 'react-native-paper';
 import { BASE_URL } from '../../Common/config/config';
 const DTDetails = ({ route, navigation, username, setIsLoggedIn }) => {
   const { lineName } = route.params || {};
+const { equipmentName } = route.params;
 
   const [LineName, setLineName] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -33,31 +34,51 @@ const DTDetails = ({ route, navigation, username, setIsLoggedIn }) => {
     fetchTableData();
   }, [selectedLineName]);
 
-  const fetchTableData = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${encodeURIComponent(selectedLineName)}`);
-      // const response = await fetch(`${BASE_URL}/downtime/downtime/details/LineName?LineName=${LineName}`);
-      const json = await response.json();
-      if (json.status === 200) {
-        setTableData(json.data.map(item => ({
+const fetchEquipmentIdAndDT = async () => {
+  try {
+    if (!equipmentName) return;
+
+    const equipmentRes = await fetch(`${BASE_URL}/oee/getEquipmentID/${encodeURIComponent(equipmentName)}`);
+    const equipmentData = await equipmentRes.json();
+
+    const EquipmentID = equipmentData?.EquipmentID;
+    if (!EquipmentID) {
+      console.warn("EquipmentID not found");
+      return;
+    }
+
+    console.log("Fetched EquipmentID:", EquipmentID);
+
+    const dtRes = await fetch(`${BASE_URL}/downtime/Getdowntime/details/${EquipmentID}`);
+    const dtData = await dtRes.json();
+
+    console.log("Downtime API Response:", dtData);
+
+    if (dtData.status === 200 && Array.isArray(dtData.data)) {
+      setTableData(
+        dtData.data.map(item => ({
           id: item.DowntimeID,
-          downtimeID: item.DowntimeID.toString(),
+          downtimeID: item.DowntimeID ? item.DowntimeID.toString() : '',
           prodDate: item.ProdDate?.split("T")[0] || '',
           prodShift: item.ProdShift,
           LossName: item.LossName,
           subLossName: item.SubLossName,
-          downtimeStartTime: new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          downtimeEndTime: new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+          downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           reason: item.Reason || '',
           duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A"
-        })));
-      } else {
-        setTableData([]);
-      }
-    } catch (error) {
-      console.error("Error fetching table data:", error);
+        }))
+      );
+    } else {
+      setTableData([]);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching downtime data:", error);
+  }
+};
+useEffect(() => {
+  fetchEquipmentIdAndDT();
+}, [equipmentName]);
 
   return (
     <ScrollView style={DTDetailsstyles.container}>
@@ -72,7 +93,7 @@ const DTDetails = ({ route, navigation, username, setIsLoggedIn }) => {
       <View style={DTDetailsstyles.Container1}>
         <View style={DTDetailsstyles.row}>
           <Text style={DTDetailsstyles.label}>Machine Name</Text>
-          <TextInput style={DTDetailsstyles.input} value={lineName} editable={false} />
+          <TextInput style={DTDetailsstyles.input} value={equipmentName} editable={false} />
         </View>
       </View>
   

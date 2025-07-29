@@ -21,14 +21,12 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   const navigation = useNavigation();
   const [selectedShift, setSelectedShift] = useState('A');
   const [LineName, setLineName] = useState([]);
-   const [EquipmentName, setEquipmentName] = useState([]);
+  const [EquipmentName, setEquipmentName] = useState([]);
   const [loading, setLoading] = useState(true);
 
 
-  //const lineName = route?.params?.MachineName ?? 'No Line Selected';
-
-  //const lineName = route?.params?.EquipmentName ?? 'No Machine Selected';
- const { equipmentName } = route.params;
+  
+  const { equipmentName } = route.params;
   const [prodDate, setProdDate] = useState('');
   const [shiftName, setShiftName] = useState('');
   // const getRandomPercent = () => Math.floor(Math.random() * 50) + 50;
@@ -145,14 +143,15 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!lineName) return;
+        if (!equipmentName) return;
 
-        // Get LineID based on lineName
-        const lineIdRes = await axios.get(`${BASE_URL}/oee/getLineID/${lineName}`);
-        const lineId = lineIdRes.data.LineID;
+        // Step 1: Get LineID from lineName
+        const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
+        const EquipmentID = equipmentIdResponse.data.EquipmentID;
+
 
         // Fetch Unassigned Reason Count using LineID
-        const unassignedRes = await axios.get(`${BASE_URL}/oee/unassigned-downtime-count/${lineId}`);
+        const unassignedRes = await axios.get(`${BASE_URL}/oee/unassigned-downtime-count/${EquipmentID}`);
         if (unassignedRes.status === 200) {
           setUnassignedReasonCount(unassignedRes.data.count?.toString() || '0');
         } else {
@@ -160,14 +159,6 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
           setUnassignedReasonCount('0');
         }
 
-        // ✅ Fetch Unassigned Rework Reason Count
-        const reworkRes = await axios.get(`${BASE_URL}/oee/unassigned-ReworkReason-count/${lineId}`);
-        if (reworkRes.status === 200) {
-          setUnassignedReworkReasonCount(reworkRes.data.count?.toString() || '0');
-        } else {
-          console.warn('Unassigned rework count not found');
-          setUnassignedReworkReasonCount('0');
-        }
 
         // Fetch other OEE-related data if needed here
 
@@ -181,123 +172,123 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 
 
   return (
-     <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Overall line effectiveness​' />
- <ScrollView contentContainerStyle={styles.container}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 20 }}>
-        {/* <Text style={styles.headerBox}>Date : {prodDate}</Text> */}
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginTop: 20 }}>
+          {/* <Text style={styles.headerBox}>Date : {prodDate}</Text> */}
 
-        <Text style={styles.headerBox}>{equipmentName}</Text>
-        {/* //<Text style={styles.headerBox}>Shift : A</Text> */}
-        <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
-      </View>
-      {/* Circular Progress Section */}
-      <View style={styles.chartSection}>
-        {metrics.map((metric, index) => (
-          <View key={index} style={styles.progressContainer}>
-            <AnimatedCircularProgress
-              size={100}
-              width={10}
-              fill={metric.value}
-              tintColor={getColor(metric.value)}
-              backgroundColor="#e0e0e0"
-              duration={1500}
-            >
-              {fill => <Text style={styles.chartPercentage}>{Math.round(fill)}%</Text>}
-            </AnimatedCircularProgress>
-            <Text style={styles.chartTitle}>{metric.title}</Text>
-          </View>
-        ))}
-      </View>
+          <Text style={styles.headerBox}>{equipmentName}</Text>
+          {/* //<Text style={styles.headerBox}>Shift : A</Text> */}
+          <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
+        </View>
+        {/* Circular Progress Section */}
+        <View style={styles.chartSection}>
+          {metrics.map((metric, index) => (
+            <View key={index} style={styles.progressContainer}>
+              <AnimatedCircularProgress
+                size={100}
+                width={10}
+                fill={metric.value}
+                tintColor={getColor(metric.value)}
+                backgroundColor="#e0e0e0"
+                duration={1500}
+              >
+                {fill => <Text style={styles.chartPercentage}>{Math.round(fill)}%</Text>}
+              </AnimatedCircularProgress>
+              <Text style={styles.chartTitle}>{metric.title}</Text>
+            </View>
+          ))}
+        </View>
 
       // section for OEE, Availability, Performance, Quality
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Availability {availability}%</Text>
-        <View style={styles.row}>
-          <Text>Shift Time</Text>
-          <TextInput style={styles.input} value={shiftTime} editable={false} />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Availability {availability}%</Text>
+          <View style={styles.row}>
+            <Text>Shift Time</Text>
+            <TextInput style={styles.input} value={shiftTime} editable={false} />
 
-          <Text>TotalDT</Text>
-          <TextInput style={styles.input} value={totalDownTime} editable={false} />
+            <Text>TotalDT</Text>
+            <TextInput style={styles.input} value={totalDownTime} editable={false} />
+
+
+          </View>
+
+          <View style={styles.row3}>
+            <Text>TotalTime</Text>
+            <TextInput style={styles.input} value={totalTime} editable={false} />
+            <TouchableOpacity style={styles.detailsBtn}
+              onPress={() => navigation.navigate('DTDetails', { equipmentName: equipmentName  })}
+            >
+              <Text style={{ color: 'white' }}>Details</Text>
+            </TouchableOpacity>
+          </View>
+
+
+          <View style={styles.row2}>
+            <Text>UnAssigned Reason </Text>
+            <TextInput
+              style={styles.input2}
+              value={unassignedReasonCount}
+              editable={false}
+            />
+            <TouchableOpacity
+              style={[styles.assignBtn, { marginLeft: 4 }]}
+              onPress={() => navigation.navigate('Downtime', { equipmentName: equipmentName })}
+            >
+              <Text style={{ color: 'white' }}>Update Reason</Text>
+            </TouchableOpacity>
+          </View>
 
 
         </View>
+        {/* Performance */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Performance {performance}%</Text>
+          <View style={styles.row}>
+            <Text>Expected Quntity</Text>
+            <TextInput style={styles.input} value={expectedQty} editable={false} />
+            <Text>Gap</Text>
+            <TextInput style={styles.input} value={gap} editable={false} />
+          </View>
 
-        <View style={styles.row3}>
-          <Text>TotalTime</Text>
-          <TextInput style={styles.input} value={totalTime} editable={false} />
-          <TouchableOpacity style={styles.detailsBtn}
-            onPress={() => navigation.navigate('DTDetails', { lineName: lineName })}
-          >
-            <Text style={{ color: 'white' }}>Details</Text>
-          </TouchableOpacity>
+          <View style={styles.row2}>
+            <Text>Actual Quntity</Text>
+            <TextInput style={styles.input} value={actualQty} editable={false} />
+          </View>
+
+        </View>
+        {/* Quality */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quality {quality}%</Text>
+          <View style={styles.row4}>
+            <Text>Rejected Count</Text>
+            <TextInput style={styles.input} value={rejected} editable={false} />
+            <TouchableOpacity style={[styles.assignBtn, { marginLeft: 4 }]}
+              onPress={() => navigation.navigate('Quality', { equipmentName: equipmentName  })}>
+              <Text style={{ color: 'white' }}>Rejection Entry </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
+        {/* Calls Section */}
+        <View style={styles.section}>
+          <View style={styles.row4}>
+            <TouchableOpacity style={styles.callBtn}>
+              <Text style={styles.callText}>Maintenance</Text>
+            </TouchableOpacity>
 
-        <View style={styles.row2}>
-          <Text>UnAssigned Reason </Text>
-          <TextInput
-            style={styles.input2}
-            value={unassignedReasonCount}
-            editable={false}
-          />
-          <TouchableOpacity
-            style={[styles.assignBtn, { marginLeft: 4 }]}
-            onPress={() => navigation.navigate('Downtime', { equipmentName: equipmentName })}
-          >
-            <Text style={{ color: 'white' }}>Update Reason</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.callBtn}>
+              <Text style={styles.callText}>Production</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.callBtn}>
+              <Text style={styles.callText}>Quality</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-
-      </View>
-      {/* Performance */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Performance {performance}%</Text>
-        <View style={styles.row}>
-          <Text>Expected Quntity</Text>
-          <TextInput style={styles.input} value={expectedQty} editable={false} />
-          <Text>Gap</Text>
-          <TextInput style={styles.input} value={gap} editable={false} />
-        </View>
-
-        <View style={styles.row2}>
-          <Text>Actual Quntity</Text>
-          <TextInput style={styles.input} value={actualQty} editable={false} />
-        </View>
-
-      </View>
-      {/* Quality */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quality {quality}%</Text>
-        <View style={styles.row4}>
-          <Text>Rejected Count</Text>
-          <TextInput style={styles.input} value={rejected} editable={false} />
-          <TouchableOpacity style={[styles.assignBtn, { marginLeft: 4 }]}
-            onPress={() => navigation.navigate('Quality', { lineName: lineName })}>
-            <Text style={{ color: 'white' }}>Rejection Entry </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Calls Section */}
-<View style={styles.section}>
-  <View style={styles.row4}>
-    <TouchableOpacity style={styles.callBtn}>
-      <Text style={styles.callText}>Maintenance</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.callBtn}>
-      <Text style={styles.callText}>Production</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.callBtn}>
-      <Text style={styles.callText}>Quality</Text>
-    </TouchableOpacity>
-  </View>
-</View>
-
-    </ScrollView>
+      </ScrollView>
     </View>
   );
 }

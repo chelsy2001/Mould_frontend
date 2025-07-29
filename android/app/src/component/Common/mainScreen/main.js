@@ -4,12 +4,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import mainstyles from './mainStyle';
 import Header from '../../Common/header/header';
 
-const MainHome = ({ navigation, setIsLoggedIn, username,title }) => {
+const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
   return (
     <LinearGradient colors={['#f5f7fa', '#f5f7fa']} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <Header username={username} setIsLoggedIn={setIsLoggedIn}  title = 'Home Screen'/>
-        
+        <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Home Screen' />
+
         {/* <Text style={mainstyles.sectionTitle}>Welcome, {username} 👋</Text> */}
 
         <View style={mainstyles.container}>
@@ -18,7 +18,8 @@ const MainHome = ({ navigation, setIsLoggedIn, username,title }) => {
             style={mainstyles.cardButton}
             activeOpacity={0.85}
           >
-            <Image source={require('../assets/per.jpg')} style={mainstyles.icon} />
+            <Image source={require('../assets/per.jpg')} style={{ width: '50%', height: '50%', resizeMode: 'contain' }} />
+
             <Text style={mainstyles.cardText}>Performance Management</Text>
           </TouchableOpacity>
 

@@ -6,7 +6,7 @@ import OEE from '../OEE/oee';
 import Downtime from '../downTime/downTime';
 import Quality from '../quality/quality';
 import DTDetails from '../OEE/DT Details';
-import ReworkDetails from '../OEE/Rework Details';
+
 import ZoneScreen from '../zone/zone';
 import StationScreen from '../station/station';
 
@@ -48,10 +48,7 @@ const PerformanceStack = ({ setIsLoggedIn, username }) => {
         name="DTDetails" 
         children={(props) => <DTDetails {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
       />
-      <Stack.Screen 
-        name="ReworkDetails" 
-        children={(props) => <ReworkDetails {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
-      />
+     
     </Stack.Navigator>
   );
 };
