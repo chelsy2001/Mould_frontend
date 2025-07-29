@@ -13,7 +13,7 @@ import {
 import Header from '../../Common/header/header';
 import { useRoute } from '@react-navigation/native';
 import styles from './SeperateHCApprovalStyle';
-import { BASE_URL } from '../../Common/config/config';
+import { BASE_URL ,REPORT_URL} from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -127,11 +127,22 @@ const fetchChecklistData = () => {
                             </View>
 
                             <View style={styles.row3}>
-                                <TouchableOpacity
-                                    style={[styles.button, { marginRight: 10, width: '14%' }]}
-                                >
-                                    <Text style={styles.buttonText}>View Reports</Text>
-                                </TouchableOpacity>
+                                                               <TouchableOpacity
+                                 style={[styles.button, { marginRight: 10, width: '14%' }]}
+                                 onPress={() => {
+                                   // const reportUrl = `http://192.168.1.15:8083`;
+                                   const reportUrl = `${REPORT_URL}`
+                                   // 👆 Replace with your actual report path and query param
+                               
+                                   Linking.openURL(reportUrl)
+                                     .catch(err => {
+                                       console.error('Failed to open browser:', err);
+                                       Alert.alert('Error', 'Failed to open report in browser');
+                                     });
+                                 }}
+                               >
+                                 <Text style={styles.buttonText}>View Reports</Text>
+                               </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={[styles.button, { marginRight: 10 }]}
