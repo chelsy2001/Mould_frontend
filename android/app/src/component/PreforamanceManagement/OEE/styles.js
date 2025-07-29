@@ -71,23 +71,24 @@ const styles = StyleSheet.create({
   },
   assignBtn: {
     backgroundColor: '#28a745',
-    paddingVertical: verticalScale(6),
+    paddingVertical: verticalScale(4),
     paddingHorizontal: moderateScale(8),
-    borderRadius: verticalScale(10),
+    borderRadius: verticalScale(6),
     justifyContent: 'center',
     alignSelf: 'center',
     elevation: 3,
     maxWidth: scale(150),
+    marginRight:verticalScale(2)
   },
   detailsBtn: {
     backgroundColor: 'black',
     color: 'white',
     paddingVertical: verticalScale(6),
-    paddingHorizontal: scale(36),
-    borderRadius: verticalScale(10),
+    paddingHorizontal: scale(25),
+    borderRadius: verticalScale(6),
     alignSelf: 'center',
     elevation: 3,
-    marginLeft: scale(40),
+    marginLeft: scale(27),
   },
   section: {
     backgroundColor: '#ffffff',
@@ -100,20 +101,20 @@ const styles = StyleSheet.create({
   sectionTitle: {
     backgroundColor: '#003366',
     color: 'white',
-    paddingVertical: verticalScale(8),
+    paddingVertical: verticalScale(6),
     paddingHorizontal: scale(20),
     borderRadius: verticalScale(10),
-    marginTop: verticalScale(10),
+    marginTop: verticalScale(-4),
     alignSelf: 'flex-start',
     elevation: 3,
-    fontSize: scale(14),
+    fontSize: scale(12),
   },
   input: {
     borderWidth: scale(1),
     borderColor: '#ccc',
     borderRadius: scale(6),
     padding: moderateScale(6),
-    width: '22%',
+    width: moderateScale(60),
     marginHorizontal: scale(8),
   },
   input2: {
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: verticalScale(4),
+    marginTop: verticalScale(6),
   },
   row2: {
     flexDirection: 'row',
@@ -146,24 +147,26 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(4),
     justifyContent: 'space-between',
   },
+  
   callBtn: {
   backgroundColor: '#003366',
   paddingVertical: verticalScale(8),
-  // paddingHorizontal: scale(16),
+  //paddingHorizontal: scale(4),
   borderRadius: scale(8),
   justifyContent: 'center',
   alignItems: 'center',
   flex: 1,
   marginHorizontal: moderateScale(2),
   marginVertical: verticalScale(2),
-  elevation: 3,
+  elevation: 5,
   minHeight: verticalScale(30),
+
 },
 
 callText: {
   color: 'white',
   fontWeight: '600',
-  fontSize: scale(13),
+  fontSize: scale(10),
   textAlign: 'center',
 },
 row4: {
