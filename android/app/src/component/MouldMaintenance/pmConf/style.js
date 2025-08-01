@@ -159,6 +159,58 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  imageSection: {
+  alignItems: 'flex-start',
+  // marginTop: 20,
+  marginBottom: 10,
+},
+
+imageRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: verticalScale(5),
+  gap: scale(12),
+},
+takeImageText: {
+  fontSize: moderateScale(10),
+  color: '#555',
+  marginLeft: scale(100),
+  fontWeight: '500',
+},
+
+imagePlaceholder: {
+  height: 50,
+  width: 50,
+  borderRadius: 5,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  backgroundColor: '#fffefeff',
+},
+
+imageControls: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  // gap: 20,
+},
+
+smallButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#2c3e50',
+  paddingVertical: 10,
+  paddingHorizontal: 8,
+  borderRadius: 10,
+  marginHorizontal: 5,
+  marginTop: 20,
+},
+
+smallButtonText: {
+  color: '#fff',
+  marginLeft: 6,
+  fontSize: moderateScale(12),
+},
 });
 
 export default styles;

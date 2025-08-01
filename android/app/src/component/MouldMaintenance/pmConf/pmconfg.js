@@ -138,11 +138,11 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
     });
 
     try {
-      const response = await fetch(`${BASE_URL}/image/upload-image/${mouldid}`, {
-        method: 'POST',
-        body: formData,
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response = await fetch(`${BASE_URL}/Image/upload-image/${mouldid}`, {
+  method: 'POST',
+  body: formData,
+  // headers: { 'Content-Type': 'multipart/form-data' },
+});
 
       if (!response.ok) throw new Error(await response.text());
     } catch (error) {
@@ -235,7 +235,7 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
 
   return (
     <View style={styles.container}>
-      <Header username={username} title="Preventive Maintenance Screen" setIsLoggedIn={setIsLoggedIn}/>
+      <Header username={username} title="Preventive Maintenance " setIsLoggedIn={setIsLoggedIn}/>
 
         <Animated.View style={{ flex:1 ,opacity: fadeAnim }}>
           <View style={styles.inputContainer}>
@@ -333,7 +333,32 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
             </View>
             {/* <Text style={{color:'black'}}>Status: {getMouldStatusText(mouldData.MouldStatus)}</Text> */}
           
-            {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} />}
+            {/* {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} />} */}
+         <View style={styles.imageSection}>
+  {imageUri ? (
+    <View style={styles.imageRow}>
+      <Image source={{ uri: imageUri }} style={styles.previewImage} />
+      <View style={styles.imageControls}>
+        <TouchableOpacity onPress={() => setImageUri(null)} style={styles.smallButton}>
+          <Icon name="delete" size={20} color="#fff" />
+          <Text style={styles.smallButtonText}>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openCamera} style={styles.smallButton}>
+          <Icon name="camera-retake" size={20} color="#fff" />
+          <Text style={styles.smallButtonText}>Retake</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  ) : (
+    <View style={styles.imageRow}>
+      <View style={styles.imagePlaceholder}>
+        <Icon name="cloud-upload" size={45} color="#ccc" style={{backgroundColor: '#2c3e50',}} />
+      </View>
+      <Text style={styles.takeImageText}>Take mould image</Text>
+    </View>
+  )}
+</View>
+
           </View>
           
           )}
