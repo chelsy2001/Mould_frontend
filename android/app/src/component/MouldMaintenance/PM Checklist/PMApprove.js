@@ -54,7 +54,7 @@ const PMApprove = ({ username, setIsLoggedIn }) => {
   return (
     <View style={styles.container}>
       <Header username={username} title="PM Approval" />
-      <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
+      <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 ,marginTop:20}}>
         <View>
           {checkpoints.map((item, index) => (
             <View key={index} style={[
@@ -139,7 +139,7 @@ const PMApprove = ({ username, setIsLoggedIn }) => {
 </TouchableOpacity>
 
         <TouchableOpacity style={styles.button}
-          onPress={() => navigation.goBack()}
+         onPress={() => navigation.navigate('MouldHome')}
 
         >
           <Text style={styles.buttonText}>Close</Text>

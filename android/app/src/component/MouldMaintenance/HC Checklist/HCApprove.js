@@ -53,7 +53,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
 
     return (<View style={styles.container}>
         <Header username={username} title="HC Approval" />
-        <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
+        <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30,marginTop:20 }}>
             <View>
                 {checkpoints.map((item, index) => (
                     <View key={index}
@@ -160,7 +160,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
 </TouchableOpacity>
 
             <TouchableOpacity style={styles.button}
-                onPress={() => navigation.goBack()}
+               onPress={() => navigation.navigate('MouldHome')}
 
             >
                 <Text style={styles.buttonText}>Close</Text>
@@ -169,5 +169,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
     </View>
     );
 };
+
+{/* <Text style={styles.buttonText} onPress={() => navigation.navigate('MouldHome')}>Close</Text> */}
 
 export default HCApprove;

@@ -87,10 +87,10 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
 
     return (
         <View style={styles.container}>
-            <Header username={username} title="PM Aproval" />
+            <Header username={username} title="PM Approval" />
             <ScrollView
                 nestedScrollEnabled={true}
-                style={{ maxHeight: 700, marginBottom: 30, marginTop: 10 }}
+                style={{ maxHeight: 700, marginBottom: 30, marginTop:20 }}
             >
                 {checklistData.map((item, index) => (
                     <View>

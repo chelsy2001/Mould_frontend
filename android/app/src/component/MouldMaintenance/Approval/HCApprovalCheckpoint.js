@@ -16,11 +16,12 @@ import styles from './HCApprovalCheckpointStyle';
 import { BASE_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
 
 const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
     const { checklistID } = route.params;
+    //  const checklistID = checklist?.CheckListID;
     console.log('Checklist ID from route:', checklistID);
     const [checkpoints, setCheckpoints] = useState([]);
     const navigation = useNavigation();
@@ -98,7 +99,7 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
     return (
         <View style={styles.container}>
             <Header username={username} title="HC Approval Checkpoints" />
-            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 }}>
+            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: scale(10) }}>
                 <View>
                     {checkpoints.map((item, index) => (
                         <View key={index} style={[
@@ -127,7 +128,7 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
                                 <Text style={styles.label}>Observation</Text>
 
                                 <TextInput
-                                    style={[styles.input2, { width: 250, marginEnd: '-20' ,opacity: item.isDisabled ? 0.5 : 1 }]}
+                                    style={[styles.input2, { width: 250, marginEnd: '-20', opacity: item.isDisabled ? 0.5 : 1 }]}
                                     multiline={true}
                                     numberOfLines={4}
                                     value={item.ObservationInput}
@@ -215,14 +216,14 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
                     ))}
                 </View>
             </ScrollView>
-<View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
-     <TouchableOpacity style={styles.button}
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
+                <TouchableOpacity style={styles.button}
                     // onPress={() => navigation.goBack()}
                     onPress={() => navigation.navigate('SeperateHCApproval', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Save</Text>
                 </TouchableOpacity>
-</View>
+            </View>
         </View>
     );
 }

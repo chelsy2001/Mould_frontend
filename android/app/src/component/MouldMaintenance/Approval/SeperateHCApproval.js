@@ -87,7 +87,7 @@ const fetchChecklistData = () => {
             <Header username={username} title="HC Approval" />
             <ScrollView
                 nestedScrollEnabled={true}
-                style={{ maxHeight: 700, marginBottom: 30 }}
+                style={{ maxHeight: 700, marginBottom: 30 ,marginTop: 10}}
             >
                 {checklistData.map((item, index) => (
                     <View>
@@ -249,14 +249,14 @@ const fetchChecklistData = () => {
                                                             'Content-Type': 'application/json',
                                                         },
                                                         body: JSON.stringify({
-                                                            CheckListID: selectedChecklist.UID // or another unique identifier
+                                                            CheckListID: selectedChecklist.CheckListID // or another unique identifier
                                                         }),
                                                     })
                                                         .then(res => res.json())
                                                         .then(result => {
                                                             if (result.status === 200) {
                                                                 Alert.alert("Approved", "Checklist approved successfully");
-                                                                fetchChecklistData(); // ✅ refresh
+                                                                   fetchChecklistData(); // ✅ refresh
                                                                 setIsModalVisible(false);
                                                                 setPassword('');
                                                                 setSelectedUser('');
@@ -273,7 +273,7 @@ const fetchChecklistData = () => {
                                                 } else if (modalMode === 'edit') {
                                                     // ✅ Navigate to edit screen
                                                     navigation.navigate('HCApprovalCheckpoint', {
-                                                        checklistID: selectedChecklist.UID
+                                                        checklistID: selectedChecklist.CheckListID
                                                     });
                                                     setIsModalVisible(false);
                                                     setPassword('');
