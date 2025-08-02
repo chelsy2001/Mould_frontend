@@ -219,10 +219,36 @@ console.log("Time",currentStartTime);
   };
   
   
+const checkActiveBreakdown = async (mouldId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/mould/activebreakdown/${mouldId}`);
+    const data = await response.json();
+
+    if (data.status === 200 && data.data) {
+      setBreakdownReason(data.data.BDReason || '');
+      setBreakdownRemark(data.data.BDRemark || '');
+      setStartTime(data.data.BDStartTime || '');
+      setIsBreakdownInProgress(true);
+
+      // Alert.alert('Notice', 'This mould has an ongoing breakdown');
+    } else {
+      // Reset fields if no active breakdown
+      setBreakdownReason('');
+      setBreakdownRemark('');
+      setStartTime('');
+      setEndTime('');
+      setDuration('');
+      setIsBreakdownInProgress(false);
+    }
+  } catch (error) {
+    console.error('Error checking breakdown:', error);
+    setIsBreakdownInProgress(false);
+  }
+};
 
   return (
     <View style={styles.container}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title = 'BreakDown Screen' />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title = 'BreakDown' />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{padding:20}}>
         <View style={styles.dropdownsection}>
@@ -230,13 +256,24 @@ console.log("Time",currentStartTime);
             <Icon name="cog-outline" size={20} color="#000000ff" /> Select Mould
           </Text>
           <View style={styles.dropdown}>
-            <SelectList
+            {/* <SelectList
               setSelected={(val) => setSelectedMouldId(val)}
               data={mouldIdOptions}
               save="value"
               placeholder="Choose Mould ID"
               search={true}
-            />
+            /> */}
+            <SelectList
+  setSelected={(val) => {
+    setSelectedMouldId(val);
+    checkActiveBreakdown(val); // <-- CHECK active breakdown here
+  }}
+  data={mouldIdOptions}
+  save="value"
+  placeholder="Choose Mould ID"
+  search={true}
+/>
+
           </View>
         </View>
 
@@ -309,10 +346,18 @@ console.log("Time",currentStartTime);
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#28a745' }]} onPress={handleStart}>
-            <Icon name="play-circle-outline" size={24} color="#fff" />
-            <Text style={styles.buttonText}>Start</Text>
-          </TouchableOpacity>
+         <TouchableOpacity
+  style={[
+    styles.actionButton,
+    { backgroundColor: isBreakdownInProgress ? '#6c757d' : '#28a745' }
+  ]}
+  onPress={handleStart}
+  disabled={isBreakdownInProgress}
+>
+  <Icon name="play-circle-outline" size={24} color="#fff" />
+  <Text style={styles.buttonText}>Start</Text>
+</TouchableOpacity>
+
 
           <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#dc3545' }]} onPress={handleEnd}>
             <Icon name="stop-circle-outline" size={24} color="#fff" />
