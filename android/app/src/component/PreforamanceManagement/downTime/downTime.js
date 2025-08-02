@@ -195,8 +195,10 @@ useEffect(() => {
 
           <View style={styles.row}>
             <Text style={styles.label}>Loss Name</Text>
+            <View style={{ flex: 1, marginLeft: scale(53), marginRight: scale(2) }}>
             <SelectList
-              boxStyles={{ width: verticalScale(150), backgroundColor: 'white' }}
+              boxStyles={{ 
+                 backgroundColor: 'white' }}
               dropdownStyles={{ backgroundColor: '#f0f8ff' }}
               data={lossData.map(item => ({
                 key: item.LossID.toString(),
@@ -209,13 +211,16 @@ useEffect(() => {
                 formData.LossName ? { key: formData.LossName, value: formData.LossName } : null
               }
             />
+            </View>
           </View>
 
           <View style={styles.row}>
             <Text style={styles.label}>Subloss Name</Text>
+            <View style={{ flex: 1, marginLeft: scale(35), marginRight: scale(2) }}>
             <SelectList
-              boxStyles={{ width: verticalScale(150), backgroundColor: 'white' }}
-              dropdownStyles={{ backgroundColor: '#f0f8ff' }}
+              boxStyles={{ 
+                backgroundColor: 'white' }}
+           dropdownStyles={{ backgroundColor: '#f0f8ff' }}
               setSelected={setSelectedSubLoss}
               data={subLossData}
               save="key"
@@ -229,6 +234,7 @@ useEffect(() => {
                   : null
               }
             />
+            </View>
           </View>
 
           <Text style={[styles.label, { marginLeft: 12 }]}>Remark</Text>
