@@ -247,7 +247,7 @@ const handleConfirm = async () => {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Spare Part Screen" />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Spare Part " />
       <ScrollView contentContainerStyle={{ paddingBottom: 30, padding: 30}}>
 
         <View style={styles.mouldData}>

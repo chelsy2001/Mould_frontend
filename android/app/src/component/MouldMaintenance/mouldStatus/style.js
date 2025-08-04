@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     padding: scale(5),
     marginRight: scale(15),
     marginLeft: scale(15),
-    marginVertical: verticalScale(12),
+    marginVertical: verticalScale(15),
     // elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.05,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
    confirmButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#004d99',
     borderRadius: moderateScale(12),
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(10),

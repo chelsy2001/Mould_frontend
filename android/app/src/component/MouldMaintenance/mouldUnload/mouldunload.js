@@ -296,7 +296,7 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
-        <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Mould UnLoading Screen"></Header>
+        <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Mould UnLoading "></Header>
         <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
           <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingRight: '-10%', paddingLeft: '-10%' }} showsVerticalScrollIndicator={false} >
             <View style={styles.inputContainer}>

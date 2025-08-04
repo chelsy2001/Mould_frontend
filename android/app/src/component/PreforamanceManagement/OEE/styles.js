@@ -148,25 +148,36 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   
-  callBtn: {
-  backgroundColor: '#003366',
-  paddingVertical: verticalScale(8),
-  //paddingHorizontal: scale(4),
+//   callBtn: {
+//   backgroundColor: '#003366',
+//   paddingVertical: verticalScale(8),
+//   //paddingHorizontal: scale(4),
+//   borderRadius: scale(8),
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   flex: 1,
+//   marginHorizontal: moderateScale(2),
+//   marginVertical: verticalScale(2),
+//   elevation: 5,
+//   minHeight: verticalScale(30),
+
+// },
+
+// callText: {
+//   color: 'white',
+//   fontWeight: '600',
+//   fontSize: scale(10),
+//   textAlign: 'center',
+// },
+callBtn: {
+  paddingVertical: verticalScale(10),
+  paddingHorizontal: scale(12),
   borderRadius: scale(8),
-  justifyContent: 'center',
-  alignItems: 'center',
-  flex: 1,
-  marginHorizontal: moderateScale(2),
-  marginVertical: verticalScale(2),
-  elevation: 5,
-  minHeight: verticalScale(30),
-
+  backgroundColor: '#091829ff',
 },
-
 callText: {
-  color: 'white',
-  fontWeight: '600',
-  fontSize: scale(10),
+  color: '#fff',
+  fontWeight: 'bold',
   textAlign: 'center',
 },
 row4: {

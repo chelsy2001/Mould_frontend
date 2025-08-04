@@ -44,8 +44,8 @@ const mainstyles = StyleSheet.create({
   },
   cardText: {
     marginTop: moderateScale(12),
-    fontSize: scale(14),
-    fontWeight: '600',
+    fontSize: scale(10),
+    fontWeight: '500',
     color: 'white',
     textAlign: 'center',
   },

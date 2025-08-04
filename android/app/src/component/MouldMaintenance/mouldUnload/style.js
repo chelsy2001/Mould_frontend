@@ -52,7 +52,7 @@ export default StyleSheet.create({
     fontSize:scale(10)
   },
   confirmButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#004d99',
     padding: moderateScale(12),
     borderRadius: moderateScale(12),
     alignItems: 'center',
@@ -111,15 +111,15 @@ export default StyleSheet.create({
   },
 
   breakdownButton: {
-    backgroundColor: '#e74c3c',
+    backgroundColor: '#004d99',
   },
 
   notInUseButton: {
-    backgroundColor: '#f1c40f',
+    backgroundColor: '#004d99',
   },
 
   normalButton: {
-    backgroundColor: '#2ecc71',
+    backgroundColor: '#004d99',
   },
 
   buttonText: {
