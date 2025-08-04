@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
 
   confirmText: {
     color: 'white',
-    fontSize: moderateScale(16),
-    fontWeight: '700',
+    fontSize: moderateScale(12),
+    fontWeight: '500',
     letterSpacing: 0.5,
   },
 
@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
   },
 
   iconButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#004d99',
     borderRadius: 50,
-    padding: scale(14),
+    padding: scale(10),
     justifyContent: 'center',
     alignItems: 'center',
     // elevation: 2,

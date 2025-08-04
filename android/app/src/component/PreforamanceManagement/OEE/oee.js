@@ -171,6 +171,92 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
     fetchData();
   }, [equipmentName]);
 
+// function to handle call status for different departments
+  const [callStatus, setCallStatus] = useState({});
+
+// const handleCallToggle = (deptId) => {
+//   setCallStatus((prevStatus) => {
+//     const current = prevStatus[deptId];
+//     if (current.status === 0) {
+//       // Start call
+//       return {
+//         ...prevStatus,
+//         [deptId]: {
+//           status: 1,
+//           startTime: new Date(),
+//           endTime: null,
+//           duration: null,
+//         },
+//       };
+//     } else {
+//       // End call
+//       const endTime = new Date();
+//       const durationInMinutes = Math.round((endTime - new Date(current.startTime)) / 60000);
+//       return {
+//         ...prevStatus,
+//         [deptId]: {
+//           ...current,
+//           status: 0,
+//           endTime,
+//           duration: `${durationInMinutes} min`,
+//         },
+//       };
+//     }
+//   });
+// };
+const handleCallToggle = async (deptId) => {
+  try {
+    const stationIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
+    const StationID = stationIdResponse.data.EquipmentID;
+
+    await axios.post(`${BASE_URL}/oee/call-logging`, {
+      StationID,
+      DepartmentID: deptId,
+    });
+
+    // Update local state for UI feedback (optional)
+    setCallStatus((prevStatus) => {
+      const current = prevStatus[deptId];
+      if (current.status === 0) {
+        return {
+          ...prevStatus,
+          [deptId]: {
+            status: 1,
+            startTime: new Date(),
+            endTime: null,
+            duration: null,
+          },
+        };
+      } else {
+        const endTime = new Date();
+        const durationInMinutes = Math.round((endTime - new Date(current.startTime)) / 60000);
+        return {
+          ...prevStatus,
+          [deptId]: {
+            ...current,
+            status: 0,
+            endTime,
+            duration: `${durationInMinutes} min`,
+          },
+        };
+      }
+    });
+
+  } catch (error) {
+    console.error('Error calling stored procedure:', error);
+    Alert.alert('Error', 'Failed to log call.');
+  }
+};
+
+const getCallBtnStyle = (deptId) => {
+  const isActive = callStatus[deptId]?.status === 1;
+  return {
+    ...styles.callBtn,
+    backgroundColor: isActive ? 'green' : '#003366',
+  };
+};
+
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -267,21 +353,29 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
         </View>
 
         {/* Calls Section */}
-        <View style={styles.section}>
-          <View style={styles.row4}>
-            <TouchableOpacity style={styles.callBtn}>
-              <Text style={styles.callText}>Maintenance</Text>
-            </TouchableOpacity>
+       {/* Calls Section */}
+<View style={styles.section}>
+  <View style={styles.row4}>
+    <TouchableOpacity style={getCallBtnStyle(1)} onPress={() => handleCallToggle(1)}>
+      <Text style={styles.callText}>Maintenance</Text>
+    </TouchableOpacity>
 
-            <TouchableOpacity style={styles.callBtn}>
-              <Text style={styles.callText}>Production</Text>
-            </TouchableOpacity>
+    <TouchableOpacity style={getCallBtnStyle(2)} onPress={() => handleCallToggle(2)}>
+      <Text style={styles.callText}>Production</Text>
+    </TouchableOpacity>
 
-            <TouchableOpacity style={styles.callBtn}>
-              <Text style={styles.callText}>Quality</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+    <TouchableOpacity style={getCallBtnStyle(3)} onPress={() => handleCallToggle(3)}>
+      <Text style={styles.callText}>Quality</Text>
+    </TouchableOpacity>
+  </View>
+</View>
+<View style={styles.section}>
+  {Object.entries(callStatus).map(([id, info]) => (
+    <Text key={id} style={{ fontSize: 12 }}>
+      {`Dept ${id} | Status: ${info.status} | Duration: ${info.duration || '-'} `}
+    </Text>
+  ))}
+</View>
 
       </ScrollView>
     </View>

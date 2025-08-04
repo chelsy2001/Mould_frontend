@@ -243,7 +243,7 @@ const MouldLoadingScreen = ({ username }) => {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
-        <Header username={username} title="Mould Loading Screen" date="05-10-2024" />
+        <Header username={username} title="Mould Loading " date="05-10-2024" />
         <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
           <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingRight: '-10%', paddingLeft: '-10%' }} showsVerticalScrollIndicator={false}>
             <View style={styles.inputContainer}>

@@ -168,7 +168,7 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
 
   return (
     <View style={styles.container}>
-      <Header username={username}  setIsLoggedIn={setIsLoggedIn} title = 'Mould Monitoring Screen' />
+      <Header username={username}  setIsLoggedIn={setIsLoggedIn} title = 'Mould Monitoring ' />
       
       <ScrollView>
         <View style={styles.dropdown}>
@@ -259,7 +259,7 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
-    <Text style={styles.dataLabel}>📊  Status: </Text>
+    <Text style={styles.dataLabel}>📊 Mould Status: </Text>
     <Text style={styles.dataValue}>{getMouldStatusText(filteredMould.MouldStatus)}</Text>
     </View>
     <View style={styles.separator} />

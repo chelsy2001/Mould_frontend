@@ -18,7 +18,7 @@ const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
             style={mainstyles.cardButton}
             activeOpacity={0.85}
           >
-            <Image source={require('../assets/per.jpg')} style={{ width: '50%', height: '50%', resizeMode: 'contain' }} />
+            <Image source={require('../assets/mainper1.png')} style={{ width: '80%', height: '70%', resizeMode: 'center' }} />
 
             <Text style={mainstyles.cardText}>Performance Management</Text>
           </TouchableOpacity>
@@ -28,7 +28,7 @@ const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
             style={mainstyles.cardButton}
             activeOpacity={0.85}
           >
-            <Image source={require('../assets/maint.jpg')} style={mainstyles.icon} />
+            <Image source={require('../assets/mainmol.jpg')} style={mainstyles.icon} />
             <Text style={mainstyles.cardText}>Mould Maintenance</Text>
           </TouchableOpacity>
 

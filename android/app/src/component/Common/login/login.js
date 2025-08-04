@@ -65,7 +65,7 @@ const LoginScreen = ({ navigation, setIsLoggedIn, setUsername }) => {
     <LinearGradient colors={['#f5f7fa', '#c3cfe2']} style={styles.gradient}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
         <View style={styles.card}>
-          <Text style={styles.header}>  Mould Maintenance </Text>
+          <Text style={styles.header}> Lumax Industries </Text>
           <Image
   source={require('../assets/login.png')} // Adjust path if needed
   style={styles.logo}

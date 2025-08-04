@@ -366,7 +366,7 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
           <View style={styles.buttonRow}>
             <TouchableOpacity style={[
     styles.confirmButton,
-    { backgroundColor: imageUri ? '#2980b9' : '#888' } // Disable-style when no image
+    { backgroundColor: imageUri ? '#004d99' : '#888' } // Disable-style when no image
   ]}
   onPress={handleConfirm}
   disabled={!imageUri}>

@@ -52,7 +52,7 @@ export default StyleSheet.create({
     fontSize:scale(10)
   },
   confirmButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#004d99',
     padding: moderateScale(12),
     borderRadius: moderateScale(12),
     alignItems: 'center',

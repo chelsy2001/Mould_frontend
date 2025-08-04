@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
 
   confirmText: {
     color: 'white',
-    fontSize: moderateScale(16),
-    fontWeight: '700',
+    fontSize: moderateScale(12),
+    fontWeight: '500',
     letterSpacing: 0.5,
   },
 
@@ -48,18 +48,18 @@ const styles = StyleSheet.create({
   },
 
   iconButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#004d99',
     borderRadius: 50,
-    padding: scale(14),
+    padding: scale(10),
     justifyContent: 'center',
     alignItems: 'center',
     // elevation: 2,
   },
 
   confirmButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#004d99',
     borderRadius: moderateScale(12),
-    paddingVertical: verticalScale(10),
+    paddingVertical: verticalScale(5),
     paddingHorizontal: scale(10),
     justifyContent: 'center',
     alignItems: 'center',
@@ -74,15 +74,15 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(16),
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: verticalScale(16),
+    paddingVertical: verticalScale(5),
     width: '45%',
     // elevation: 4,
   },
 
   cameraButtonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: moderateScale(26),
+    fontWeight: '500',
+    fontSize: moderateScale(10),
   },
 
   iconRow: {
