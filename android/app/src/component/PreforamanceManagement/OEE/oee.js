@@ -26,7 +26,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   const [loading, setLoading] = useState(true);
 
 
-  
+
   const { equipmentName } = route.params;
   const [prodDate, setProdDate] = useState('');
   const [shiftName, setShiftName] = useState('');
@@ -177,7 +177,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Overall line effectiveness​' />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: scale(16), marginTop: scale(20) }}>
-       
+
 
           <Text style={styles.headerBox}>{equipmentName}</Text>
           <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
@@ -210,21 +210,16 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 
             <Text>TotalDT</Text>
             <TextInput style={styles.input} value={totalDownTime} editable={false} />
-
-
           </View>
-
           <View style={styles.row3}>
             <Text>TotalTime</Text>
             <TextInput style={styles.input} value={totalTime} editable={false} />
             <TouchableOpacity style={styles.detailsBtn}
-              onPress={() => navigation.navigate('DTDetails', { equipmentName: equipmentName  })}
+              onPress={() => navigation.navigate('DTDetails', { equipmentName: equipmentName })}
             >
               <Text style={{ color: 'white' }}>Details</Text>
             </TouchableOpacity>
           </View>
-
-
           <View style={styles.row2}>
             <Text>UnAssigned Reason </Text>
             <TextInput
@@ -236,7 +231,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
               style={[styles.assignBtn]}
               onPress={() => navigation.navigate('Downtime', { equipmentName: equipmentName })}
             >
-              <Text style={{ color: 'white',fontSize:moderateScale(10) }}>Update Reason</Text>
+              <Text style={{ color: 'white', fontSize: moderateScale(10) }}>Update Reason</Text>
             </TouchableOpacity>
           </View>
 
@@ -265,7 +260,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
             <Text>Rejected Count</Text>
             <TextInput style={styles.input} value={rejected} editable={false} />
             <TouchableOpacity style={[styles.assignBtn, { marginLeft: 4 }]}
-              onPress={() => navigation.navigate('Quality', { equipmentName: equipmentName  })}>
+              onPress={() => navigation.navigate('Quality', { equipmentName: equipmentName })}>
               <Text style={{ color: 'white' }}>Rejection Entry </Text>
             </TouchableOpacity>
           </View>
