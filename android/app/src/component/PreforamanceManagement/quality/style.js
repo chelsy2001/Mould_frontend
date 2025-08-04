@@ -101,7 +101,7 @@ inputWithIcon: {
   borderRadius: scale(6),
   paddingHorizontal: scale(5),
   marginRight: scale(6),
-  width: screenWidth < 360 ? '100%' : screenWidth < 420 ? '60%' : '70%',
+  width: screenWidth < 360 ? '100%' : screenWidth < 420 ? '75%' : '70%',
 }
 ,
   iconContainer: {

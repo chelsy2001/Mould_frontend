@@ -204,23 +204,20 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 //     }
 //   });
 // };
-const handleCallToggle = async (deptId) => {
+const handleCallToggle = async (departmentName) => {
   try {
-    const stationIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
-    const StationID = stationIdResponse.data.EquipmentID;
-
-    await axios.post(`${BASE_URL}/oee/call-logging`, {
-      StationID,
-      DepartmentID: deptId,
+    await axios.post(`${BASE_URL}/OEE/logCall`, {
+      EquipmentName: equipmentName,
+      DepartmentName: departmentName,
     });
 
-    // Update local state for UI feedback (optional)
+    // Optional: Track status UI for user feedback
     setCallStatus((prevStatus) => {
-      const current = prevStatus[deptId];
-      if (current.status === 0) {
+      const current = prevStatus[departmentName];
+      if (!current || current.status === 0) {
         return {
           ...prevStatus,
-          [deptId]: {
+          [departmentName]: {
             status: 1,
             startTime: new Date(),
             endTime: null,
@@ -232,7 +229,7 @@ const handleCallToggle = async (deptId) => {
         const durationInMinutes = Math.round((endTime - new Date(current.startTime)) / 60000);
         return {
           ...prevStatus,
-          [deptId]: {
+          [departmentName]: {
             ...current,
             status: 0,
             endTime,
@@ -242,19 +239,22 @@ const handleCallToggle = async (deptId) => {
       }
     });
 
+    Alert.alert('Success', `${departmentName} call logged successfully.`);
   } catch (error) {
-    console.error('Error calling stored procedure:', error);
-    Alert.alert('Error', 'Failed to log call.');
+    console.error(`Error logging call for ${departmentName}:`, error);
+    Alert.alert('Error', `Failed to log call for ${departmentName}.`);
   }
 };
 
-const getCallBtnStyle = (deptId) => {
-  const isActive = callStatus[deptId]?.status === 1;
+const getCallBtnStyle = (departmentName) => {
+  const isActive = callStatus[departmentName]?.status === 1;
   return {
     ...styles.callBtn,
     backgroundColor: isActive ? 'green' : '#003366',
   };
 };
+
+
 
 
 
@@ -355,19 +355,20 @@ const getCallBtnStyle = (deptId) => {
         {/* Calls Section */}
        {/* Calls Section */}
 <View style={styles.section}>
-  <View style={styles.row4}>
-    <TouchableOpacity style={getCallBtnStyle(1)} onPress={() => handleCallToggle(1)}>
-      <Text style={styles.callText}>Maintenance</Text>
-    </TouchableOpacity>
+ <View style={styles.row4}>
+  <TouchableOpacity style={getCallBtnStyle("Maintenance")} onPress={() => handleCallToggle("Maintenance")}>
+    <Text style={styles.callText}>Maintenance</Text>
+  </TouchableOpacity>
 
-    <TouchableOpacity style={getCallBtnStyle(2)} onPress={() => handleCallToggle(2)}>
-      <Text style={styles.callText}>Production</Text>
-    </TouchableOpacity>
+  <TouchableOpacity style={getCallBtnStyle("Production")} onPress={() => handleCallToggle("Production")}>
+    <Text style={styles.callText}>Production</Text>
+  </TouchableOpacity>
 
-    <TouchableOpacity style={getCallBtnStyle(3)} onPress={() => handleCallToggle(3)}>
-      <Text style={styles.callText}>Quality</Text>
-    </TouchableOpacity>
-  </View>
+  <TouchableOpacity style={getCallBtnStyle("Quality")} onPress={() => handleCallToggle("Quality")}>
+    <Text style={styles.callText}>Quality</Text>
+  </TouchableOpacity>
+</View>
+
 </View>
 <View style={styles.section}>
   {Object.entries(callStatus).map(([id, info]) => (
