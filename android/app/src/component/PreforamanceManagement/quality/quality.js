@@ -5,6 +5,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Dimensions,
+  useWindowDimensions 
 } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Header from '../../Common/header/header';
@@ -40,7 +42,10 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
   const [count, setCount] = useState('');
   const [remark, setRemark] = useState('');
 
-const [totalCount, setTotalCount] = useState('');
+  const [totalCount, setTotalCount] = useState('');
+const { width } = useWindowDimensions();
+const isLargeScreen = width > 600; // You can tune this threshold
+
 
   const shiftList = [
     { key: '1', value: 'A' },
@@ -73,7 +78,7 @@ const [totalCount, setTotalCount] = useState('');
   };
 
 
-  
+
   //-----------fetch the reason-------
   useEffect(() => {
     fetch(`${BASE_URL}/rework/ReworkReason`)
@@ -95,56 +100,56 @@ const [totalCount, setTotalCount] = useState('');
 
 
   //================update api
-const handleUpdateRework = async () => {
-  if (!selectedDate || !selectedShift || !selectedReason || !remark || !count) {
-    alert('Please fill all required fields.');
-    return;
-  }
-
-  const payload = {
-    ProdDate: selectedDate,
-    ProdShift: selectedShift,
-    ReworkReason: selectedReason,
-    Remark: remark,
-    NOTOKQuantity: parseInt(count),
-    EquipmentName: equipmentName,
-    UserName: username || 'admin',
-  };
-
-  console.log('🚀 Sending payload to update-rework-cycle-summary:', payload);
-
-  try {
-    const response = await fetch(`${BASE_URL}/rework/update-rework-cycle-summary`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-    console.log('✅ API Response:', result);
-
-    if (response.ok && result.status === 200) {
-      alert(result.message || 'Rework updated successfully.');
-
-      // Update UI values with the response
-    //   setCount(result.data.TotalCount?.toString() || '0');
-      setGoodPart(result.data.GoodPart?.toString() || '0');
-      setRejectedCount(result.data.RejectedCount?.toString() || '0');
-
-      // Clear inputs
-      setSelectedReason('');
-      setRemark('');
-    } else {
-      console.warn('⚠️ Update failed:', result);
-      alert(result.message || 'Failed to update.');
+  const handleUpdateRework = async () => {
+    if (!selectedDate || !selectedShift || !selectedReason || !remark || !count) {
+      alert('Please fill all required fields.');
+      return;
     }
-  } catch (error) {
-    console.error('❌ Error during API call:', error);
-    alert('Error occurred while updating rework.');
-  }
-};
+
+    const payload = {
+      ProdDate: selectedDate,
+      ProdShift: selectedShift,
+      ReworkReason: selectedReason,
+      Remark: remark,
+      NOTOKQuantity: parseInt(count),
+      EquipmentName: equipmentName,
+      UserName: username || 'admin',
+    };
+
+    console.log('🚀 Sending payload to update-rework-cycle-summary:', payload);
+
+    try {
+      const response = await fetch(`${BASE_URL}/rework/update-rework-cycle-summary`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      console.log('✅ API Response:', result);
+
+      if (response.ok && result.status === 200) {
+        alert(result.message || 'Rework updated successfully.');
+
+        // Update UI values with the response
+        //   setCount(result.data.TotalCount?.toString() || '0');
+        setGoodPart(result.data.GoodPart?.toString() || '0');
+        setRejectedCount(result.data.RejectedCount?.toString() || '0');
+
+        // Clear inputs
+        setSelectedReason('');
+        setRemark('');
+      } else {
+        console.warn('⚠️ Update failed:', result);
+        alert(result.message || 'Failed to update.');
+      }
+    } catch (error) {
+      console.error('❌ Error during API call:', error);
+      alert('Error occurred while updating rework.');
+    }
+  };
   //-----------------fecth the table data--------
   const fetchEquipmentIdAndReworkDetails = async () => {
     try {
@@ -190,51 +195,51 @@ const handleUpdateRework = async () => {
   useEffect(() => {
     fetchEquipmentIdAndReworkDetails();
   }, [equipmentName]);
-//------------------------ APi to fetch the qty's from cycle time table
+  //------------------------ APi to fetch the qty's from cycle time table
 
 
-const fetchCycleSummary = async (prodDate, shift, equipmentName) => {
-  if (!prodDate || !shift || !equipmentName) return;
+  const fetchCycleSummary = async (prodDate, shift, equipmentName) => {
+    if (!prodDate || !shift || !equipmentName) return;
 
-  try {
-    // Step 1: Get EquipmentID from EquipmentName
-    const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
-    const EquipmentID = equipmentIdResponse.data.EquipmentID;
+    try {
+      // Step 1: Get EquipmentID from EquipmentName
+      const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
+      const EquipmentID = equipmentIdResponse.data.EquipmentID;
 
-    if (!EquipmentID) {
-      console.warn("No EquipmentID found for:", equipmentName);
-      return;
+      if (!EquipmentID) {
+        console.warn("No EquipmentID found for:", equipmentName);
+        return;
+      }
+
+      // Step 2: Call CycleSummary API with EquipmentID
+      const response = await fetch(
+        `${BASE_URL}/rework/CycleSummary?ProdDate=${encodeURIComponent(prodDate)}&ProdShift=${encodeURIComponent(shift)}&EquipmentID=${encodeURIComponent(EquipmentID)}`
+      );
+      const data = await response.json();
+
+      console.log("CycleSummary API Response:", data);
+
+      if (data.status === 200 && data.data.length > 0) {
+        const cycle = data.data[0];
+        setRejectedCount(cycle.RejectedCount?.toString() || '0');
+        setGoodPart(cycle.GoodPart?.toString() || '0');
+        setTotalCount(cycle.TotalCount?.toString() || '0');
+
+      } else {
+        console.warn("No cycle data found.");
+        setRejectedCount('0');
+        setGoodPart('0');
+        setTotalCount('0');
+      }
+    } catch (error) {
+      console.error("Error fetching cycle summary:", error);
     }
-
-    // Step 2: Call CycleSummary API with EquipmentID
-    const response = await fetch(
-      `${BASE_URL}/rework/CycleSummary?ProdDate=${encodeURIComponent(prodDate)}&ProdShift=${encodeURIComponent(shift)}&EquipmentID=${encodeURIComponent(EquipmentID)}`
-    );
-    const data = await response.json();
-
-    console.log("CycleSummary API Response:", data);
-
-    if (data.status === 200 && data.data.length > 0) {
-      const cycle = data.data[0];
-      setRejectedCount(cycle.RejectedCount?.toString() || '0');
-      setGoodPart(cycle.GoodPart?.toString() || '0');
- setTotalCount(cycle.TotalCount?.toString() || '0');
-
-    } else {
-      console.warn("No cycle data found.");
-      setRejectedCount('0');
-      setGoodPart('0');
-      setTotalCount('0');
+  };
+  useEffect(() => {
+    if (selectedDate && selectedShift && equipmentName) {
+      fetchCycleSummary(selectedDate, selectedShift, equipmentName);
     }
-  } catch (error) {
-    console.error("Error fetching cycle summary:", error);
-  }
-};
-useEffect(() => {
-  if (selectedDate && selectedShift && equipmentName) {
-    fetchCycleSummary(selectedDate, selectedShift, equipmentName);
-  }
-}, [selectedDate, selectedShift, equipmentName]);
+  }, [selectedDate, selectedShift, equipmentName]);
 
 
 
@@ -258,15 +263,15 @@ useEffect(() => {
     setDatePickerVisibility(false);
   };
 
-const handleConfirm = (date) => {
-  const formattedDate = date.toISOString().split('T')[0];
-  setSelectedDate(formattedDate);
-  hideDatePicker();
+  const handleConfirm = (date) => {
+    const formattedDate = date.toISOString().split('T')[0];
+    setSelectedDate(formattedDate);
+    hideDatePicker();
 
-  if (selectedShift && equipmentName) {
-    fetchCycleSummary(formattedDate, selectedShift, equipmentName);
-  }
-};
+    if (selectedShift && equipmentName) {
+      fetchCycleSummary(formattedDate, selectedShift, equipmentName);
+    }
+  };
 
 
   //-------------------------------------------------
@@ -283,38 +288,45 @@ const handleConfirm = (date) => {
 
       <View style={styles.Container1}>
         <View style={styles.row1}>
-          <Text style={styles.label}>ProdDate</Text>
-          <View style={styles.inputWithIcon}>
-            <TextInput
-              style={styles.input12}
-              value={selectedDate}
-              editable={false}
-              placeholder="Select Date"
-            />
-            <TouchableOpacity onPress={showDatePicker} style={styles.iconContainer}>
-              <Icon name="calendar" size={20} color="#555" />
-            </TouchableOpacity>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.labelWithMargin}>ProdDate</Text>
+            <View style={styles.inputWithIcon}>
+              <TextInput
+                style={styles.input12}
+                value={selectedDate}
+                editable={false}
+                placeholder="Select Date"
+              />
+              <TouchableOpacity onPress={showDatePicker} style={styles.iconContainer}>
+                <Icon name="calendar" size={20} color="#555" />
+              </TouchableOpacity>
+            </View>
           </View>
-       
-          <Text style={styles.label}>Shift</Text>
-          <View>
 
-            <SelectList
-              setSelected={setSelectedShift}
-              data={shiftList}
-              save="value"
-              placeholder="Select "
-              boxStyles={{
-                marginLeft: scale(2),
-                //marginRight: scale(9),
-                width: scale(75), // Adjust as needed
-                backgroundColor: 'white',
-              }}
-              dropdownStyles={{
-                backgroundColor: '#f0f8ff',
-              }}
-            />
+          {/* Shift Group */}
+          <View style={styles.fieldGroup}>
+            <Text style={styles.labelWithMargin}>Shift</Text>
+            <View style={styles.dropdownWrapper}>
+              <SelectList
+                setSelected={setSelectedShift}
+                data={shiftList}
+                save="value"
+                placeholder="Select"
+                boxStyles={{
+                  backgroundColor: 'white',
+                  borderRadius: scale(6),
+                  minHeight: verticalScale(20),
+                  borderColor: '#ccc',
+                  borderWidth: 1,
+                }}
+                dropdownStyles={{
+                  backgroundColor: '#f0f8ff',
+                  borderRadius: scale(6),
+                }}
+              />
+            </View>
           </View>
+
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
@@ -331,14 +343,14 @@ const handleConfirm = (date) => {
 
         <View>
           <Text style={styles.label}>Rework Reason</Text>
+           <View style={{ flex: 1, marginLeft: scale(2), marginRight: scale(2) }}>
           <SelectList
             setSelected={setSelectedReason}
             data={reasonList}
             save="value"
             placeholder="Select Reason"
             boxStyles={{
-              marginRight: scale(7),
-              width: scale(243),
+             
               backgroundColor: 'white',
             }}
             dropdownStyles={{
@@ -346,15 +358,16 @@ const handleConfirm = (date) => {
             }}
             defaultOption={{ key: '', value: '' }}
           />
+          </View>
         </View>
 
-        <View style={styles.row4}>
+        {/* <View style={styles.row4}>
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Total Qty</Text>
             <TextInput
               style={styles.input3}
               value={totalCount}
-      editable={false} // If read-only
+              editable={false} // If read-only
               keyboardType="numeric"
             />
           </View>
@@ -369,7 +382,7 @@ const handleConfirm = (date) => {
             />
           </View>
         </View>
-        <View style={styles.row4}>
+        <View style={[styles.row4, { marginTop: verticalScale(-4) }]}>
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Total NOK Qty</Text>
             <TextInput
@@ -389,7 +402,95 @@ const handleConfirm = (date) => {
               keyboardType="numeric"
             />
           </View>
-        </View>
+        </View> */}
+{isLargeScreen ? (
+  // LARGE SCREEN: Show all 4 fields in a single row
+  <View style={[styles.row4, { flexWrap: 'nowrap' }]}>
+    <View style={styles.flexItem}>
+      <Text style={styles.label}>Total Qty</Text>
+      <TextInput
+        style={styles.input3}
+        value={totalCount}
+        editable={false}
+        keyboardType="numeric"
+      />
+    </View>
+    <View style={styles.flexItem}>
+      <Text style={styles.label}>OK Qty</Text>
+      <TextInput
+        style={styles.input3}
+        value={goodPart}
+        editable={false}
+        keyboardType="numeric"
+      />
+    </View>
+    <View style={styles.flexItem}>
+      <Text style={styles.label}>Total NOK Qty</Text>
+      <TextInput
+        style={styles.input3}
+        value={rejectedCount}
+        editable={false}
+        keyboardType="numeric"
+      />
+    </View>
+    <View style={styles.flexItem}>
+      <Text style={styles.label}>NOT OK Entry</Text>
+      <TextInput
+        style={styles.input3}
+        value={count}
+        onChangeText={setCount}
+        keyboardType="numeric"
+      />
+    </View>
+  </View>
+) : (
+  // SMALL SCREEN: Render same as before (2 rows)
+  <>
+    <View style={styles.row4}>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Total Qty</Text>
+        <TextInput
+          style={styles.input3}
+          value={totalCount}
+          editable={false}
+          keyboardType="numeric"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Ok Qty</Text>
+        <TextInput
+          style={styles.input3}
+          value={goodPart}
+          editable={false}
+          keyboardType="numeric"
+        />
+      </View>
+    </View>
+
+    <View style={[styles.row4, { marginTop: verticalScale(-4) }]}>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Total NOK Qty</Text>
+        <TextInput
+          style={styles.input3}
+          value={rejectedCount}
+          editable={false}
+          keyboardType="numeric"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>NOT OK Entry</Text>
+        <TextInput
+          style={styles.input3}
+          value={count}
+          onChangeText={setCount}
+          keyboardType="numeric"
+        />
+      </View>
+    </View>
+  </>
+)}
 
         <View style={styles.row5}>
           <Text style={styles.label}>Remark</Text>
