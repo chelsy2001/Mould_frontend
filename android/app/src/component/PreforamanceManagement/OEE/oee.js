@@ -14,6 +14,7 @@ import { BASE_URL } from '../../Common/config/config';
 import Header from '../../Common/header/header';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // adjust path if needed
 
@@ -204,25 +205,24 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
 //     }
 //   });
 // };
-const handleCallToggle = async (deptId) => {
-  try {
-    const stationIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
-    const StationID = stationIdResponse.data.EquipmentID;
 
-    await axios.post(`${BASE_URL}/oee/call-logging`, {
-      StationID,
-      DepartmentID: deptId,
+const handleCallToggle = async (departmentName) => {
+  try {
+    await axios.post(`${BASE_URL}/OEE/logCall`, {
+      EquipmentName: equipmentName,
+      DepartmentName: departmentName,
     });
 
-    // Update local state for UI feedback (optional)
     setCallStatus((prevStatus) => {
-      const current = prevStatus[deptId];
-      if (current.status === 0) {
-        return {
+      const current = prevStatus[departmentName];
+      let updatedStatus;
+
+      if (!current || current.status === 0) {
+        updatedStatus = {
           ...prevStatus,
-          [deptId]: {
+          [departmentName]: {
             status: 1,
-            startTime: new Date(),
+            startTime: new Date().toISOString(),
             endTime: null,
             duration: null,
           },
@@ -230,31 +230,54 @@ const handleCallToggle = async (deptId) => {
       } else {
         const endTime = new Date();
         const durationInMinutes = Math.round((endTime - new Date(current.startTime)) / 60000);
-        return {
+        updatedStatus = {
           ...prevStatus,
-          [deptId]: {
+          [departmentName]: {
             ...current,
             status: 0,
-            endTime,
+            endTime: endTime.toISOString(),
             duration: `${durationInMinutes} min`,
           },
         };
       }
+
+      // Save to AsyncStorage
+      AsyncStorage.setItem('callStatus', JSON.stringify(updatedStatus));
+      return updatedStatus;
     });
 
+    Alert.alert('Success', `${departmentName} call logged successfully.`);
   } catch (error) {
-    console.error('Error calling stored procedure:', error);
-    Alert.alert('Error', 'Failed to log call.');
+    console.error(`Error logging call for ${departmentName}:`, error);
+    Alert.alert('Error', `Failed to log call for ${departmentName}.`);
   }
 };
 
-const getCallBtnStyle = (deptId) => {
-  const isActive = callStatus[deptId]?.status === 1;
+useEffect(() => {
+  const loadCallStatus = async () => {
+    try {
+      const storedStatus = await AsyncStorage.getItem('callStatus');
+      if (storedStatus) {
+        setCallStatus(JSON.parse(storedStatus));
+      }
+    } catch (error) {
+      console.error('Failed to load call status from storage', error);
+    }
+  };
+
+  loadCallStatus();
+}, []);
+
+
+const getCallBtnStyle = (departmentName) => {
+  const isActive = callStatus[departmentName]?.status === 1;
   return {
     ...styles.callBtn,
     backgroundColor: isActive ? 'green' : '#003366',
   };
 };
+
+
 
 
 
@@ -355,27 +378,28 @@ const getCallBtnStyle = (deptId) => {
         {/* Calls Section */}
        {/* Calls Section */}
 <View style={styles.section}>
-  <View style={styles.row4}>
-    <TouchableOpacity style={getCallBtnStyle(1)} onPress={() => handleCallToggle(1)}>
-      <Text style={styles.callText}>Maintenance</Text>
-    </TouchableOpacity>
+ <View style={styles.row4}>
+  <TouchableOpacity style={getCallBtnStyle("Maintenance")} onPress={() => handleCallToggle("Maintenance")}>
+    <Text style={styles.callText}>Maintenance</Text>
+  </TouchableOpacity>
 
-    <TouchableOpacity style={getCallBtnStyle(2)} onPress={() => handleCallToggle(2)}>
-      <Text style={styles.callText}>Production</Text>
-    </TouchableOpacity>
+  <TouchableOpacity style={getCallBtnStyle("Production")} onPress={() => handleCallToggle("Production")}>
+    <Text style={styles.callText}>Production</Text>
+  </TouchableOpacity>
 
-    <TouchableOpacity style={getCallBtnStyle(3)} onPress={() => handleCallToggle(3)}>
-      <Text style={styles.callText}>Quality</Text>
-    </TouchableOpacity>
-  </View>
+  <TouchableOpacity style={getCallBtnStyle("Quality")} onPress={() => handleCallToggle("Quality")}>
+    <Text style={styles.callText}>Quality</Text>
+  </TouchableOpacity>
 </View>
-<View style={styles.section}>
+
+</View>
+{/* //<View style={styles.section}>
   {Object.entries(callStatus).map(([id, info]) => (
     <Text key={id} style={{ fontSize: 12 }}>
       {`Dept ${id} | Status: ${info.status} | Duration: ${info.duration || '-'} `}
     </Text>
   ))}
-</View>
+</View> */}
 
       </ScrollView>
     </View>
