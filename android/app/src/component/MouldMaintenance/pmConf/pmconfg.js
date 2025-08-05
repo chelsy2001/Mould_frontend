@@ -103,19 +103,19 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
           setMouldData(mouldDetail);
           setError('');
           if (mouldDetail.MouldStatus === 3) {
-            Alert.alert('Info', 'This mould is already in Preventive Maintenance.');
+            Alert.alert('Info', 'This Mould is already in Preventive Maintenance.');
             return;
           }
           if (mouldDetail.MouldStatus !== 1) {
-            Alert.alert('Info', 'To start preventive maintenance, the mould must be "Mould UnLoaded".');
+            Alert.alert('Info', 'To start Preventive Maintenance, the Mould must be "Mould UnLoaded".');
             return;
           }
           if (mouldDetail.MouldPMStatus === 1) {
-            Alert.alert('Info', 'We Can not start pm beacuse Pm is not in warring ,alarm or Due state.'); 
+            Alert.alert('Info', 'We Can not start PM Beacuse Pm is not in Warring ,Alarm or Due state.'); 
             return;
           }
         } else {
-          setError('No mould data found.');
+          setError('No Mould data found.');
           setMouldData(null);
         }
       })
@@ -157,7 +157,7 @@ const PmConfig = ({ username ,setIsLoggedIn}) => {
     }
 
     if (mouldData.MouldStatus === 3) {
-      Alert.alert('Info', 'This mould is already in Preventive Maintenance.');
+      Alert.alert('Info', 'This Mould is already in Preventive Maintenance.');
       return;
     }
 

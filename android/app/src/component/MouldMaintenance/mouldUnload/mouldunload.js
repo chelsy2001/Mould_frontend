@@ -67,7 +67,7 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
                 {
                   text: 'OK',
                   onPress: async () => {
-                    console.log('Calling updateValidationStatus API with:', machineScan, mouldScan);
+                    console.log('Calling UpdateValidationStatus API with:', machineScan, mouldScan);
                     try {
                       const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatus`, {
                         EquipmentID: machineScan,
@@ -101,7 +101,7 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
               if (mouldData.MouldStatus === 6) {
                 setIsMouldNotInUse(true);
                 setProductName(''); // Clear product name
-                Alert.alert('Warning', 'This mould is not in use.');
+                Alert.alert('Warning', 'This Mould is not in use.');
               } else {
                 setIsMouldNotInUse(false);
               }
@@ -135,7 +135,7 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
     if (mouldScan && machineScan) {
       setModalVisible(true);
     } else {
-      Alert.alert('Info', 'This mould does not belong to this machine.');
+      Alert.alert('Info', 'This Mould does not belong to this Machine.');
     }
   };
 
@@ -165,7 +165,7 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
       // Show confirmation alert for "Not in Use" status
       Alert.alert(
         'Confirm',
-        'Are you sure you want to set the mould as "Not in Use"?',
+        'Are you sure you want to set the Mould as "Not in Use"?',
         [
           {
             text: 'Cancel',
@@ -242,11 +242,11 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
           },
         ]);
       } else {
-        Alert.alert('Error', 'Failed to update mould.');
+        Alert.alert('Error', 'Failed to Update Mould.');
       }
     } catch (error) {
-      console.error('Error updating mould:', error);
-      Alert.alert('Error', 'Error updating mould. Please try again.');
+      console.error('Error Updating Mould:', error);
+      Alert.alert('Error', 'Error Updating Mould. Please try again.');
     }
   };
 

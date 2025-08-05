@@ -142,10 +142,10 @@ const MouldStatus = ({ username ,setIsLoggedIn}) => {
         setFilteredMould(json.data[0]);
       } else {
         setFilteredMould(null);
-        console.error('No mould data found');
+        console.error('No Mould data found');
       }
     } catch (error) {
-      console.error('Error fetching mould details:', error);
+      console.error('Error fetching Mould details:', error);
     }
   };
 

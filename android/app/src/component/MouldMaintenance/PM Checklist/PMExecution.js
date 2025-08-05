@@ -66,7 +66,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                 }
             })
             .catch(err => {
-                Alert.alert('Error', 'Failed to update checkpoint');
+                Alert.alert('Error', 'Failed to Update Checkpoint');
                 console.error(err);
             });
     };
@@ -94,7 +94,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                             onPress: () => navigation.navigate('PMApprove', { checklistID }), // Pass checklistID if needed
                         },])
                 } else {
-                    Alert.alert('Error', response.message || 'Failed to move to execution.');
+                    Alert.alert('Error', response.message || 'Failed to Move to Execution.');
                 }
             })
             .catch(error => {

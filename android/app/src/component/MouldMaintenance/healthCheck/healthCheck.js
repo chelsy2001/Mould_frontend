@@ -155,7 +155,7 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
 
           // Check if the mouldHealthStatus is already in status 
           if (mouldDetail.MouldHealthStatus === 4) {
-            Alert.alert('Info', 'In this mould health check is already started.');
+            Alert.alert('Info', 'In this Mould Health Check is Already Started.');
             return; // Exit if this condition is met
           }
 
@@ -182,19 +182,19 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
   // Function to handle the Confirm button click and update the mould status
 const handleConfirm = async () => {
   if (!mouldData || !mouldid) {
-    Alert.alert('Error', 'Please fetch mould data before confirming.');
+    Alert.alert('Error', 'Please fetch Mould data before confirming.');
     return;
   }
 
   // Prevent updating if the status is already 4 (in health check confirmation)
   if (mouldData.MouldHealthStatus === 4) {
-    Alert.alert('Info', 'This mould is already in health check confirmation.');
+    Alert.alert('Info', 'This Mould is already in Health check Confirmation.');
     return;
   }
 
   // Ensure the mould is either in status 1 or 3 to start Health Check
   if (mouldData.MouldStatus === 3) {
-    Alert.alert('Info', 'Mould is in preventive mantinenace we can not start helath check for this mould');
+    Alert.alert('Info', 'Mould is in preventive mantinenace we can not start health check for this Mould');
     return;
   }
 
@@ -217,8 +217,8 @@ const handleConfirm = async () => {
       Alert.alert('Error', 'Failed to start Health Check.');
     }
   } catch (error) {
-    console.error('Error updating mould status:', error);
-    Alert.alert('Error', 'Error updating Health Check status. Please try again.');
+    console.error('Error updating Mould Status:', error);
+    Alert.alert('Error', 'Error updating Health Check Status. Please try again.');
   }
 };
 

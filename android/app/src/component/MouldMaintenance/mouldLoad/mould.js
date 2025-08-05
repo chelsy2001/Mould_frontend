@@ -191,8 +191,8 @@ const MouldLoadingScreen = ({ username }) => {
           Alert.alert('Error', 'Failed to mould machine validation.');
         }
       } catch (error) {
-        console.error('Error updating mould machine validation:', error);
-        Alert.alert('Error', 'Error updating mould machine validation. Please try again.');
+        console.error('Error Updating Mould Machine Validation:', error);
+        Alert.alert('Error', 'Error Updating Mould Machine Validation. Please try again.');
       }
     } else {
       Alert.alert('Info', 'Please enter both MouldID and MachineID.');
