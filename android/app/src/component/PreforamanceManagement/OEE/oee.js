@@ -375,6 +375,7 @@ const getCallBtnStyle = (deptId) => {
       {`Dept ${id} | Status: ${info.status} | Duration: ${info.duration || '-'} `}
     </Text>
   ))}
+
 </View>
 
       </ScrollView>
