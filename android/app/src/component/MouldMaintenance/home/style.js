@@ -10,17 +10,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e9f5',
   },
   menuContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingTop: 15,
-  },
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between', // Better than space-around for alignment
+  alignItems: 'center',
+  paddingTop: 15,
+},
+
 menuItem: {
-  width: width > 400 ? '30%' : '45%',
-  height: 130, // slightly increased to accommodate image and text
-  marginVertical: 15,
-  justifyContent: 'flex-start', // align from top
+  width: '46%', // Almost 2 per row with margin
+  height: 130,
+  marginVertical: 10,
+  marginHorizontal: '2%', // horizontal gap between two boxes
+  justifyContent: 'flex-start',
   alignItems: 'center',
   backgroundColor: '#003366',
   borderRadius: 10,
@@ -28,9 +30,10 @@ menuItem: {
   paddingHorizontal: 5,
   overflow: 'hidden',
 },
+
   menuText: {
     marginTop: 10,
-    fontSize: width > 400 ? 16 : 14, // Adjust font size for smaller screens
+    fontSize: width > 400 ? 14 : 14, // Adjust font size for smaller screens
     height: 50, 
     fontWeight: '500',
     color: 'white',

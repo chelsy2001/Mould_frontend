@@ -72,6 +72,13 @@ const HomePage = ({ setIsLoggedIn, username }) => {
             <Text style={styles.menuText}>BreakDown</Text>
           </View>
         </TouchableOpacity>
+
+         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMStatus')}>
+          <Image style={styles.icon} source={require('../../Common/assets/pmmont.png')} />
+          <View style={styles.labelWrapper}>
+            <Text style={styles.menuText}>Preventive Maintenance Monitoring</Text>
+          </View>
+        </TouchableOpacity>
         </>
         )}
 
