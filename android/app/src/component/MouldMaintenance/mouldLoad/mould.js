@@ -34,18 +34,6 @@ const MouldLoadingScreen = ({ username }) => {
   const machineInputRef = useRef(null);
   const mouldInputRef = useRef(null);
 
-  const callFailedValidationAPI = async () => {
-  try {
-    await axios.post(`${BASE_URL}/mould/updateValidationStatusFailed`, {
-      EquipmentID: machineScan,
-      mouldID: mouldScan
-    });
-    console.log('❗Failed validation status updated in DB.');
-  } catch (error) {
-    console.error('❌ Error calling updateValidationStatusFailed:', error.response?.data || error.message);
-  }
-};
-
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -77,7 +65,6 @@ const MouldLoadingScreen = ({ username }) => {
             ) {
               if (data.ProductGroupID == null) {
                 Alert.alert('Error', 'Machine and Mould validation failed — ProductGroupID is missing.');
-                await callFailedValidationAPI(); // 🛑 Call on ProductGroupID null
                 resetFields();
                 return;
               }
@@ -98,7 +85,7 @@ const MouldLoadingScreen = ({ username }) => {
                   onPress: async () => {
                     console.log('Calling updateValidationStatus API with:', machineScan, mouldScan);
                     try {
-                      const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatus`, {
+                      const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatusLoad`, {
                         EquipmentID: machineScan,
                         mouldID: mouldScan,
                       });
@@ -118,20 +105,17 @@ const MouldLoadingScreen = ({ username }) => {
               ]);
 
             } else {
-              Alert.alert('Error', 'Machine and Mould not in system.');
-              await callFailedValidationAPI(); // 🛑 Call on mismatch
+              Alert.alert('Error', 'Machine and Mould not in system.')
               resetFields();
             }
           } else {
             Alert.alert('Error', 'No data found for this combination.');
-            await callFailedValidationAPI(); // 🛑 Call on empty data
             resetFields();
           }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
         setProductName('Error fetching data');
-        await callFailedValidationAPI(); // 🛑 Call on API failure
       }
     }
   };

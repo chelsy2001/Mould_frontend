@@ -69,7 +69,7 @@ const MouldUnLoadingScreen = ({ username, setIsLoggedIn }) => {
                   onPress: async () => {
                     console.log('Calling UpdateValidationStatus API with:', machineScan, mouldScan);
                     try {
-                      const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatus`, {
+                      const updateRes = await axios.post(`${BASE_URL}/mould/updateValidationStatUnload`, {
                         EquipmentID: machineScan,
                         mouldID: mouldScan,
                       });
