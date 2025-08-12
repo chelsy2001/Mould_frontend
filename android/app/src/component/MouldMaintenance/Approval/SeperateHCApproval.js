@@ -13,7 +13,7 @@ import {
 import Header from '../../Common/header/header';
 import { useRoute } from '@react-navigation/native';
 import styles from './SeperateHCApprovalStyle';
-import { BASE_URL ,REPORT_URL} from '../../Common/config/config';
+import { BASE_URL, REPORT_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,7 +31,26 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
     const [password, setPassword] = useState('');
     const [modalMode, setModalMode] = useState(''); // 'approve' or 'edit'
 
-
+    const getHCStatusText = (hcStatus) => {
+        switch (hcStatus) {
+            case 1:
+                return 'HC Not Started';
+            case 2:
+                return 'HC Warring';
+            case 3:
+                return 'HC Alarm';
+            case 4:
+                return 'HC in Prepration';
+            case 5:
+                return 'waiting for approval';
+            case 6:
+                return 'Approived';
+            case 7:
+                return 'HC Due';
+            default:
+                return 'Unknown Status';
+        }
+    };
     //integrate the checklist api
     useEffect(() => {
         fetch(`${BASE_URL}/SeperateHCApproval/HCChecklistForApproval`)
@@ -68,18 +87,18 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
 
     //For refresh data
 
-const fetchChecklistData = () => {
-  fetch(`${BASE_URL}/SeperateHCApproval/HCChecklistForApproval`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === 200) {
-        setChecklistData(data.data);
-      } else {
-        console.log('Error:', data.message);
-      }
-    })
-    .catch(error => console.error('API fetch error:', error));
-};
+    const fetchChecklistData = () => {
+        fetch(`${BASE_URL}/SeperateHCApproval/HCChecklistForApproval`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    setChecklistData(data.data);
+                } else {
+                    console.log('Error:', data.message);
+                }
+            })
+            .catch(error => console.error('API fetch error:', error));
+    };
 
 
     return (
@@ -87,7 +106,7 @@ const fetchChecklistData = () => {
             <Header username={username} title="HC Approval" />
             <ScrollView
                 nestedScrollEnabled={true}
-                style={{ maxHeight: 700, marginBottom: 30 ,marginTop: 10}}
+                style={{ maxHeight: 700, marginBottom: 30, marginTop: 10 }}
             >
                 {checklistData.map((item, index) => (
                     <View>
@@ -101,49 +120,55 @@ const fetchChecklistData = () => {
                                 <Text style={styles.label}>Checklist Name</Text>
                                 <TextInput style={[styles.input1, { width: 280 }]} value={item.CheckListName} editable={false} />
 
+                                <Text style={styles.label}>MouldID</Text>
+                                <TextInput style={[styles.input1, { width: 120 }]} value={item.MouldID.toString()} editable={false} />
+
+
                                 <Text style={styles.label}>Mould Name</Text>
                                 <TextInput style={styles.input1} value={item.MouldName} editable={false} />
 
                                 <Text style={styles.label}>HCFreqCount</Text>
                                 <TextInput style={[styles.input1, { width: 120 }]} value={item.HCFreqCount.toString()} editable={false} />
 
-                                <Text style={styles.label}>HCFreqDays</Text>
-                                <TextInput style={[styles.input1, { width: 120 }]} value={item.HCFreqDays.toString()} editable={false} />
+
                             </View>
 
                             <View style={styles.row2}>
+                                <Text style={styles.label}>HCFreqDays</Text>
+                                <TextInput style={[styles.input1, { width: 80 ,marginLeft:38 }]} value={item.HCFreqDays.toString()} editable={false} />
+
                                 <Text style={styles.label}>HCWarningCount</Text>
-                                <TextInput style={[styles.input2, { width: 80 }]} value={item.HCWarningCount.toString()} editable={false} />
+                                <TextInput style={[styles.input2, { width: 100 }]} value={item.HCWarningCount.toString()} editable={false} />
 
                                 <Text style={styles.label}>HCWarningDays</Text>
                                 <TextInput style={[styles.input2, { width: 80 }]} value={item.HCWarningDays.toString()} editable={false} />
 
                                 <Text style={styles.label}>Instance</Text>
-                                <TextInput style={[styles.input2, { width: 80 }]} value={item.Instance.toString()} editable={false} />
+                                <TextInput style={[styles.input2, { width: 50 }]} value={item.Instance.toString()} editable={false} />
 
                                 <Text style={styles.label}>HCStatus</Text>
-                                <TextInput style={[styles.input2, { width: 150 }]} value={item.HCStatus.toString()} editable={false} />
+                                <TextInput style={[styles.input2, { width: 154}]} value={getHCStatusText(item.HCStatus)} editable={false} />
 
 
                             </View>
 
                             <View style={styles.row3}>
-                                                               <TouchableOpacity
-                                 style={[styles.button, { marginRight: 10, width: '14%' }]}
-                                 onPress={() => {
-                                   // const reportUrl = `http://192.168.1.15:8083`;
-                                   const reportUrl = `${REPORT_URL}`
-                                   // 👆 Replace with your actual report path and query param
-                               
-                                   Linking.openURL(reportUrl)
-                                     .catch(err => {
-                                       console.error('Failed to open browser:', err);
-                                       Alert.alert('Error', 'Failed to open report in browser');
-                                     });
-                                 }}
-                               >
-                                 <Text style={styles.buttonText}>View Reports</Text>
-                               </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, { marginRight: 10, width: '14%' }]}
+                                    onPress={() => {
+                                        // const reportUrl = `http://192.168.1.15:8083`;
+                                        const reportUrl = `${REPORT_URL}`
+                                        // 👆 Replace with your actual report path and query param
+
+                                        Linking.openURL(reportUrl)
+                                            .catch(err => {
+                                                console.error('Failed to open browser:', err);
+                                                Alert.alert('Error', 'Failed to open report in browser');
+                                            });
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>View Reports</Text>
+                                </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={[styles.button, { marginRight: 10 }]}
@@ -195,14 +220,15 @@ const fetchChecklistData = () => {
                             Login
                         </Text>
                         <View>
-                            <Text style={styles.label}>User</Text>
+                            <Text style={[styles.label, { marginLeft: '12%' }]}>User</Text>
                             <SelectList
                                 setSelected={setSelectedUser}
                                 data={userList}
                                 save="value"
                                 placeholder="Select User"
                                 boxStyles={{
-                                    marginRight: '4%',
+                                 
+                                    marginLeft: '12%',
                                     width: 250,
                                     backgroundColor: 'white',
                                 }}
@@ -211,15 +237,15 @@ const fetchChecklistData = () => {
                                 }}
 
                             />
-                            <Text style={styles.label}>Password</Text>
-                            <TextInput style={[styles.input2, { width: 250 }]}
+                            <Text style={[styles.label, { marginLeft: '12%' }]}>Password</Text>
+                            <TextInput style={[styles.input2, { width: 250 , marginLeft: '12%'}]}
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={true}
                             />
                         </View>
 
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                             <TouchableOpacity
                                 style={[styles.button, { marginRight: 10, width: '30%' }]}
                                 onPress={() => {
@@ -256,7 +282,7 @@ const fetchChecklistData = () => {
                                                         .then(result => {
                                                             if (result.status === 200) {
                                                                 Alert.alert("Approved", "Checklist approved successfully");
-                                                                   fetchChecklistData(); // ✅ refresh
+                                                                fetchChecklistData(); // ✅ refresh
                                                                 setIsModalVisible(false);
                                                                 setPassword('');
                                                                 setSelectedUser('');

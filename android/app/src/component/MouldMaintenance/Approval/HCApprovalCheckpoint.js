@@ -139,6 +139,7 @@ const HCApprovalCheckpoint = ({ username, setIsLoggedIn }) => {
                                         setCheckpoints(updated);
                                     }}
                                     placeholder="Enter observation"
+                                    placeholderTextColor="#A9A9A9"
                                 />
 
                                 <TouchableOpacity

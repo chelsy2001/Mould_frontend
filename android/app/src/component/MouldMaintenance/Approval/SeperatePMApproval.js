@@ -33,6 +33,29 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
     const [modalMode, setModalMode] = useState(''); // 'approve' or 'edit'
 
 
+    const getPMStatusText = (pmStatus) => {
+        switch (pmStatus) {
+            case 1:
+                return 'PM Not Started';
+            case 2:
+                return 'PM Warring';
+            case 3:
+                return 'PM Alarm';
+            case 4:
+                return 'PM in Prepration';
+            case 5:
+                return 'PM in MainExcution';
+            case 6:
+                return 'waiting for approval';
+            case 7:
+                return 'Approived';
+            case 8:
+                return 'PM Due';
+            default:
+                return 'Unknown Status';
+        }
+    }
+
     //integrate the checklist api
     useEffect(() => {
         fetch(`${BASE_URL}/SeperatePMApproval/PMChecklistForApproval`)
@@ -54,7 +77,7 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
         fetch(`${BASE_URL}/SeperatePMApproval/Users`)
             .then((res) => res.json())
             .then((data) => {
-                   console.log("User fetch response:", data); 
+                console.log("User fetch response:", data);
                 if (data.status === 200) {
                     // Convert user list into format required by SelectList
                     const formattedUsers = data.data.map((user, index) => ({
@@ -90,7 +113,7 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
             <Header username={username} title="PM Approval" />
             <ScrollView
                 nestedScrollEnabled={true}
-                style={{ maxHeight: 700, marginBottom: 30, marginTop:20 }}
+                style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}
             >
                 {checklistData.map((item, index) => (
                     <View>
@@ -104,17 +127,22 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
                                 <Text style={styles.label}>Checklist Name</Text>
                                 <TextInput style={[styles.input1, { width: 280 }]} value={item.CheckListName} editable={false} />
 
+
+                                <Text style={styles.label}>MouldID</Text>
+                                <TextInput style={[styles.input1, { width: 120 }]} value={item.MouldID.toString()} editable={false} />
+
                                 <Text style={styles.label}>Mould Name</Text>
                                 <TextInput style={styles.input1} value={item.MouldName} editable={false} />
 
                                 <Text style={styles.label}>PMFreqCount</Text>
                                 <TextInput style={[styles.input1, { width: 120 }]} value={item.PMFreqCount.toString()} editable={false} />
 
-                                <Text style={styles.label}>PMFreqDays</Text>
-                                <TextInput style={[styles.input1, { width: 120 }]} value={item.PMFreqDays.toString()} editable={false} />
+
                             </View>
 
                             <View style={styles.row2}>
+                                <Text style={styles.label}>PMFreqDays</Text>
+                                <TextInput style={[styles.input1, { width: 80, marginLeft: 37 }]} value={item.PMFreqDays.toString()} editable={false} />
                                 <Text style={styles.label}>PMWarningCount</Text>
                                 <TextInput style={[styles.input2, { width: 80 }]} value={item.PMWarningCount.toString()} editable={false} />
 
@@ -122,10 +150,10 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
                                 <TextInput style={[styles.input2, { width: 80 }]} value={item.PMWarningDays.toString()} editable={false} />
 
                                 <Text style={styles.label}>Instance</Text>
-                                <TextInput style={[styles.input2, { width: 80 }]} value={item.Instance.toString()} editable={false} />
+                                <TextInput style={[styles.input2, { width: 50 }]} value={item.Instance.toString()} editable={false} />
 
                                 <Text style={styles.label}>PMStatus</Text>
-                                <TextInput style={[styles.input2, { width: 150 }]} value={item.PMStatus.toString()} editable={false} />
+                                <TextInput style={[styles.input2, { width: 167 }]} value={getPMStatusText(item.PMStatus)} editable={false} />
 
 
                             </View>
@@ -198,14 +226,15 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
                             Login
                         </Text>
                         <View>
-                            <Text style={styles.label}>User</Text>
+                            <Text style={[styles.label, { marginLeft: '12%' }]}>User</Text>
                             <SelectList
                                 setSelected={setSelectedUser}
                                 data={userList}
                                 save="value"
                                 placeholder="Select User"
                                 boxStyles={{
-                                    marginRight: '4%',
+
+                                    marginLeft: '12%',
                                     width: 250,
                                     backgroundColor: 'white',
                                 }}
@@ -214,15 +243,15 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
                                 }}
 
                             />
-                            <Text style={styles.label}>Password</Text>
-                            <TextInput style={[styles.input2, { width: 250 }]}
+                            <Text style={[styles.label, { marginLeft: '12%' }]}>Password</Text>
+                            <TextInput style={[styles.input2, { width: 250, marginLeft: '12%' }]}
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={true}
                             />
                         </View>
 
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                             <TouchableOpacity
                                 style={[styles.button, { marginRight: 10, width: '30%' }]}
                                 onPress={() => {

@@ -13,7 +13,7 @@ import {
 import Header from '../../Common/header/header';
 import { useRoute } from '@react-navigation/native';
 import styles from './HCApproveStyle';
-import { BASE_URL,REPORT_URL } from '../../Common/config/config';
+import { BASE_URL, REPORT_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,6 +24,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
     const { checklistID } = route.params;
     const [checkpoints, setCheckpoints] = useState([]);
     const navigation = useNavigation();
+
 
 
     useEffect(() => {
@@ -53,7 +54,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
 
     return (<View style={styles.container}>
         <Header username={username} title="HC Approval" />
-        <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30,marginTop:20 }}>
+        <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
             <View>
                 {checkpoints.map((item, index) => (
                     <View key={index}
@@ -142,25 +143,25 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
             </View>
         </ScrollView>
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
-                                            <TouchableOpacity
-  style={[styles.button, { marginRight: 10, width: '14%' }]}
-  onPress={() => {
-    // const reportUrl = `http://192.168.1.15:8083`;
-    const reportUrl = `${REPORT_URL}`
-    // 👆 Replace with your actual report path and query param
+            <TouchableOpacity
+                style={[styles.button, { marginRight: 10, width: '14%' }]}
+                onPress={() => {
+                    // const reportUrl = `http://192.168.1.15:8083`;
+                    const reportUrl = `${REPORT_URL}`
+                    // 👆 Replace with your actual report path and query param
 
-    Linking.openURL(reportUrl)
-      .catch(err => {
-        console.error('Failed to open browser:', err);
-        Alert.alert('Error', 'Failed to open report in browser');
-      });
-  }}
->
-  <Text style={styles.buttonText}>View Reports</Text>
-</TouchableOpacity>
+                    Linking.openURL(reportUrl)
+                        .catch(err => {
+                            console.error('Failed to open browser:', err);
+                            Alert.alert('Error', 'Failed to open report in browser');
+                        });
+                }}
+            >
+                <Text style={styles.buttonText}>View Reports</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.button}
-               onPress={() => navigation.navigate('MouldHome')}
+                onPress={() => navigation.navigate('MouldHome')}
 
             >
                 <Text style={styles.buttonText}>Close</Text>
@@ -170,6 +171,6 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
     );
 };
 
-{/* <Text style={styles.buttonText} onPress={() => navigation.navigate('MouldHome')}>Close</Text> */}
+{/* <Text style={styles.buttonText} onPress={() => navigation.navigate('MouldHome')}>Close</Text> */ }
 
 export default HCApprove;

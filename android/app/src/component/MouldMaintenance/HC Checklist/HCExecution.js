@@ -8,7 +8,9 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Platform,
-    Animated
+    Animated,
+    PermissionsAndroid,
+    Image
 } from 'react-native';
 import Header from '../../Common/header/header';
 import { useRoute } from '@react-navigation/native';
@@ -16,10 +18,19 @@ import styles from './HCExecutionStyle';
 import { BASE_URL } from '../../Common/config/config';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { launchCamera } from 'react-native-image-picker';
+import axios from 'axios';
+
+
 const HCExecution = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
     const { checklistID } = route.params;
     const [checkpoints, setCheckpoints] = useState([]);
+
+    const [imageUri, setImageUri] = useState(null);
+    const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
+
+
     const navigation = useNavigation();
 
 
@@ -109,10 +120,72 @@ const HCExecution = ({ username, setIsLoggedIn }) => {
                 Alert.alert('Error', 'Submission failed: ' + error.message);
             });
     };
+
+    const requestCameraPermission = async () => {
+        if (Platform.OS === 'android') {
+            try {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.CAMERA,
+                    {
+                        title: 'Camera Permission',
+                        message: 'App needs access to your camera',
+                        buttonPositive: 'OK',
+                    }
+                );
+                return granted === PermissionsAndroid.RESULTS.GRANTED;
+            } catch (err) {
+                console.warn(err);
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const openCamera = async (checkpoint) => {
+        const hasPermission = await requestCameraPermission();
+        if (!hasPermission) return;
+
+        launchCamera({ mediaType: 'photo', quality: 0.7, saveToPhotos: true }, async (response) => {
+            if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
+                const uri = response.assets[0].uri;
+                setImageUri(uri);
+                setCurrentCheckpoint(checkpoint);
+
+                const fileName = `${checkpoint.CheckListID}_${checkpoint.CheckPointID}.jpg`;
+                const formData = new FormData();
+                formData.append('image', {
+                    uri,
+                    type: 'image/jpeg',
+                    name: fileName,
+                });
+
+                try {
+                    const uploadResponse = await axios.post(
+                        `${BASE_URL}/HCMouldExecution/upload-image-to-checkpoint/${checkpoint.CheckListID}/${checkpoint.CheckPointID}`,
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        }
+                    );
+
+                    if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
+                        Alert.alert('✅ Image uploaded successfully');
+                    } else {
+                        Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error.response?.data || error.message);
+                    Alert.alert('❌ Error uploading image');
+                }
+            }
+        });
+    };
     return (
         <View style={styles.container}>
             <Header username={username} title="HC Execution" />
-            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30,marginTop:20 }}>
+            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
                 <View>
                     {checkpoints.map((item, index) => (
                         <View key={index}
@@ -153,6 +226,7 @@ const HCExecution = ({ username, setIsLoggedIn }) => {
                                         setCheckpoints(updated);
                                     }}
                                     placeholder="Enter observation"
+                                    placeholderTextColor="#A9A9A9"
                                 />
                             </View>
 
@@ -200,7 +274,10 @@ const HCExecution = ({ username, setIsLoggedIn }) => {
                                     <Icon name="camera" size={24} color="white" />
                                 </TouchableOpacity> */}
                                 {item.CheckingMethod === 'Visual' && (
-                                    <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]}>
+                                    <TouchableOpacity
+                                        style={[styles.iconButton, { marginRight: 10 }]}
+                                        onPress={() => openCamera(item)}
+                                    >
                                         <Icon name="camera" size={24} color="white" />
                                     </TouchableOpacity>
                                 )}
@@ -232,7 +309,7 @@ const HCExecution = ({ username, setIsLoggedIn }) => {
 
                 <TouchableOpacity style={styles.button}
                     //  onPress={() => navigation.goBack()}
-                    onPress={() => navigation.navigate('HCApprove', { checklistID })}
+                    onPress={() => navigation.navigate('HCMonitoring', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>

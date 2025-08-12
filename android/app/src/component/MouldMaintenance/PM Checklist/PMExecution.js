@@ -59,7 +59,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                     Alert.alert('Success', response.message);
                     const updated = [...checkpoints];
                     updated[index].isDisabled = true; // disable after update
-                     updated[index].OKNOK = oknok;  
+                    updated[index].OKNOK = oknok;
                     setCheckpoints(updated);
                 } else {
                     Alert.alert('Error', response.message);
@@ -82,7 +82,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-             body: JSON.stringify({ CheckListID: checklistID })
+            body: JSON.stringify({ CheckListID: checklistID })
         })
             .then(res => res.json())
             .then(response => {
@@ -106,7 +106,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
     return (
         <View style={styles.container}>
             <Header username={username} title="PM Execution" />
-            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30 ,marginTop:20 }}>
+            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
                 <View>
                     {checkpoints.map((item, index) => (
                         <View key={index}
@@ -147,6 +147,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                         setCheckpoints(updated);
                                     }}
                                     placeholder="Enter observation"
+                                    placeholderTextColor="#A9A9A9"
                                 />
                             </View>
 
@@ -193,11 +194,11 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                 {/* <TouchableOpacity style={[styles.iconButton, { marginRight: 10, }]} >
                                     <Icon name="camera" size={24} color="white" />
                                 </TouchableOpacity> */}
-  {item.CheckingMethod === 'Visual' && (
-        <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]}>
-            <Icon name="camera" size={24} color="white" />
-        </TouchableOpacity>
-    )}
+                                {item.CheckingMethod === 'Visual' && (
+                                    <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]}>
+                                        <Icon name="camera" size={24} color="white" />
+                                    </TouchableOpacity>
+                                )}
                                 <TouchableOpacity
                                     style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
                                     onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 1, index)}
@@ -226,7 +227,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
 
                 <TouchableOpacity style={styles.button}
                     //  onPress={() => navigation.goBack()}
-                    onPress={() => navigation.navigate('PMApprove', { checklistID })}
+                    onPress={() => navigation.navigate('PMPreparation', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>

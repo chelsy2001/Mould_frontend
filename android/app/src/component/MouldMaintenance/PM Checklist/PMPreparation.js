@@ -207,6 +207,7 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
                                         setCheckpoints(updated);
                                     }}
                                     placeholder="Enter observation"
+                                    placeholderTextColor="#A9A9A9"
                                 />
                             </View>
 
@@ -266,7 +267,7 @@ const PMPreparation = ({ username, setIsLoggedIn }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('PMExecution', { checklistID })}
+                    onPress={() => navigation.navigate('PMMouldMonitoring', { checklistID })}
                 >
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>

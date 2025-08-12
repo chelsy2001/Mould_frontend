@@ -75,7 +75,7 @@ const MouldMonitoringStyle = StyleSheet.create({
         padding: 3,
         height: 42,
         color: 'black',
-        marginRight:70,
+        marginRight:31,
          marginHorizontal:9 
     },
 
@@ -92,7 +92,18 @@ const MouldMonitoringStyle = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
-
+  iconButton: {
+    backgroundColor: '#2980b9',
+    borderRadius: 30,
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
 });
 
 
