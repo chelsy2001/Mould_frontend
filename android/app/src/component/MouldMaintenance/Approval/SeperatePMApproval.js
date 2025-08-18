@@ -121,7 +121,7 @@ const SeperatePMApproval = ({ username, setIsLoggedIn }) => {
                             styles.Container1,
                             item.PMStatus === 6 && { backgroundColor: '#00b050', borderColor: '#28a745', borderWidth: 1.5 }, // green background
                         ]}>
-                            <Text style={styles.boxHeader}>Checklist #{index + 1}</Text>
+                            {/* <Text style={styles.boxHeader}>Checklist #{index + 1}</Text> */}
 
                             <View style={styles.row1}>
                                 <Text style={styles.label}>Checklist Name</Text>

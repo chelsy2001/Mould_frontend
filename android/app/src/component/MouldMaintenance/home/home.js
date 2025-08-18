@@ -15,7 +15,7 @@ const HomePage = ({ setIsLoggedIn, username }) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Mould Home Screen' />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Mould Home' />
 
       {/* Scrollable Menu Section */}
       <ScrollView contentContainerStyle={styles.menuContainer}>

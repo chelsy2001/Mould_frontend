@@ -38,7 +38,7 @@ const PerformanceScreen = ({ setIsLoggedIn, username }) => {
 
   return (
     <LinearGradient colors={['#f5f7fa', '#c3cfe2']} style={styles.gradient}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Shop Screen" />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title="Shop" />
 
       <ScrollView contentContainerStyle={styles.menuContainer}>
         {loading ? (
