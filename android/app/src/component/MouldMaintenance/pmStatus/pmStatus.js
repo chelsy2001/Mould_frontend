@@ -8,68 +8,45 @@ import { BASE_URL } from '../../Common/config/config';
 
 const pmStatus = ({ username ,setIsLoggedIn}) => {
   const navigation = useNavigation();
-  const [selectMouldId, setSelectedMouldId] = useState('select mould');
+
+  const [selectMouldId, setSelectedMouldId] = useState(null);
   const [mouldScan, setMouldScan] = useState('');
   const [mouldOptions, setMouldOptions] = useState([]); 
-  const [filteredMould, setFilteredMould] = useState(null);
 
+  const [checklistOptions, setChecklistOptions] = useState([]);
+  const [selectCheckListID, setSelectedCheckListID] = useState(null);
 
+  const [filteredChecklist, setFilteredChecklist] = useState(null);
+
+  // PM Status color
   const getColorPM = (value) => {
     switch (value) {
-      case 1: return '#27ae60'; // GREEN it is in normal state
-      case 2: return '#f1c40f'; // YELLOW it is in warning state
-      case 3: return '#e74c3c'; // RED it is in alarm state
-      case 4: return '#f0d851'; // it is in maintenance state
-      case 5: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 6: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 7: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 8: return '#e67e22'; // ORANGE it is in Due
-      default: return '#bdc3c7'; // GRAY it is in unknown state
+      case 1: return '#27ae60';
+      case 2: return '#f1c40f';
+      case 3: return '#e74c3c';
+      case 4: return '#f0d851';
+      case 5: case 6: case 7: return '#8e44ad';
+      case 8: return '#e67e22';
+      default: return '#bdc3c7';
     }
   };
 
-  const getMouldStatusText = (status) => {
-    switch (status) {
-      case 1:
-        return 'Normal';
-      case 2:
-        return 'Mould Loaded';
-      case 3:
-        return 'Preventive Maintenance Start';
-      case 4:
-        return 'Breakdown';
-      case 5:
-        return 'Mould in Health Check';  
-      case 6:
-        return 'Not in Use';
-      default:
-        return 'Unknown Status';
-    }
-  };
-
+  // PM Status text
   const getPMStatusText = (status) => {
     switch (status) {
-      case 1:
-        return 'Normal';
-      case 2:
-        return 'Warning';
-      case 3:
-        return 'Alarm';
-        case 4:
-          return 'Inprocess';
-      case 5:
-        return 'PM in Main Execution';
-      case 6:
-        return  'Waiting for Approval';
-      case 7:
-        return 'PM Approved';
-      case 8:
-        return 'PM Due'; 
-      default:
-        return 'Unknown Status';
+      case 1: return 'Normal';
+      case 2: return 'Warning';
+      case 3: return 'Alarm';
+      case 4: return 'Inprocess';
+      case 5: return 'PM in Main Execution';
+      case 6: return 'Waiting for Approval';
+      case 7: return 'PM Approved';
+      case 8: return 'PM Due'; 
+      default: return 'Unknown Status';
     }
   };
 
+  // 🔹 Fetch all Mould IDs
   useEffect(() => {
     const fetchMouldIds = async () => {
       try {
@@ -81,8 +58,6 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
             value: item.MouldID,
           }));
           setMouldOptions(options);
-        } else {
-          console.log('Failed to fetch Mould IDs:', data.message);
         }
       } catch (error) {
         console.error('Error fetching Mould IDs:', error);
@@ -91,118 +66,148 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
     fetchMouldIds();
   }, []);
 
-  const fetchPMDetails = async (id) => {
+  // 🔹 Fetch Checklist by MouldID
+  const fetchChecklistByMould = async (id) => {
     try {
-      const response = await fetch(`${BASE_URL}/pm/PMDetails/${id}`);
+      const response = await fetch(`${BASE_URL}/pm/checklist/${id}`);
       const json = await response.json();
-      if (json.status === 200 && json.data.length > 0) {
-        setFilteredMould(json.data[0]);
+      if (json.status === 200) {
+        const options = json.data.map(item => ({
+          key: item.CheckListID,
+          value: item.CheckListID,
+        }));
+        setChecklistOptions(options);
       } else {
-        setFilteredMould(null);
-        console.error('No Mould data found');
+        setChecklistOptions([]);
       }
     } catch (error) {
-      console.error('Error fetching Mould details:', error);
+      console.error('Error fetching Checklist:', error);
     }
   };
 
-  // Fetch details when the mould ID is selected from the dropdown
+  // 🔹 Fetch PM Details by ChecklistID
+  const fetchPMDetails = async (checklistID) => {
+    try {
+      const response = await fetch(`${BASE_URL}/pm/PMDetails/${checklistID}`);
+      const json = await response.json();
+      if (json.status === 200 && json.data.length > 0) {
+        setFilteredChecklist(json.data[0]);
+      } else {
+        setFilteredChecklist(null);
+      }
+    } catch (error) {
+      console.error('Error fetching checklist details:', error);
+    }
+  };
+
+  // 🔹 When MouldID changes → fetch Checklist
   useEffect(() => {
-    if (selectMouldId !== 'select mould') {
-      fetchPMDetails(selectMouldId);
+    if (selectMouldId) {
+      fetchChecklistByMould(selectMouldId);
+      setSelectedCheckListID(null);
+      setFilteredChecklist(null);
     }
   }, [selectMouldId]);
 
-  // Fetch details when a Mould ID is entered manually
+  // 🔹 When ChecklistID changes → fetch PM Details
+  useEffect(() => {
+    if (selectCheckListID) {
+      fetchPMDetails(selectCheckListID);
+    }
+  }, [selectCheckListID]);
+
+  // 🔹 If scanned manually
   useEffect(() => {
     if (mouldScan) {
-      fetchPMDetails(mouldScan); 
+      fetchChecklistByMould(mouldScan);
     }
   }, [mouldScan]);
 
-  const pmWarning = filteredMould ? filteredMould.PMStatus : null;
+  const pmWarning = filteredChecklist ? filteredChecklist.PMStatus : null;
 
   return (
     <View style={styles.container}>
-      <Header username={username}  setIsLoggedIn={setIsLoggedIn} title = 'Preventive Maintenance Monitoring ' />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Preventive Maintenance Monitoring' />
       
       <ScrollView>
+        {/* 🔹 Select Mould */}
         <View style={styles.dropdown}>
-          <Text style={styles.label}>Select Mould  dropdown</Text>
+          <Text style={styles.label}>Select Mould</Text>
           <SelectList 
             setSelected={(val) => setSelectedMouldId(val)} 
             data={mouldOptions} 
             save="value"
-            placeholder="Select Mould ID "
+            placeholder="Select Mould ID"
           />
         </View>
-        
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Mould scan</Text>
-          <TextInput
-            style={styles.input}
-            value={mouldScan}
-            placeholder="Enter Mould ID"
-            onChangeText={setMouldScan} // Bind to the mouldScan state
-            returnKeyType="done"
-            blurOnSubmit={false}
-          />
-        </View>
+        {/* 🔹 Select Checklist */}
+        {/* {checklistOptions.length > 0 && ( */}
+          <View style={styles.dropdown}>
+            <Text style={styles.label}>Select Checklist</Text>
+            <SelectList 
+              setSelected={(val) => setSelectedCheckListID(val)} 
+              data={checklistOptions} 
+              save="value"
+              placeholder="Select Checklist ID"
+            />
+          </View>
+        {/* )} */}
 
-        {filteredMould ? (
-  <View style={styles.mouldData}>
+        {/* 🔹 Show Details */}
+        {filteredChecklist ? (
+            <View style={styles.mouldData}>
     <Text style={styles.label}>🧰Preventive Maintenance Details</Text>
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>🆔   Mould ID: </Text>
-    <Text style={styles.dataValue}>{filteredMould.MouldID}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.MouldID}</Text>
     </View>
     <View style={styles.separator} />
 
      <View style={styles.dataRow}>
      <Text style={styles.dataLabel}>🔤   EquipmentID: </Text>
-     <Text style={styles.dataValue}>{filteredMould.EquipmentID}</Text>
+     <Text style={styles.dataValue}>{filteredChecklist.EquipmentID}</Text>
      </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>📝CheckListID: </Text>
-    <Text style={styles.dataValue}>{filteredMould.CheckListID}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.CheckListID}</Text>
     </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>🔢 PMFreqCount: </Text>
-    <Text style={styles.dataValue}>{filteredMould.PMFreqCount}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.PMFreqCount}</Text>
     </View>
     <View style={styles.separator} />
     <View style={styles.dataRow}> 
     <Text style={styles.dataLabel}>🔢 PMFreqDays: </Text>
-    <Text style={styles.dataValue}>{filteredMould.PMFreqDays}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.PMFreqDays}</Text>
     </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>🔧WarningCount</Text>
-    <Text style={styles.dataValue}> {filteredMould.PMWarningCount}</Text>
+    <Text style={styles.dataValue}> {filteredChecklist.PMWarningCount}</Text>
     </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>📅 PMWarningDays </Text>
-    <Text style={styles.dataValue}>{filteredMould.PMWarningDays}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.PMWarningDays}</Text>
     </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel }>⚙️ MaterialID </Text>
-    <Text style={styles.dataValue}>{filteredMould.MaterialID}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.MaterialID}</Text>
     </View>
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel }>⚙️ MaterialName </Text>
-    <Text style={styles.dataValue}>{filteredMould.MaterialName}</Text>
+    <Text style={styles.dataValue}>{filteredChecklist.MaterialName}</Text>
     </View>
 
     <View style={styles.separator} />
@@ -212,14 +217,13 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
       🛡   PM Status: 
     </Text>
     <Text style={[styles.dataValue,{ color: getColorPM(pmWarning) }]}>
-    {getPMStatusText(filteredMould.PMStatus)}
+    {getPMStatusText(filteredChecklist.PMStatus)}
     </Text>
     </View>
   </View>
-) : (
-  <Text style={styles.text}>No Mould Selected or Scanned</Text>
-)}
-
+        ) : (
+          <Text style={styles.text}>No Checklist Selected</Text>
+        )}
 
         <TouchableOpacity style={styles.confirmButton} onPress={() => navigation.navigate('MouldHome')}>
           <Text style={styles.confirmText}>CLOSE</Text>
