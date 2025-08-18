@@ -163,10 +163,10 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
                       Alert.alert('Info', 'We Can not start HC beacuse HC is not in warring or alarm ');
                       return;
                     }
-          // if (mouldDetail.MouldStatus !== 1 || mouldDetail.MouldStatus !== 3 ) {
-          //   Alert.alert('Info', 'To start Health Check, the mould needs to be in the "Mould  UnLoading and in preventive mantinace" status.');
-          //   return; // Exit if this condition is met
-          // }
+          if (mouldDetail.MouldStatus !== 1 || mouldDetail.MouldStatus !== 3 ) {
+            Alert.alert('Info', 'To start Health Check, the mould needs to be in the "Mould  UnLoading and in preventive mantinace" status.');
+            return; // Exit if this condition is met
+          }
         } else {
           setError('No mould data found.');
           setMouldData(null); // Clear previous data

@@ -159,29 +159,32 @@ const handleFind = async () => {
     const result = await response.json();
 
     if (result.status === 200 && result.data) {
-      setCurrentQuantity(String(result.data.CurrentQuantity));
+      const fetchedQuantity = result.data.CurrentQuantity; // ✅ API se aaya hua value
+      setCurrentQuantity(String(fetchedQuantity));
       setSparePartLoc(result.data.SparePartLoc);
+
+      // ✅ Required vs Available quantity check
+      if (parseInt(RequiredQuantity) > parseInt(fetchedQuantity)) {
+        Alert.alert(
+          "Insufficient Quantity",
+          `Required quantity (${RequiredQuantity}) exceeds available stock (${fetchedQuantity}).`
+        );
+        return;
+      }
     } else {
       Alert.alert("Not Found", result.message || "No data found.");
     }
   } catch (error) {
     Alert.alert("Error", error.message);
   }
-  if (RequiredQuantity > currentQuantity) {
-   Alert.alert(
-          // "Insufficient Quantity",
-          // `Required quantity (${RequiredQuantity}) exceeds available stock (${currentQuantity}).`
-          "Insufficient Quantity , Required quantity exceeds available stock"
-        );
-    return;
-  }
 };
 
+
 const handleConfirm = async () => {
-  if (spareLocationScan.trim() !== sparePartLoc.trim()) {
-    Alert.alert("Location Mismatch", "Scanned location does not match stored location.");
-    return;
-  }
+  // if (spareLocationScan.trim() !== sparePartLoc.trim()) {
+  //   Alert.alert("Location Mismatch", "Scanned location does not match stored location.");
+  //   return;
+  // }
 
   if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) {
     Alert.alert("Invalid Quantity", "Please enter a valid quantity to use.");
@@ -387,7 +390,7 @@ const handleConfirm = async () => {
 
         {/* SCAN LOCATION AND QUANTITY TO USE */}
         <View style={styles.row}>
-          <View style={styles.inputContainer}>
+          {/* <View style={styles.inputContainer}>
             <Text style={styles.label}>
               <Icon name="qrcode-scan" size={18} color="#003366" /> ScanSparePartLoc
             </Text>
@@ -399,7 +402,7 @@ const handleConfirm = async () => {
               ref={SparePartLocation}
               placeholderTextColor={'black'}
             />
-          </View>
+          </View> */}
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
@@ -418,6 +421,8 @@ const handleConfirm = async () => {
      </View> 
         {/* CONFIRM BUTTON */}
        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+        
+
   <Text style={styles.confirmText}>
     <Icon name="check-circle-outline" size={20} color="#fff" /> CONFIRM
   </Text>
