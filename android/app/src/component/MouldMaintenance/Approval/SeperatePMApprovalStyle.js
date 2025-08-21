@@ -74,7 +74,7 @@ const SeperatePMApprovalStyle = StyleSheet.create({
         padding: 3,
         width: 200,
         height: 40,
-        marginHorizontal: 9,
+        marginHorizontal: 9
     },
     input2: {
         borderWidth: 1,
@@ -89,7 +89,7 @@ const SeperatePMApprovalStyle = StyleSheet.create({
     },
 
     button: {
-    backgroundColor: '#0059b3',
+    backgroundColor: '#3883ceff',
   paddingVertical: verticalScale(6),
   paddingHorizontal: scale(4),
    borderRadius: scale(2),
@@ -97,7 +97,8 @@ const SeperatePMApprovalStyle = StyleSheet.create({
     width:"10%"
   },
   buttonText: {
-    color: '#fff',
+    // color: '#fff',
+    color :'black',
     fontWeight: '600',
     fontSize: 16,
   },

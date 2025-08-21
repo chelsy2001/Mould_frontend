@@ -88,7 +88,7 @@ const SeperateHCApprovalStyle = StyleSheet.create({
     },
 
     button: {
-    backgroundColor: '#0059b3',
+    backgroundColor: '#3883ceff',
   paddingVertical: verticalScale(10),
   paddingHorizontal: scale(7),
    borderRadius: scale(2),
@@ -96,7 +96,8 @@ const SeperateHCApprovalStyle = StyleSheet.create({
     width:"10%"
   },
   buttonText: {
-    color: '#fff',
+     // color: '#fff',
+    color :'black',
     fontWeight: '600',
     fontSize: 16,
   },
