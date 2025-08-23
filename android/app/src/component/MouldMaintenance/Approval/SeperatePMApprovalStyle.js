@@ -44,15 +44,12 @@ const SeperatePMApprovalStyle = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginLeft: '2%'
     },
 
     row2: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '97%',
-        marginLeft: '2%',
         marginTop: '5'
 
     },
@@ -101,6 +98,44 @@ const SeperatePMApprovalStyle = StyleSheet.create({
     color :'black',
     fontWeight: '600',
     fontSize: 16,
+  },
+   dropdownContainer: {
+    marginVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    paddingBottom: 5,
+  },
+  dropdownLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  dropdownBox: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    // paddingHorizontal: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  dropdownInput: {
+    fontSize: 15,
+    color: '#333',
+  },
+  dropdownList: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+  },
+  dropdownText: {
+    fontSize: 15,
+    color: '#444',
   },
 
 });
