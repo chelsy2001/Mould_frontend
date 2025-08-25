@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { moderateScale } from '../../Common/utils/scale';
 
 const { width, height } = Dimensions.get('window');
 
@@ -46,10 +47,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   icon: {
-    width: 60,
-    height: 60,
+    width: moderateScale(50),
+    height: moderateScale(50),
     resizeMode: 'contain',
   },
+  scanButton: {
+  backgroundColor: '#004080',  // fresh green
+  paddingVertical: moderateScale(10),
+  paddingHorizontal: moderateScale(10),
+  borderRadius: 15,
+  alignItems: 'center',
+  justifyContent: 'center',
+  elevation: 4,   // Android shadow
+  shadowColor: '#000', // iOS shadow
+  shadowOpacity: 0.2,
+  shadowOffset: { width: 0, height: 3 },
+  shadowRadius: 4,
+  marginTop: moderateScale(12),
+  marginHorizontal: moderateScale(20),
+},
+
+scanButtonText: {
+  color: '#fff',
+  fontSize: 18,
+  fontWeight: '600',
+  letterSpacing: 1,
+},
+
 });
 
 export default styles;
