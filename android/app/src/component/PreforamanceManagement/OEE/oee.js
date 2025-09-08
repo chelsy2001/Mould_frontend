@@ -285,10 +285,10 @@ const getCallBtnStyle = (departmentName) => {
     <View style={{ flex: 1 }}>
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Overall line effectiveness​' />
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: scale(16), marginTop: scale(20) }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between',  marginTop: scale(20) }}>
 
 
-          <Text style={styles.headerBox}>{equipmentName}</Text>
+          <Text style={styles.headerBox} >{equipmentName}</Text>
           <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
         </View>
         {/* Circular Progress Section */}
@@ -367,8 +367,14 @@ const getCallBtnStyle = (departmentName) => {
           <Text style={styles.sectionTitle}>Quality {quality}%</Text>
           <View style={styles.row4}>
             <Text>Rejected Count</Text>
-            <TextInput style={styles.input} value={rejected} editable={false} />
-            <TouchableOpacity style={[styles.assignBtn, { marginLeft: 4 }]}
+            <TextInput style={{borderWidth: scale(1),
+    borderColor: '#ccc',
+    borderRadius: scale(6),
+    padding: moderateScale(2),
+    width: "40%",
+    marginVertical: verticalScale(10),
+    marginHorizontal: scale(20),}} value={rejected} editable={false} />
+            <TouchableOpacity style={[styles.assignBtn, { marginLeft: scale(120) }]}
               onPress={() => navigation.navigate('Quality', { equipmentName: equipmentName })}>
               <Text style={{ color: 'white' }}>Rejection Entry </Text>
             </TouchableOpacity>

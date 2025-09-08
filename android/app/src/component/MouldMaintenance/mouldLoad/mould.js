@@ -200,13 +200,13 @@ const MouldLoadingScreen = ({ username }) => {
   const getColorPM = (value) => {
     switch (value) {
       case 1: return '#27ae60'; // GREEN it is in normal state
-      case 2: return '#f1c40f'; // YELLOW it is in warning state
-      case 3: return '#e74c3c'; // RED it is in alarm state
-      case 4: return '#f0d851'; // it is in maintenance state
-      case 5: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 6: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 7: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 8: return '#e67e22'; // ORANGE it is in Due
+      case 2: return '#e68b22ff'; // orange it is in warning state
+      case 3: return '#e73c3cff'; // RED it is in alarm state
+      case 4: return '#3c64e7ff'; // purple  in preparation maintenance state
+      case 5: return '#67a3c5ff'; // Main Execution
+      case 6: return '#085a49ff'; // gray it is in maintenance state
+      case 7: return '#27ae60'; // Approved 
+      case 8: return '#f1c40f'; // Yellow it is in Alert
       default: return '#bdc3c7'; // GRAY it is in unknown state
     }
   };
@@ -214,12 +214,12 @@ const MouldLoadingScreen = ({ username }) => {
   const getColorHC = (value) => {
     switch (value) {
       case 1: return '#27ae60'; // GREEN it is in normal state
-      case 2: return '#f1c40f'; // YELLOW it is in warning state
-      case 3: return '#e74c3c'; // RED it is in alarm state
-      case 4: return '#f0d851'; // it is in maintenance state
-      case 5: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 6: return '#8e44ad'; // PURPLE it is in maintenance state
-      case 7: return '#e67e22'; // ORANGE it is in Due
+      case 2: return '#e68b22ff'; // YELLOW it is in warning state
+      case 3: return '#e73c3cff'; // RED it is in alarm state
+      case 4: return '#3c64e7ff'; // it is in maintenance state
+      case 5: return '#085a49ff'; // PURPLE it is in maintenance state
+      case 6: return '#27ae60'; // PURPLE it is in maintenance state
+      case 7: return '#f1c40f'; // ORANGE it is in Due
       default: return '#bdc3c7'; // GRAY it is in unknown state
     }
   };

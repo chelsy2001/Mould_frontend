@@ -16,6 +16,7 @@ import HCMonitoring from '../HC Checklist/HC Monitoring.js';
 import HCExecution from '../HC Checklist/HCExecution.js';
 import HCApprove from '../HC Checklist/HCApprove.js';
 import PMStatus from '../pmStatus/pmStatus.js';
+import HCStatus from '../hcStatus/hcStatus.js';
 
 import SeperatePMApproval from '../Approval/SeperatePMApproval.js';
 import SeperateHCApproval from '../Approval/SeperateHCApproval.js';
@@ -49,6 +50,9 @@ const MouldStack = ({ setIsLoggedIn, username }) => {
       </Stack.Screen>
       <Stack.Screen name="HealthCheck">
         {() => <HealthCheck setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+        <Stack.Screen name="HCStatus">
+        {() => <HCStatus setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
       <Stack.Screen name="BreakDown">
         {() => <BreakDown setIsLoggedIn={setIsLoggedIn} username={username} />}

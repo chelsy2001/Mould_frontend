@@ -130,7 +130,7 @@ const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
   return (
     //<ScrollView style={styles.container}>
     <View style={styles.container}>
-      <Header username={username} title="PM Mould Monitoring" />
+      <Header username={username} title="Preventive Maintenance Monitoring" />
       <ScrollView
         nestedScrollEnabled={true}
         style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}

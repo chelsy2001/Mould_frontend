@@ -6,7 +6,7 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import { useNavigation } from '@react-navigation/native';
 import { BASE_URL } from '../../Common/config/config';
 
-const pmStatus = ({ username ,setIsLoggedIn}) => {
+const hcStatus = ({ username ,setIsLoggedIn}) => {
   const navigation = useNavigation();
 
   const [selectMouldId, setSelectedMouldId] = useState(null);
@@ -19,32 +19,38 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
   const [filteredChecklist, setFilteredChecklist] = useState(null);
 
   // PM Status color
-  const getColorPM = (value) => {
+  const getColorHC = (value) => {
     switch (value) {
       case 1: return '#27ae60'; // GREEN it is in normal state
-      case 2: return '#e68b22ff'; // orange it is in warning state
+      case 2: return '#e68b22ff'; // YELLOW it is in warning state
       case 3: return '#e73c3cff'; // RED it is in alarm state
-      case 4: return '#3c64e7ff'; // purple  in preparation maintenance state
-      case 5: return '#67a3c5ff'; // Main Execution
-      case 6: return '#085a49ff'; // gray it is in maintenance state
-      case 7: return '#27ae60'; // Approved 
-      case 8: return '#f1c40f'; // Yellow it is in Alert
+      case 4: return '#3c64e7ff'; // it is in maintenance state
+      case 5: return '#085a49ff'; // PURPLE it is in maintenance state
+      case 6: return '#27ae60'; // PURPLE it is in maintenance state
+      case 7: return '#f1c40f'; // ORANGE it is in Due
       default: return '#bdc3c7'; // GRAY it is in unknown state
     }
   };
 
   // PM Status text
-  const getPMStatusText = (status) => {
-    switch (status) {
-      case 1: return 'Normal';
-      case 2: return 'Warning';
-      case 3: return 'Alarm';
-      case 4: return 'Inprocess';
-      case 5: return 'PM in Main Execution';
-      case 6: return 'Waiting for Approval';
-      case 7: return 'PM Approved';
-      case 8: return 'PM Due'; 
-      default: return 'Unknown Status';
+  const getHCStatusText = (Status) => {
+    switch (Status) {
+      case 1:
+        return 'HC Not Started';
+      case 2:
+        return 'HC Warring';
+      case 3:
+        return 'HC Alarm';
+      case 4:
+        return 'HC in Prepration';
+      case 5:
+        return 'waiting for approval';
+      case 6:
+        return 'Approived';
+      case 7:
+        return 'HC Due';  
+      default:
+        return 'Unknown Status';
     }
   };
 
@@ -71,7 +77,7 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
   // 🔹 Fetch Checklist by MouldID
   const fetchChecklistByMould = async (id) => {
     try {
-      const response = await fetch(`${BASE_URL}/pm/checklist/${id}`);
+      const response = await fetch(`${BASE_URL}/hc/checklist/${id}`);
       const json = await response.json();
       if (json.status === 200) {
         const options = json.data.map(item => ({
@@ -90,7 +96,7 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
   // 🔹 Fetch PM Details by ChecklistID
   const fetchPMDetails = async (checklistID) => {
     try {
-      const response = await fetch(`${BASE_URL}/pm/PMDetails/${checklistID}`);
+      const response = await fetch(`${BASE_URL}/hc/hcDetails/${checklistID}`);
       const json = await response.json();
       if (json.status === 200 && json.data.length > 0) {
         setFilteredChecklist(json.data[0]);
@@ -125,11 +131,11 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
     }
   }, [mouldScan]);
 
-  const pmWarning = filteredChecklist ? filteredChecklist.PMStatus : null;
+  const hcWarning = filteredChecklist ? filteredChecklist.HCStatus : null;
 
   return (
     <View style={styles.container}>
-      <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Preventive Maintenance Monitoring' />
+      <Header username={username} setIsLoggedIn={setIsLoggedIn} title=' Health Check Monitoring' />
       
       <ScrollView>
         {/* 🔹 Select Mould */}
@@ -158,7 +164,7 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
         {/* 🔹 Show Details */}
         {filteredChecklist ? (
             <View style={styles.mouldData}>
-    <Text style={styles.label}>🧰Preventive Maintenance Details</Text>
+    <Text style={styles.label}>🧰Health Check Details</Text>
 
     <View style={styles.dataRow}>
     <Text style={styles.dataLabel}>🆔   Mould ID: </Text>
@@ -167,7 +173,7 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
     <View style={styles.separator} />
 
      <View style={styles.dataRow}>
-     <Text style={styles.dataLabel}>🔤   EquipmentID: </Text>
+     <Text style={styles.dataLabel}>🔤   MachineID: </Text>
      <Text style={styles.dataValue}>{filteredChecklist.EquipmentID}</Text>
      </View>
     <View style={styles.separator} />
@@ -215,11 +221,11 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
     <View style={styles.separator} />
 
     <View style={styles.dataRow}>
-    <Text style={[styles.dataLabel, { color: getColorPM(pmWarning) }]}>
-      🛡   PM Status: 
+    <Text style={[styles.dataLabel, { color: getColorHC(hcWarning) }]}>
+      🛡   HC Status: 
     </Text>
-    <Text style={[styles.dataValue,{ color: getColorPM(pmWarning) }]}>
-    {getPMStatusText(filteredChecklist.PMStatus)}
+    <Text style={[styles.dataValue,{ color: getColorHC(hcWarning) }]}>
+    {getHCStatusText(filteredChecklist.HCStatus)}
     </Text>
     </View>
   </View>
@@ -235,4 +241,4 @@ const pmStatus = ({ username ,setIsLoggedIn}) => {
   );
 };
 
-export default pmStatus;
+export default hcStatus;

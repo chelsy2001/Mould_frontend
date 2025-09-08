@@ -344,7 +344,7 @@ const handleConfirm = async () => {
         <View style={styles.row}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
-              <Icon name="numeric" size={18} color="#003366" /> Required Quantity
+              <Icon name="cart-arrow-down" size={18} color="#003366" /> Required Quantity
             </Text>
             <TextInput
               style={styles.input}
@@ -406,7 +406,7 @@ const handleConfirm = async () => {
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
-              <Icon name="cart-arrow-down" size={18} color="#003366" /> Quantity to Use
+              <Icon name="cart-minus" size={18} color="#003366" /> Quantity to Use
             </Text>
             <TextInput
               style={styles.input}

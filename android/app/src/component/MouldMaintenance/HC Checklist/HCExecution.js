@@ -184,7 +184,7 @@ const HCExecution = ({ username, setIsLoggedIn }) => {
     };
     return (
         <View style={styles.container}>
-            <Header username={username} title="HC Execution" />
+            <Header username={username} title="Health Check Execution" />
             <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
                 <View>
                     {checkpoints.map((item, index) => (

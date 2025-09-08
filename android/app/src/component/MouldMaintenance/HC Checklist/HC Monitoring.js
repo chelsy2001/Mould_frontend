@@ -128,7 +128,7 @@ const HCMonitoring = ({ username, setIsLoggedIn }) => {
 
   return (
     <View style={styles.container}>
-      <Header username={username} title="HC Mould Monitoring" />
+      <Header username={username} title="Health Check Monitoring" />
       <ScrollView
         nestedScrollEnabled={true}
         style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}

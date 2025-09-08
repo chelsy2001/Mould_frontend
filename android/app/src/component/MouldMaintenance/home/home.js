@@ -35,13 +35,10 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Pmconfg')}>
-          <Image style={styles.icon} source={require('../../Common/assets/pm.jpg')} />
+         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('MouldStatus')}>
+          <Image style={styles.icon} source={require('../../Common/assets/mouldmon.jpg')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>Preventive </Text>
-            <Text style={{ fontSize: 14, color: 'white', fontWeight: '500', textAlign: 'center', marginTop: -30 }}>
-              Maintenance
-            </Text>
+            <Text style={styles.menuText}>Mould Monitoring</Text>
           </View>
         </TouchableOpacity>
 
@@ -52,17 +49,34 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('MouldStatus')}>
-          <Image style={styles.icon} source={require('../../Common/assets/mouldmon.jpg')} />
+         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMStatus')}>
+          <Image style={styles.icon} source={require('../../Common/assets/pmmont.png')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>Mould Monitoring</Text>
+            <Text style={styles.menuText}>Preventive Maintenance Monitoring</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Pmconfg')}>
+          <Image style={styles.icon} source={require('../../Common/assets/pm.jpg')} />
+          <View style={styles.labelWrapper}>
+            <Text style={styles.menuText}>Preventive Maintenance Confromation</Text>
+            {/* <Text style={{ fontSize: 14, color: 'white', fontWeight: '500', textAlign: 'center', marginTop: -30 }}>
+              Confromation
+            </Text> */}
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HCStatus')}>
+          <Image style={styles.icon} source={require('../../Common/assets/pmmont.png')} />
+          <View style={styles.labelWrapper}>
+            <Text style={styles.menuText}>Health Check Monitoring</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('HealthCheck')}>
           <Image style={styles.icon} source={require('../../Common/assets/healthcheck.jpg')} />
           <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>Health Check</Text>
+            <Text style={styles.menuText}>Health Check Confromation</Text>
           </View>
         </TouchableOpacity>
 
@@ -70,13 +84,6 @@ const HomePage = ({ setIsLoggedIn, username }) => {
           <Image style={styles.icon} source={require('../../Common/assets/BD.jpeg')} />
           <View style={styles.labelWrapper}>
             <Text style={styles.menuText}>BreakDown</Text>
-          </View>
-        </TouchableOpacity>
-
-         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PMStatus')}>
-          <Image style={styles.icon} source={require('../../Common/assets/pmmont.png')} />
-          <View style={styles.labelWrapper}>
-            <Text style={styles.menuText}>Preventive Maintenance Monitoring</Text>
           </View>
         </TouchableOpacity>
         </>

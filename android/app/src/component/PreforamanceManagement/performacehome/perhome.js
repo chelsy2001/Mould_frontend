@@ -28,12 +28,7 @@ const PerformanceScreen = ({ setIsLoggedIn, username }) => {
 
   // For assigning images based on index (optional - you can also map ShopID to specific icons)
   const shopIcons = [
-    require('../../Common/assets/oee.jpg'),
-    require('../../Common/assets/Downtime.jpg'),
-    require('../../Common/assets/dashboard.jpg'),
-    require('../../Common/assets/quality.jpg'),
-    require('../../Common/assets/quality.jpg'),
-    require('../../Common/assets/quality.jpg')
+    require('../../Common/assets/shop.jpg'),
   ];
 
   return (

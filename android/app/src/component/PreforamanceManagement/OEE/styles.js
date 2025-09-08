@@ -63,10 +63,10 @@ const styles = StyleSheet.create({
   headerBox: {
     backgroundColor: '#007ACC',
     color: 'white',
-    padding: moderateScale(10),
+    padding: moderateScale(8),
     borderRadius: moderateScale(10),
-    fontWeight: 'bold',
-    minWidth: scale(60),
+    fontWeight: 'medium',
+    minWidth: scale(20),
     textAlign: 'center',
   },
   assignBtn: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 // },
 callBtn: {
   paddingVertical: verticalScale(10),
-  paddingHorizontal: scale(12),
+  paddingHorizontal: scale(8),
   borderRadius: scale(8),
   backgroundColor: '#091829ff',
 },

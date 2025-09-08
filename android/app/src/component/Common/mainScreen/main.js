@@ -8,7 +8,7 @@ const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
   return (
     <LinearGradient colors={['#f5f7fa', '#f5f7fa']} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Home Screen' />
+        <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Home' />
 
         {/* <Text style={mainstyles.sectionTitle}>Welcome, {username} 👋</Text> */}
 

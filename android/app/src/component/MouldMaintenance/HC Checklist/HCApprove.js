@@ -53,7 +53,7 @@ const HCApprove = ({ username, setIsLoggedIn }) => {
     }, [checklistID]);
 
     return (<View style={styles.container}>
-        <Header username={username} title="HC Approval" />
+        <Header username={username} title="Health Check Executed Checklist" />
         <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
             <View>
                 {checkpoints.map((item, index) => (
