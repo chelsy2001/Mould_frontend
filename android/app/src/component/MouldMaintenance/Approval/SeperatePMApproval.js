@@ -153,7 +153,7 @@ const SeperatePMApproval = ({ username }) => {
 
   
   // ✅ fetch PM Approval data
-const fetchChecklistData = (mouldId = 1) => {
+const fetchChecklistData = (mouldId) => {
   fetch(`${BASE_URL}/SeperatePMApproval/pm-approval/${mouldId}`)
     .then(res => res.json())
     .then(data => {

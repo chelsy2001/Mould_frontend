@@ -168,7 +168,7 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
     }, []);
 
     // ✅ fetch HC Approval data
-   const fetchChecklistData = (mouldId = 1) => {
+   const fetchChecklistData = (mouldId) => {
      fetch(`${BASE_URL}/SeperateHCApproval/HC-approval/${mouldId}`)
        .then(res => res.json())
        .then(data => {
