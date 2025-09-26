@@ -149,16 +149,16 @@ const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
 
               <View style={styles.row1}>
                 <Text style={styles.label}>Checklist Name</Text>
-                <TextInput style={[styles.input1, { width: 280 }]} value={item.CheckListName} editable={false} />
+                <TextInput style={[styles.input1, { width: 200 }]} value={item.CheckListName} editable={false} />
 
                 <Text style={styles.label}>MouldID</Text>
-                <TextInput style={[styles.input1, { width: 120 }]} value={item.MouldID.toString()} editable={false} />
+                <TextInput style={[styles.input1, { width: 250 }]} value={item.MouldID.toString()} editable={false} />
 
                 <Text style={styles.label}>Mould Name</Text>
                 <TextInput style={styles.input1} value={item.MouldName} editable={false} />
 
                 <Text style={styles.label}>PMFreqCount</Text>
-                <TextInput style={[styles.input1, { width: 120 }]} value={item.PMFreqCount.toString()} editable={false} />
+                <TextInput style={[styles.input1, { width: 100 }]} value={item.PMFreqCount.toString()} editable={false} />
 
 
               </View>
