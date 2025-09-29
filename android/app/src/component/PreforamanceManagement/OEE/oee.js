@@ -15,6 +15,7 @@ import Header from '../../Common/header/header';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useWindowDimensions } from 'react-native';
 import axios from 'axios';
 import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // adjust path if needed
 
@@ -48,6 +49,9 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   const [unassignedReasonCount, setUnassignedReasonCount] = useState('');
   const [unassignedReworkReasonCount, setUnassignedReworkReasonCount] = useState('0');
 
+const { width: windowWidth } = useWindowDimensions();
+const isLarge = windowWidth >= 900;
+const isMedium = windowWidth >= 420 && windowWidth < 900;
 
   const oee = Math.round((availability * performance * quality) / 10000);
 
@@ -278,127 +282,162 @@ const getCallBtnStyle = (departmentName) => {
 };
 
 
-
-
-
   return (
     <View style={{ flex: 1 }}>
       <Header username={username} setIsLoggedIn={setIsLoggedIn} title='Overall line effectiveness​' />
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between',  marginTop: scale(20) }}>
+        {/* Header Row */}
+<View style={styles.headerRow}>
+  <Text style={styles.headerBox}>{equipmentName}</Text>
+  <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
+</View>
 
+{/* Circular Progress Section */}
+<View style={styles.chartSection}>
+  {metrics.map((metric, index) => (
+    <View key={index} style={styles.progressContainer}>
+      <AnimatedCircularProgress
+        size={scale(90)}
+        width={scale(10)}
+        fill={metric.value}
+        tintColor={getColor(metric.value)}
+        backgroundColor="#e0e0e0"
+        duration={1500}
+      >
+        {fill => <Text style={styles.chartPercentage}>{Math.round(fill)}%</Text>}
+      </AnimatedCircularProgress>
+      <Text style={styles.chartTitle}>{metric.title}</Text>
+    </View>
+  ))}
+</View>
 
-          <Text style={styles.headerBox} >{equipmentName}</Text>
-          <Text style={styles.headerBox}>Shift Name: {shiftName}</Text>
-        </View>
-        {/* Circular Progress Section */}
-        <View style={styles.chartSection}>
-          {metrics.map((metric, index) => (
-            <View key={index} style={styles.progressContainer}>
-              <AnimatedCircularProgress
-                size={scale(90)}
-                width={scale(10)}
-                fill={metric.value}
-                tintColor={getColor(metric.value)}
-                backgroundColor="#e0e0e0"
-                duration={1500}
-              >
-                {fill => <Text style={styles.chartPercentage}>{Math.round(fill)}%</Text>}
-              </AnimatedCircularProgress>
-              <Text style={styles.chartTitle}>{metric.title}</Text>
-            </View>
-          ))}
-        </View>
 
       // section for OEE, Availability, Performance, Quality
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Availability {availability}%</Text>
-          <View style={styles.row}>
-            <Text>Shift Time</Text>
-            <TextInput style={styles.input} value={shiftTime} editable={false} />
+       {/* ---------- Availability Section ---------- */}
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>Availability {availability}%</Text>
 
-            <Text>TotalDT</Text>
-            <TextInput style={styles.input} value={totalDownTime} editable={false} />
-          </View>
-          <View style={styles.row3}>
-            <Text>TotalTime</Text>
-            <TextInput style={styles.input} value={totalTime} editable={false} />
-            <TouchableOpacity style={styles.detailsBtn}
-              onPress={() => navigation.navigate('DTDetails', { equipmentName: equipmentName })}
-            >
-              <Text style={{ color: 'white' }}>Details</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.row2}>
-            <Text>UnAssigned Reason </Text>
-            <TextInput
-              style={styles.input2}
-              value={unassignedReasonCount}
-              editable={false}
-            />
-            <TouchableOpacity
-              style={[styles.assignBtn]}
-              onPress={() => navigation.navigate('Downtime', { equipmentName: equipmentName })}
-            >
-              <Text style={{ color: 'white', fontSize: moderateScale(10) }}>Update Reason</Text>
-            </TouchableOpacity>
-          </View>
+  {/* Row: Shift Time and TotalDT */}
+  <View style={[styles.formRow, isLarge ? styles.formRowHorizontal : styles.formRowStack]}>
+    <View style={styles.field}>
+      <Text style={styles.label}>Shift Time</Text>
+      <TextInput style={styles.input} value={shiftTime} editable={false} />
+    </View>
+    <View style={styles.field}>
+      <Text style={styles.label}>TotalDT</Text>
+      <TextInput style={styles.input} value={totalDownTime} editable={false} />
+    </View>
 
+       <View style={styles.field}>
+      <Text style={styles.label}>TotalTime</Text>
+      <TextInput style={styles.input} value={totalTime} editable={false} />
+    </View>
+  </View>
 
-        </View>
-        {/* Performance */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Performance {performance}%</Text>
-          <View style={styles.row}>
-            <Text>Expected Qty</Text>
-            <TextInput style={styles.input} value={expectedQty} editable={false} />
-            <Text>Gap</Text>
-            <TextInput style={styles.input} value={gap} editable={false} />
-          </View>
+  {/* Row: TotalTime and Details Button */}
+  {/* <View style={[styles.formRow, isLarge ? styles.formRowHorizontal : styles.formRowStack]}>
+    <View style={styles.field}>
+      <Text style={styles.label}>TotalTime</Text>
+      <TextInput style={styles.input} value={totalTime} editable={false} />
+    </View>
+   
+  </View> */}
 
-          <View style={styles.row2}>
-            <Text>Actual Qty</Text>
-            <TextInput style={styles.input} value={actualQty} editable={false} />
-          </View>
+  {/* Row: UnAssigned Reason */}
+  <View style={[styles.formRow, isLarge ? styles.formRowHorizontal : styles.formRowStack]}>
+  <View style={styles.field}>
+    <Text style={styles.label}>UnAssigned Reason</Text>
+    <TextInput style={styles.input} value={unassignedReasonCount} editable={false} />
+  </View>
+  
+</View>
+   {/* 🔄 Combine both buttons into a horizontal row */}
+  <View style={styles.buttonRow}>
+    <TouchableOpacity
+      style={[styles.button, styles.detailsBtn]}
+      onPress={() => navigation.navigate('DTDetails', { equipmentName })}
+    >
+      <Text style={styles.buttonText}>Details</Text>
+    </TouchableOpacity>
 
-        </View>
-        {/* Quality */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quality {quality}%</Text>
-          <View style={styles.row4}>
-            <Text>Rejected Count</Text>
-            <TextInput style={{borderWidth: scale(1),
-    borderColor: '#ccc',
-    borderRadius: scale(6),
-    padding: moderateScale(2),
-    width: "40%",
-    marginVertical: verticalScale(10),
-    marginHorizontal: scale(20),}} value={rejected} editable={false} />
-            <TouchableOpacity style={[styles.assignBtn, { marginLeft: scale(120) }]}
-              onPress={() => navigation.navigate('Quality', { equipmentName: equipmentName })}>
-              <Text style={{ color: 'white' }}>Rejection Entry </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+    <TouchableOpacity
+      style={[styles.button, styles.assignBtn]}
+      onPress={() => navigation.navigate('Downtime', { equipmentName })}
+    >
+      <Text style={styles.buttonText}>Update Reason</Text>
+    </TouchableOpacity>
+  </View>
+</View>
 
-        {/* Calls Section */}
+{/* ---------- Performance Section ---------- */}
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>Performance {performance}%</Text>
+
+  {/* Row: Expected Qty and Gap */}
+  <View style={[styles.formRow, isLarge ? styles.formRowHorizontal : styles.formRowStack]}>
+    <View style={styles.field}>
+      <Text style={styles.label}>Expected Qty</Text>
+      <TextInput style={styles.input} value={expectedQty} editable={false} />
+    </View>
+    <View style={styles.field}>
+      <Text style={styles.label}>Gap</Text>
+      <TextInput style={styles.input} value={gap} editable={false} />
+    </View>
+     <View style={styles.field}>
+      <Text style={styles.label}>Actual Qty</Text>
+      <TextInput style={styles.input} value={actualQty} editable={false} />
+    </View>
+  </View>
+
+  {/* Row: Actual Qty */}
+  {/* <View style={[styles.formRow, isLarge ? styles.formRowHorizontal : styles.formRowStack]}>
+    <View style={styles.field}>
+      <Text style={styles.label}>Actual Qty</Text>
+      <TextInput style={styles.input} value={actualQty} editable={false} />
+    </View>
+  </View> */}
+</View>
+
+{/* ---------- Quality Section ---------- */}
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>Quality {quality}%</Text>
+
+  {/* Row: Rejected Count and Button */}
+ <View style={[styles.formRow, isLarge ? styles.formRowHorizontal : styles.formRowStack]}>
+  <View style={styles.field}>
+    <Text style={styles.label}>Rejected Count</Text>
+    <TextInput style={styles.input} value={rejected} editable={false} />
+  </View>
+ <TouchableOpacity
+      style={[styles.button1, styles.assignBtn]}
+      onPress={() => navigation.navigate('Quality', { equipmentName })}
+    >
+      <Text style={styles.buttonText}>Rejection Entry</Text>
+    </TouchableOpacity>
+  {/* <View style={styles.actionField}>
+   
+  </View> */}
+</View>
+
+</View>
+
        {/* Calls Section */}
 <View style={styles.section}>
- <View style={styles.row4}>
-  <TouchableOpacity style={getCallBtnStyle("Maintenance")} onPress={() => handleCallToggle("Maintenance")}>
-    <Text style={styles.callText}>Maintenance</Text>
-  </TouchableOpacity>
+  <Text style={styles.sectionTitle}>Department Calls</Text>
 
-  <TouchableOpacity style={getCallBtnStyle("Production")} onPress={() => handleCallToggle("Production")}>
-    <Text style={styles.callText}>Production</Text>
-  </TouchableOpacity>
-
-  <TouchableOpacity style={getCallBtnStyle("Quality")} onPress={() => handleCallToggle("Quality")}>
-    <Text style={styles.callText}>Quality</Text>
-  </TouchableOpacity>
+  <View style={styles.callButtonRow}>
+    {['Maintenance', 'Production', 'Quality'].map((dept) => (
+      <TouchableOpacity
+        key={dept}
+        style={getCallBtnStyle(dept)}
+        onPress={() => handleCallToggle(dept)}
+      >
+        <Text style={styles.callText}>{dept}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
 </View>
 
-</View>
 {/* //<View style={styles.section}>
   {Object.entries(callStatus).map(([id, info]) => (
     <Text key={id} style={{ fontSize: 12 }}>

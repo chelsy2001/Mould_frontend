@@ -1,193 +1,187 @@
 import { StyleSheet } from 'react-native';
-import { scale, verticalScale, moderateScale } from '../../Common/utils/scale'; // adjust path if needed
+import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
+import { Dimensions } from 'react-native';
+const windowWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
-    paddingBottom: verticalScale(20),
-    backgroundColor: '#f0f4f8',
+    paddingHorizontal: scale(15),
+    paddingBottom: verticalScale(30),
+    backgroundColor: '#f3f7fa',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: verticalScale(16),
-    paddingHorizontal: moderateScale(16),
-    justifyContent: 'space-between',
-    elevation: 5,
-    borderRadius: verticalScale(16),
-  },
-  dateText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: scale(13),
-  },
-  shiftButton: {
-    backgroundColor: '#007ACC',
-    paddingHorizontal: scale(48),
-    paddingVertical: verticalScale(6),
-    borderRadius: verticalScale(10),
-    elevation: 2,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: scale(13),
-  },
-  picker: {
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderRadius: moderateScale(10),
-    width: scale(150),
-    padding: verticalScale(6),
-  },
-  chartSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    margin: moderateScale(16),
-    flexWrap: 'wrap',
-  },
-  progressContainer: {
-    alignItems: 'center',
-    marginBottom: verticalScale(20),
-  },
-  chartPercentage: {
-    fontSize: scale(18),
-    fontWeight: 'bold',
-    color: '#004080',
-  },
-  chartTitle: {
-    marginTop: verticalScale(6),
-    fontWeight: '600',
-    fontSize: scale(14),
-    color: '#333',
-  },
-  headerBox: {
-    backgroundColor: '#007ACC',
-    color: 'white',
-    padding: moderateScale(8),
-    borderRadius: moderateScale(10),
-    fontWeight: 'medium',
-    minWidth: scale(20),
-    textAlign: 'center',
-  },
-  assignBtn: {
-    backgroundColor: '#28a745',
-    paddingVertical: verticalScale(4),
-    paddingHorizontal: moderateScale(8),
-    borderRadius: verticalScale(6),
-    justifyContent: 'center',
-    alignSelf: 'center',
-    elevation: 3,
-    maxWidth: scale(150),
-    marginRight:verticalScale(2)
-  },
-  detailsBtn: {
-    backgroundColor: 'black',
-    color: 'white',
-    paddingVertical: verticalScale(6),
-    paddingHorizontal: scale(25),
-    borderRadius: verticalScale(6),
-    alignSelf: 'center',
-    elevation: 3,
-    marginLeft: scale(27),
-  },
-  section: {
-    backgroundColor: '#ffffff',
-    padding: moderateScale(15),
-    marginVertical: verticalScale(10),
-    marginHorizontal: scale(16),
-    borderRadius: verticalScale(10),
-    elevation: 2,
-  },
-  sectionTitle: {
-    backgroundColor: '#003366',
-    color: 'white',
-    paddingVertical: verticalScale(6),
-    paddingHorizontal: scale(20),
-    borderRadius: verticalScale(10),
-    marginTop: verticalScale(-4),
-    alignSelf: 'flex-start',
-    elevation: 3,
-    fontSize: scale(12),
-  },
-  input: {
-    borderWidth: scale(1),
-    borderColor: '#ccc',
-    borderRadius: scale(6),
-    padding: moderateScale(6),
-    width: moderateScale(60),
-    marginHorizontal: scale(8),
-  },
-  input2: {
-    borderWidth: scale(1),
-    borderColor: '#ccc',
-    borderRadius: scale(6),
-    padding: moderateScale(6),
-    width: '20%',
-    marginHorizontal: scale(6),
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: verticalScale(6),
-  },
-  row2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: verticalScale(4),
-  },
-  row3: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: verticalScale(4),
-  },
-  row4: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: verticalScale(4),
-    justifyContent: 'space-between',
-  },
-  
-//   callBtn: {
-//   backgroundColor: '#003366',
-//   paddingVertical: verticalScale(8),
-//   //paddingHorizontal: scale(4),
-//   borderRadius: scale(8),
-//   justifyContent: 'center',
-//   alignItems: 'center',
-//   flex: 1,
-//   marginHorizontal: moderateScale(2),
-//   marginVertical: verticalScale(2),
-//   elevation: 5,
-//   minHeight: verticalScale(30),
 
+  section: {
+  backgroundColor: '#fff',
+  borderRadius: scale(12),
+  padding: scale(12),
+  marginBottom: verticalScale(16),
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.1,
+  shadowRadius: 2,
+  elevation: 2,
+},
+
+sectionTitle: {
+  fontSize: moderateScale(14),
+  fontWeight: 'bold',
+  marginBottom: verticalScale(10),
+  color: '#003366',
+},
+
+formRow: {
+  marginBottom: verticalScale(10),
+},
+
+formRowHorizontal: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: scale(10),
+},
+
+formRowStack: {
+  flexDirection: 'column',
+},
+
+field: {
+  flex: 1,
+},
+
+label: {
+  fontSize: moderateScale(12),
+  marginBottom: verticalScale(4),
+  color: '#333',
+},
+
+input: {
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: scale(8),
+  paddingHorizontal: scale(10),
+  paddingVertical: verticalScale(8),
+  fontSize: moderateScale(12),
+  backgroundColor: '#f9f9f9',
+},
+
+actionField: {
+  flex: 1,
+  justifyContent: 'flex-end',
+},
+
+// ✅ Button styles
+buttonRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: scale(10),
+  marginTop: verticalScale(10),
+},
+
+button: {
+  flex: 1,
+  paddingVertical: verticalScale(10),
+  borderRadius: scale(8),
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+button1: {
+  paddingVertical: verticalScale(5),
+   paddingHorizontal: verticalScale(100),
+   marginTop: verticalScale(10),
+  borderRadius: scale(10),
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+assignBtn: {
+  backgroundColor: '#28a745',
+},
+
+detailsBtn: {
+  backgroundColor: '#000',
+},
+
+buttonText: {
+  color: 'white',
+  fontSize: moderateScale(12),
+  fontWeight: '600',
+},
+
+// callBtn: {
+//   flex: 1,
+//   marginHorizontal: scale(5),
+//   paddingVertical: verticalScale(10),
+//   borderRadius: scale(8),
+//   alignItems: 'center',
 // },
 
 // callText: {
 //   color: 'white',
+//   fontSize: moderateScale(12),
 //   fontWeight: '600',
-//   fontSize: scale(10),
-//   textAlign: 'center',
 // },
-callBtn: {
-  paddingVertical: verticalScale(10),
-  paddingHorizontal: scale(8),
-  borderRadius: scale(8),
-  backgroundColor: '#091829ff',
-},
-callText: {
-  color: '#fff',
-  fontWeight: 'bold',
-  textAlign: 'center',
-},
+
 row4: {
   flexDirection: 'row',
-  alignItems: 'center',
-  marginTop: verticalScale(4),
   justifyContent: 'space-between',
-  flexWrap: 'wrap', // Add this
+  marginTop: verticalScale(10),
 },
 
-});
 
-export default styles;
+ headerRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingHorizontal: scale(10),
+  marginTop: verticalScale(20),
+  marginBottom: verticalScale(10),
+},
+
+headerBox: {
+  fontSize: moderateScale(14),
+  fontWeight: '600',
+  color: '#fcfdffff',
+  backgroundColor: '#003366',
+  padding: scale(8),
+  borderRadius: scale(6),
+  flex: 1,
+  marginHorizontal: scale(5),
+  textAlign: 'center',
+},
+
+chartSection: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-around',
+  paddingVertical: verticalScale(10),
+},
+
+progressContainer: {
+  alignItems: 'center',
+  margin: verticalScale(10),
+},
+
+chartPercentage: {
+  fontSize: moderateScale(14),
+  fontWeight: '700',
+  color: '#003366',
+},
+
+chartTitle: {
+  fontSize: moderateScale(12),
+  color: '#555',
+  marginTop: verticalScale(5),
+},
+
+  callBtn: {
+    padding: scale(10),
+    borderRadius: scale(6),
+    margin: scale(5),
+  },
+
+  callText: {
+    color: 'white',
+    fontSize: moderateScale(12),
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});
