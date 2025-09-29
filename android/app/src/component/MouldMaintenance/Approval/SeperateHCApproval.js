@@ -103,7 +103,7 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
       style={[
         styles.Container1,
         item.type === 'Start' && { backgroundColor: '#FFF8DC', borderColor: '#FFD700' },
-        item.type === 'Approved' && { backgroundColor: '#D4EDDA', borderColor: '#28A745' },
+        item.type === 'Approved' && { backgroundColor: '#00FF00', borderColor: '#008000' },
         { padding: 10, marginBottom: 10, borderRadius: 8, borderWidth: 1 },
       ]}
     >
@@ -254,7 +254,7 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
 
             <View style={modalStyles.modalButtonRow}>
               <TouchableOpacity
-                style={[modalStyles.modalButton, { backgroundColor: '#28a745' }]}
+                style={[modalStyles.modalButton, { backgroundColor: '#3535ebff' }]}
                 onPress={() => {
                   if (!selectedUser || !password) {
                     Alert.alert('Validation', 'Please select user and enter password');
@@ -273,7 +273,7 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
                           fetch(`${BASE_URL}/SeperateHCApproval/ApproveChecklist`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ CheckListID: selectedChecklist.CheckListID }),
+                            body: JSON.stringify({ CheckListID: selectedChecklist.CheckListID,UserName: selectedUser  }),
                           })
                             .then(res => res.json())
                             .then(result => {
@@ -305,7 +305,7 @@ const SeperateHCApproval = ({ username, setIsLoggedIn }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[modalStyles.modalButton, { backgroundColor: '#dc3545' }]}
+                style={[modalStyles.modalButton, { backgroundColor: '#3535ebff' }]}
                 onPress={() => setIsModalVisible(false)}
               >
                 <Text style={modalStyles.modalButtonText}>Cancel</Text>
