@@ -46,12 +46,44 @@ const Quality = ({ route, navigation, username, setIsLoggedIn }) => {
 const { width } = useWindowDimensions();
 const isLargeScreen = width > 600; // You can tune this threshold
 
+ //  Mould Dropdown
+  const [mouldList, setMouldList] = useState([]);
+  const [selectedMould, setSelectedMould] = useState('');
 
   const shiftList = [
     { key: '1', value: 'A' },
     { key: '2', value: 'B' },
     { key: '3', value: 'C' },
   ];
+
+   // 🔹 Fetch Validated Moulds when equipmentName changes
+const fetchValidatedMoulds = async () => {
+  try {
+    if (!equipmentName) return;
+
+    const response = await axios.get(
+      `${BASE_URL}/rework/getValidatedMoulds/${encodeURIComponent(equipmentName)}`
+    );
+
+    if (response.data.status === 200 && Array.isArray(response.data.data)) {
+      const formatted = response.data.data.map(mould => ({
+        key: mould.MouldID,
+        value: mould.MouldName,
+      }));
+      setMouldList(formatted);
+      setSelectedMould(''); // reset previous selection
+    } else {
+      setMouldList([]);
+    }
+  } catch (error) {
+    console.error('❌ Error fetching validated moulds:', error);
+    setMouldList([]);
+  }
+};
+
+ useEffect(() => {
+  if (equipmentName) fetchValidatedMoulds();
+}, [equipmentName]);
 
   ///-----------set the role to quality supervisor
   useEffect(() => {
@@ -101,7 +133,7 @@ const isLargeScreen = width > 600; // You can tune this threshold
 
   //================update api
   const handleUpdateRework = async () => {
-    if (!selectedDate || !selectedShift || !selectedReason || !remark || !count) {
+    if (!selectedDate || !selectedShift || !selectedReason || !remark || !count || !selectedMould) {
       alert('Please fill all required fields.');
       return;
     }
@@ -113,6 +145,7 @@ const isLargeScreen = width > 600; // You can tune this threshold
       Remark: remark,
       NOTOKQuantity: parseInt(count),
       EquipmentName: equipmentName,
+      MouldName: selectedMould,   
       UserName: username || 'admin',
     };
 
@@ -177,6 +210,7 @@ const isLargeScreen = width > 600; // You can tune this threshold
             id: item.EquipmentID,
             EquipmentID: item.EquipmentID ? item.EquipmentID.toString() : '',
             EquipmentName: item.EquipmentName || '',
+            MouldName: item.MouldName || '',
             ProdDate: item.ProdDate?.split("T")[0] || '',
             ProdShift: item.ProdShift,
             UserName: item.UserName,
@@ -338,7 +372,27 @@ const isLargeScreen = width > 600; // You can tune this threshold
         <View style={styles.row2}>
           <Text style={styles.label}>Machine Name</Text>
           <TextInput style={styles.input2} value={equipmentName} editable={false} />
-
+        </View>
+  <View>
+<Text style={styles.label}>Mould Name</Text>
+<View  style={{ flex: 1, marginLeft: scale(2), marginRight: scale(2) }}>
+  <SelectList
+    setSelected={setSelectedMould}
+    data={mouldList}
+    save="value"
+    placeholder="Select Mould"
+    boxStyles={{
+      backgroundColor: 'white',
+      borderRadius: moderateScale(6),
+      borderWidth: 1,
+      borderColor: '#ccc',
+    }}
+    dropdownStyles={{
+      backgroundColor: '#f0f8ff',
+      borderRadius: moderateScale(6),
+    }}
+  />
+</View>
         </View>
 
         <View>
@@ -520,6 +574,7 @@ const isLargeScreen = width > 600; // You can tune this threshold
               <DataTable.Header>
                 <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>EquipmentID</DataTable.Title>
                 <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Equipment Name</DataTable.Title>
+                <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>Mould Name</DataTable.Title>
                 <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>UserName</DataTable.Title>
                 <DataTable.Title style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>ProdDate</DataTable.Title>
                 <DataTable.Title style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#aa9c9cff' }}>ProdShift</DataTable.Title>
@@ -545,6 +600,7 @@ const isLargeScreen = width > 600; // You can tune this threshold
                     <DataTable.Row key={row.id} onPress={() => handleRowPress(row)}>
                       <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.EquipmentID}</DataTable.Cell>
                       <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.EquipmentName}</DataTable.Cell>
+                       <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.MouldName}</DataTable.Cell>
                       <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.UserName}</DataTable.Cell>
                       <DataTable.Cell style={{ width: scale(30), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.ProdDate}</DataTable.Cell>
                       <DataTable.Cell style={{ width: scale(20), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>{row.ProdShift}</DataTable.Cell>
