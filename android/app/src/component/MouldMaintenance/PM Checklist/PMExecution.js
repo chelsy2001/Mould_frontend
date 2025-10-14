@@ -23,6 +23,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
     const { checklistID } = route.params;
     const [checkpoints, setCheckpoints] = useState([]);
+      const [imageUri, setImageUri] = useState(null);
     const navigation = useNavigation();
     //fetch the PM Execution data  
     useEffect(() => {
@@ -107,205 +108,59 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
     };
 
     // Ask for camera permission
-const requestCameraPermission = async () => {
-  if (Platform.OS === "android") {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: "Camera Permission",
-          message: "App needs access to your camera",
-          buttonPositive: "OK",
+ // Camera permissions
+    const requestCameraPermission = async () => {
+        if (Platform.OS === 'android') {
+            try {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.CAMERA,
+                    { title: 'Camera Permission', message: 'App needs access to your camera', buttonPositive: 'OK' }
+                );
+                return granted === PermissionsAndroid.RESULTS.GRANTED;
+            } catch (err) { console.warn(err); return false; }
         }
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  }
-  return true;
-};
+        return true;
+    };
 
 // Open camera and upload image
-const openCamera = async (checkpoint, index) => {
-  const hasPermission = await requestCameraPermission();
-  if (!hasPermission) return;
+  const openCamera = async (checkpoint) => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
 
-  launchCamera({ mediaType: "photo", quality: 0.7, saveToPhotos: true }, async (response) => {
-    if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
-      const uri = response.assets[0].uri;
-      const fileName = `${checkpoint.CheckPointID}.jpg`; // ✅ using CheckPointID
+    launchCamera({ mediaType: 'photo', quality: 0.7, saveToPhotos: true }, async (response) => {
+        if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
+            const uri = response.assets[0].uri;
+            setImageUri(uri);
 
-      const formData = new FormData();
-      formData.append("image", {
-        uri,
-        type: "image/jpeg",
-        name: fileName,
-      });
+            const fileName = `${checkpoint.CheckListID}_${checkpoint.CheckPointID}.jpg`;
+            const formData = new FormData();
+            formData.append("image", {
+                uri: Platform.OS === "android" ? uri : uri.replace("file://", ""),
+                type: "image/jpeg",
+                name: fileName
+            });
 
-      try {
-        const uploadResponse = await axios.post(
-          `${BASE_URL}/PMMouldExecution/upload-image-to-checkpoint/${checkpoint.CheckPointID}`, // ✅ new endpoint
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+            try {
+                const uploadResponse = await axios.post(
+  `${BASE_URL}/PMMouldExecution/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}`,
+  formData,
+  { headers: { "Content-Type": "multipart/form-data" }, timeout: 10000 }
+);
 
-        if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
-          Alert.alert("✅ Image uploaded successfully");
-
-          // update checkpoints with captured image
-          const updated = [...checkpoints];
-          updated[index].CapturedImage = uri;
-          setCheckpoints(updated);
-        } else {
-          Alert.alert("❌ Upload failed", uploadResponse.data.message || "Unknown error");
+                if (uploadResponse.data.status === 200) {
+                    Alert.alert('✅ Image uploaded successfully');
+                } else {
+                    Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error.response?.data || error.message);
+                Alert.alert('❌ Error uploading image');
+            }
         }
-      } catch (error) {
-        console.error("Upload error:", error.response?.data || error.message);
-        Alert.alert("❌ Error uploading image");
-      }
-    }
-  });
+    });
 };
 
 
-    // return (
-    //     <View style={styles.container}>
-    //         <Header username={username} title="Preventive Maintenance Execution" />
-    //         <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
-    //             <View>
-    //                 {checkpoints.map((item, index) => (
-    //                     <View key={index}
-    //                         style={[
-    //                             styles.Container1,
-    //                             item.OKNOK === 1
-    //                                 ? { backgroundColor: '#00b050' } // Green background for OK
-    //                                 : item.OKNOK === 2
-    //                                     ? { backgroundColor: 'red' } // Red background for NOK
-    //                                     : {}
-    //                         ]}>
-    //                         <View style={styles.row1}>
-    //                             <Text style={styles.label}>Checklist Name</Text>
-    //                             <TextInput style={[styles.input1, { width: 400 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckListName} editable={false} />
-
-    //                             <Text style={styles.label}>CheckPoint Name</Text>
-    //                             <TextInput style={[styles.input1, { width: 400 },]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckPointName} editable={false} />
-    //                         </View>
-
-    //                         <View style={styles.row2}>
-    //                             <Text style={styles.label}>Judgement Criteria</Text>
-    //                             <TextInput style={[styles.input2, { width: 400, marginStart: '1' }]} multiline={true}
-    //                                 numberOfLines={4} value={item.JudgementCriteria} editable={false} />
-
-    //                             <Text style={styles.label}>Observation</Text>
-
-    //                             <TextInput
-    //                                 style={[styles.input2, { width: 400, marginEnd: '-2' }]}
-    //                                 multiline={true}
-    //                                 numberOfLines={4}
-    //                                 value={item.ObservationInput}
-    //                                 editable={!item.isDisabled}
-    //                                 onChangeText={text => {
-    //                                     const updated = [...checkpoints];
-    //                                     updated[index].ObservationInput = text;
-    //                                     setCheckpoints(updated);
-    //                                 }}
-    //                                 placeholder="Enter observation"
-    //                                 placeholderTextColor="#A9A9A9"
-    //                             />
-    //                         </View>
-
-    //                         <View style={styles.row4}>
-    //                             <Text style={styles.label}>CheckPointItems</Text>
-    //                             <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckPointItems} editable={false} />
-
-    //                             <Text style={styles.label}>CheckPointArea</Text>
-    //                             <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckPointArea} editable={false} />
-
-    //                             <Text style={styles.label}>CheckingMethod</Text>
-    //                             <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckingMethod} editable={false} />
-
-    //                             <Text style={styles.label}>CheckArea</Text>
-    //                             <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckArea} editable={false} />
-    //                         </View>
-    //                         {/* edit later row 6*/}
-    //                         <View style={styles.row4}>
-
-    //                             <Text style={styles.label}>CheckPointValue</Text>
-    //                             <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.CheckPointValue?.toString() || ''} editable={false} />
-    //                             <Text style={styles.label}>UpperLimit</Text>
-    //                             <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.UpperLimit?.toString() || ''} editable={false} />
-
-    //                             <Text style={styles.label}>LowerLimit</Text>
-    //                             <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.LowerLimit?.toString() || ''} editable={false} />
-
-    //                             <Text style={styles.label}>Standard</Text>
-    //                             <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.Standard?.toString() || ''} editable={false} />
-
-    //                             <Text style={styles.label}>UOM</Text>
-    //                             <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
-    //                                 numberOfLines={4} value={item.UOM} editable={false} />
-    //                         </View>
-    //                         <View style={styles.row5}>
-    //                             {/* <TouchableOpacity style={[styles.iconButton, { marginRight: 10, }]} >
-    //                                 <Icon name="camera" size={24} color="white" />
-    //                             </TouchableOpacity> */}
-    //                             {item.CheckingMethod === 'Visual' && (
-    //                                 <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]}>
-    //                                     <Icon name="camera" size={24} color="white" />
-    //                                 </TouchableOpacity>
-    //                             )}
-    //                             <TouchableOpacity
-    //                                 style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
-    //                                 onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 1, index)}
-    //                                 disabled={item.isDisabled}
-    //                             >
-    //                                 <Text style={styles.buttonText}>OK</Text>
-    //                             </TouchableOpacity>
-
-    //                             <TouchableOpacity style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
-    //                                 onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 2, index)}
-    //                                 disabled={item.isDisabled}><Text style={styles.buttonText}>NOK</Text></TouchableOpacity>
-    //                             <TouchableOpacity style={styles.iconButton} onPress={() => handleEdit(index)}>
-    //                                 {/* <Text style={styles.buttonText}>Edit</Text> */}
-    //                                 <Icon name="square-edit-outline" size={24} color="white"></Icon>
-    //                             </TouchableOpacity>
-    //                         </View>
-    //                     </View>
-    //                 ))}
-    //             </View>
-    //         </ScrollView>
-    //         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
-    //             <TouchableOpacity style={[styles.button, { marginRight: 10 }]}
-    //                 onPress={handleSubmit}>
-    //                 <Text style={styles.buttonText}>Submit</Text>
-    //             </TouchableOpacity>
-
-    //             <TouchableOpacity style={styles.button}
-    //                 //  onPress={() => navigation.goBack()}
-    //                 onPress={() => navigation.navigate('PMPreparation', { checklistID })}
-    //             >
-    //                 <Text style={styles.buttonText}>Close</Text>
-    //             </TouchableOpacity>
-    //         </View>
-    //     </View>
-    // )
-    ;
     return (
   <View style={styles.container}>
     <Header username={username} title="Preventive Maintenance Execution" />
@@ -403,20 +258,14 @@ const openCamera = async (checkpoint, index) => {
 
           {/* Row 5 */}
           <View style={styles.row5}>
-            {item.CheckingMethod === "Visual" && (
-  <TouchableOpacity
-    style={[styles.iconButton, { marginRight: 10 }]}
-    onPress={() => openCamera(item, index)}
-  >
-    <Icon name="camera" size={24} color="white" />
-  </TouchableOpacity>
-)}
-{item.CapturedImage && (
-  <Image
-    source={{ uri: item.CapturedImage }}
-    style={{ width: 100, height: 100, marginTop: 10, borderRadius: 8 }}
-  />
-)}
+           {item.CheckingMethod === 'Visual' && (
+                    <TouchableOpacity
+                        style={[styles.iconButton, { marginRight: 10 }]}
+                        onPress={() => openCamera(item)}
+                    >
+                        <Icon name="camera" size={24} color="white" />
+                    </TouchableOpacity>
+                )}
             <TouchableOpacity
               style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
               onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 1, index)}

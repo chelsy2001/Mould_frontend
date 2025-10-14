@@ -7,8 +7,7 @@ import {
     Alert,
     FlatList,
     Platform,
-    PermissionsAndroid,
-    Linking
+    PermissionsAndroid
 } from 'react-native';
 import Header from '../../Common/header/header';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -26,7 +25,9 @@ const PMPreparation = ({ username }) => {
     const [checkpoints, setCheckpoints] = useState([]);
     const [imageUri, setImageUri] = useState(null);
     const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
+    const [isSubmitted, setIsSubmitted] = useState(false); 
 
+    // Fetch checkpoints on component mount
     useEffect(() => {
         fetch(`${BASE_URL}/PMMouldPreparation/GetCheckPoints/${checklistID}`)
             .then(res => res.json())
@@ -38,6 +39,9 @@ const PMPreparation = ({ username }) => {
                         isDisabled: item.Observation !== null && item.Observation !== '' && item.OKNOK !== null
                     }));
                     setCheckpoints(updatedData);
+
+                    const allDone = updatedData.every(cp => cp.isDisabled);
+                    setIsSubmitted(allDone);
                 } else {
                     console.warn('API error:', response.message);
                 }
@@ -45,28 +49,32 @@ const PMPreparation = ({ username }) => {
             .catch(err => console.error('API fetch error:', err));
     }, [checklistID]);
 
+    // Update checkpoint OK/NOK status
     const updateCheckpoint = (checkPointID, observation, oknok, index) => {
         fetch(`${BASE_URL}/PMMouldPreparation/UpdateCheckPointStatus`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ CheckPointID: checkPointID, Observation: observation, OKNOK: oknok })
         })
-            .then(res => res.json())
-            .then(response => {
-                if (response.status === 200) {
-                    Alert.alert('Success', response.message);
-                    const updated = [...checkpoints];
-                    updated[index].isDisabled = true;
-                    updated[index].OKNOK = oknok;
-                    setCheckpoints(updated);
-                } else {
-                    Alert.alert('Error', response.message);
-                }
-            })
-            .catch(err => {
-                Alert.alert('Error', 'Failed to update checkpoint');
-                console.error(err);
-            });
+        .then(res => res.json())
+        .then(response => {
+            if (response.status === 200) {
+                Alert.alert('Success', response.message);
+                const updated = [...checkpoints];
+                updated[index].isDisabled = true;
+                updated[index].OKNOK = oknok;
+                setCheckpoints(updated);
+
+                const allDone = updated.every(cp => cp.isDisabled);
+                setIsSubmitted(allDone);
+            } else {
+                Alert.alert('Error', response.message);
+            }
+        })
+        .catch(err => {
+            Alert.alert('Error', 'Failed to update checkpoint');
+            console.error(err);
+        });
     };
 
     const handleEdit = (index) => {
@@ -81,22 +89,24 @@ const PMPreparation = ({ username }) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ CheckListID: checklistID })
         })
-            .then(res => res.json())
-            .then(response => {
-                if (response.status === 200) {
-                    Alert.alert('Success', response.message || 'Moved to execution successfully.', [
-                        { text: 'OK', onPress: () => navigation.navigate('PMExecution', { checklistID }) },
-                    ]);
-                } else {
-                    Alert.alert('Error', response.message || 'Failed to move to execution.');
-                }
-            })
-            .catch(error => {
-                console.error('Submit error:', error);
-                Alert.alert('Error', 'Submission failed: ' + error.message);
-            });
+        .then(res => res.json())
+        .then(response => {
+            if (response.status === 200) {
+                Alert.alert('Success', response.message || 'Moved to execution successfully.', [
+                    { text: 'OK', onPress: () => navigation.navigate('PMExecution', { checklistID }) }
+                ]);
+                setIsSubmitted(true);
+            } else {
+                Alert.alert('Error', response.message || 'Failed to move to execution.');
+            }
+        })
+        .catch(error => {
+            console.error('Submit error:', error);
+            Alert.alert('Error', 'Submission failed: ' + error.message);
+        });
     };
 
+    // Camera permissions
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -110,6 +120,7 @@ const PMPreparation = ({ username }) => {
         return true;
     };
 
+    // Open camera and upload image
     const openCamera = async (checkpoint) => {
         const hasPermission = await requestCameraPermission();
         if (!hasPermission) return;
@@ -122,16 +133,21 @@ const PMPreparation = ({ username }) => {
 
                 const fileName = `${checkpoint.CheckListID}_${checkpoint.CheckPointID}.jpg`;
                 const formData = new FormData();
-                formData.append('image', { uri, type: 'image/jpeg', name: fileName });
+                formData.append("image", {
+                    uri: Platform.OS === "android" ? uri : uri.replace("file://", ""),
+                    type: "image/jpeg",
+                    name: fileName,
+                });
 
                 try {
                     const uploadResponse = await axios.post(
-                        `${BASE_URL}/PMMouldPreparation/upload-image-to-checkpoint/${checkpoint.CheckListID}/${checkpoint.CheckPointID}`,
+                        `${BASE_URL}/PMMouldPreparation/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}`,
                         formData,
-                        { headers: { 'Content-Type': 'multipart/form-data' } }
+                        { headers: { "Content-Type": "multipart/form-data" } }
                     );
+
                     if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
-                        Alert.alert('✅ Image uploaded successfully');
+                        // Alert.alert('✅ Image uploaded successfully');
                     } else {
                         Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
                     }
@@ -243,9 +259,19 @@ const PMPreparation = ({ username }) => {
             />
 
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
-                <TouchableOpacity style={[styles.button, { marginRight: 10 }]} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Submit</Text>
-                </TouchableOpacity>
+                {!isSubmitted ? (
+                    <TouchableOpacity style={[styles.button, { marginRight: 10 }]} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>Submit</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        style={[styles.button, { marginRight: 10 }]}
+                        onPress={() => navigation.navigate('PMExecution', { checklistID })}
+                    >
+                        <Text style={styles.buttonText}>Next</Text>
+                    </TouchableOpacity>
+                )}
+
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigation.navigate('PMMouldMonitoring', { checklistID })}

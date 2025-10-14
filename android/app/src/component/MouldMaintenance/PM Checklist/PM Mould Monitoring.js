@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
-  Animated,
   PermissionsAndroid,
-  Image
+  Image,
 } from 'react-native';
 import Header from '../../Common/header/header';
 import styles from './MouldMonitoringStyle';
@@ -20,50 +18,42 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { launchCamera } from 'react-native-image-picker';
 import axios from 'axios';
 
-
-const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
-
+const PMMouldMonitoring = ({ username }) => {
   const [checklistData, setChecklistData] = useState([]);
+  const [imageUri, setImageUri] = useState(null);
   const navigation = useNavigation();
 
-
-  const getPMStatusText = (pmStatus) => {
-    switch (pmStatus) {
-      case 1:
-        return 'PM Not Started';
-      case 2:
-        return 'PM Warring';
-      case 3:
-        return 'PM Alarm';
-      case 4:
-        return 'PM in Prepration';
-      case 5:
-        return 'PM in Execution';
-      case 6:
-        return 'Waiting for Approval';
-      case 7:
-        return 'Approved';
-      case 8:
-        return 'PM Due';
-      default:
-        return 'Unknown Status';
-    }
-  }
-
-  //integrate the checklist api
+  // Fetch checklist on mount
   useEffect(() => {
-    fetch(`${BASE_URL}/PMMouldMonitoring/PMChecklist`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 200) {
-          setChecklistData(data.data);
-        } else {
-          console.log('Error:', data.message);
-        }
-      })
-      .catch(error => console.error('API fetch error:', error));
+    const fetchChecklist = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/PMMouldMonitoring/PMChecklist`);
+        const data = await res.json();
+        if (data.status === 200) setChecklistData(data.data);
+        else console.log('Error fetching checklist:', data.message);
+      } catch (err) {
+        console.error('API fetch error:', err);
+      }
+    };
+    fetchChecklist();
   }, []);
 
+  // Convert PMStatus to text
+  const getPMStatusText = (pmStatus) => {
+    const statusMap = {
+      1: 'PM Not Started',
+      2: 'PM Warning',
+      3: 'PM Alarm',
+      4: 'PM in Preparation',
+      5: 'PM in Execution',
+      6: 'Waiting for Approval',
+      7: 'Approved',
+      8: 'PM Due',
+    };
+    return statusMap[pmStatus] || 'Unknown Status';
+  };
+
+  // Request camera permission
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -84,69 +74,73 @@ const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
     return true;
   };
 
-  const openCamera = async (checkpoint) => {
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) return;
-
-    launchCamera({ mediaType: 'photo', quality: 0.7, saveToPhotos: true }, async (response) => {
-      if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
-        const uri = response.assets[0].uri;
-        setImageUri(uri);
-        setCurrentCheckpoint(checkpoint);
-
-        const fileName = `${checkpoint.CheckListID}.jpg`; // ✅ Only using CheckListID now
-
-        const formData = new FormData();
-        formData.append('image', {
-          uri,
-          type: 'image/jpeg',
-          name: fileName,
-        });
-
-        try {
-          const uploadResponse = await axios.post(
-            `${BASE_URL}/PMMouldMonitoring/upload-image-to-checklist/${checkpoint.CheckListID}`, // ✅ Updated endpoint
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            }
-          );
-
-          if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
-            Alert.alert('✅ Image uploaded successfully');
-          } else {
-            Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
-          }
-        } catch (error) {
-          console.error('Upload error:', error.response?.data || error.message);
-          Alert.alert('❌ Error uploading image');
-        }
+  // Open camera and upload image
+  const openCamera = (checkpoint) => {
+    return new Promise(async (resolve, reject) => {
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) {
+        Alert.alert('❌ Camera permission denied');
+        return reject('Camera permission denied');
       }
+
+      launchCamera(
+        { mediaType: 'photo', quality: 0.7, saveToPhotos: true },
+        async (response) => {
+          try {
+            if (response.didCancel) return reject('User cancelled');
+            if (response.errorCode) return reject(response.errorMessage);
+
+            const asset = response.assets?.[0];
+            if (!asset?.uri) return reject('No image captured');
+
+            setImageUri(asset.uri);
+
+            const fileName = `${checkpoint.CheckListID}_${Date.now()}.jpg`;
+            const formData = new FormData();
+            formData.append('image', {
+              uri: asset.uri,
+              type: asset.type || 'image/jpeg',
+              name: fileName,
+            });
+
+            const uploadResponse = await axios.post(
+              `${BASE_URL}/PMMouldMonitoring//upload-image-to-checklist/${checkpoint.CheckListID}`,
+              formData,
+              { headers: { 'Content-Type': 'multipart/form-data' } }
+            );
+
+            if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
+              // Alert.alert('✅ Image uploaded successfully');
+              resolve();
+            } else {
+              reject(uploadResponse.data.message || 'Unknown upload error');
+            }
+          } catch (err) {
+            console.error('Upload error:', err.response?.data || err.message);
+            Alert.alert('❌ Error uploading image', err.response?.data?.message || 'Check console');
+            reject(err);
+          }
+        }
+      );
     });
   };
 
   return (
-    //<ScrollView style={styles.container}>
     <View style={styles.container}>
       <Header username={username} title="Preventive Maintenance Monitoring" />
-      <ScrollView
-        nestedScrollEnabled={true}
-        style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}
-      >
-        {checklistData.map((item, index) => (
-          <View>
-            <View key={item.UID} style={[
-              styles.Container1,
-              (item.PMStatus === 4 || item.PMStatus === 5) && {
-                backgroundColor: '#00b050',
-                borderColor: '#28a745',
-                borderWidth: 1.5
-              }
-            ]}>
-              {/* <Text style={styles.boxHeader}>Checklist #{index + 1}</Text> */}
-
+      <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}>
+        {checklistData.map((item) => (
+          <View key={item.UID}>
+            <View
+              style={[
+                styles.Container1,
+                (item.PMStatus === 4 || item.PMStatus === 5) && {
+                  backgroundColor: '#00b050',
+                  borderColor: '#28a745',
+                  borderWidth: 1.5,
+                },
+              ]}
+            >
               <View style={styles.row1}>
                 <Text style={styles.label}>Checklist Name</Text>
                 <TextInput style={[styles.input1, { width: 200 }]} value={item.CheckListName} editable={false} />
@@ -159,8 +153,6 @@ const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
 
                 <Text style={styles.label}>PMFreqCount</Text>
                 <TextInput style={[styles.input1, { width: 100 }]} value={item.PMFreqCount.toString()} editable={false} />
-
-
               </View>
 
               <View style={styles.row2}>
@@ -182,44 +174,37 @@ const PMMouldMonitoring = ({ username, setIsLoggedIn }) => {
                 {item.PMStatus === 4 || item.PMStatus === 5 ? (
                   <TouchableOpacity
                     style={[styles.iconButton, { marginRight: 10 }]}
-                    onPress={() => openCamera(item)}
+                    onPress={async () => {
+                      try {
+                        await openCamera(item);
+                      } catch (err) {
+                        console.log('Camera upload error:', err);
+                      }
+                    }}
                   >
                     <Icon name="camera" size={24} color="white" />
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity
-                    style={[styles.iconButton, { marginRight: 10, backgroundColor: '#ccc' }]}
-                    disabled={true}
-                  >
+                  <TouchableOpacity style={[styles.iconButton, { marginRight: 10, backgroundColor: '#ccc' }]} disabled={true}>
                     <Icon name="camera" size={24} color="#666" />
                   </TouchableOpacity>
                 )}
 
                 {item.PMStatus === 4 || item.PMStatus === 5 ? (
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      navigation.navigate('PMPreparation', { checklistID: item.CheckListID })
-                    }
-                  >
+                  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PMPreparation', { checklistID: item.CheckListID })}>
                     <Text style={styles.buttonText}>Execute</Text>
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity
-                    style={[styles.button, { backgroundColor: '#ccc' }]} // Greyed out style
-                    disabled={true}
-                  >
+                  <TouchableOpacity style={[styles.button, { backgroundColor: '#ccc' }]} disabled={true}>
                     <Text style={[styles.buttonText, { color: '#666' }]}>Execute</Text>
                   </TouchableOpacity>
                 )}
-
               </View>
             </View>
           </View>
         ))}
       </ScrollView>
     </View>
-    //</ScrollView>
   );
 };
 
