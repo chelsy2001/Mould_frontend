@@ -27,6 +27,7 @@ const HCExecutionStyle = StyleSheet.create({
     marginLeft: 15,
     padding: 10,
     borderRadius: 10,
+    marginTop: 20,
     marginBottom: 20, // 👈 adds space between boxes
     elevation: 5, // for shadow on Android
 

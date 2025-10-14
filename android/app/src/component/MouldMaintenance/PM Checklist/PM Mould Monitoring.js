@@ -104,7 +104,7 @@ const PMMouldMonitoring = ({ username }) => {
             });
 
             const uploadResponse = await axios.post(
-              `${BASE_URL}/PMMouldMonitoring//upload-image-to-checklist/${checkpoint.CheckListID}`,
+              `${BASE_URL}/PMMouldMonitoring/upload-image-to-checklist/${checkpoint.CheckListID}`,
               formData,
               { headers: { 'Content-Type': 'multipart/form-data' } }
             );

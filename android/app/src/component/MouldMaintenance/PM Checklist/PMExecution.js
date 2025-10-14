@@ -148,7 +148,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
 );
 
                 if (uploadResponse.data.status === 200) {
-                    Alert.alert('✅ Image uploaded successfully');
+                    // Alert.alert('✅ Image uploaded successfully');
                 } else {
                     Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
                 }

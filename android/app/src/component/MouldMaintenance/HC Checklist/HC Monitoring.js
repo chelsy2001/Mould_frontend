@@ -23,6 +23,7 @@ import axios from 'axios';
 const HCMonitoring = ({ username, setIsLoggedIn }) => {
 
   const [checklistData, setChecklistData] = useState([]);
+    const [imageUri, setImageUri] = useState(null);
   const navigation = useNavigation();
 
 
@@ -62,69 +63,78 @@ const HCMonitoring = ({ username, setIsLoggedIn }) => {
   }, []);
 
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonPositive: 'OK',
-          }
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const openCamera = async (checkpoint) => {
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) return;
-
-    launchCamera({ mediaType: 'photo', quality: 0.7, saveToPhotos: true }, async (response) => {
-      if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
-        const uri = response.assets[0].uri;
-        setImageUri(uri);
-        setCurrentCheckpoint(checkpoint);
-
-        const fileName = `${checkpoint.CheckListID}.jpg`; // ✅ Only using CheckListID now
-
-        const formData = new FormData();
-        formData.append('image', {
-          uri,
-          type: 'image/jpeg',
-          name: fileName,
-        });
-
+   // Request camera permission
+    const requestCameraPermission = async () => {
+      if (Platform.OS === 'android') {
         try {
-          const uploadResponse = await axios.post(
-            `${BASE_URL}/PMMouldMonitoring/upload-image-to-checklist/${checkpoint.CheckListID}`, // ✅ Updated endpoint
-            formData,
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
             {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
+              title: 'Camera Permission',
+              message: 'App needs access to your camera',
+              buttonPositive: 'OK',
             }
           );
-
-          if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
-            Alert.alert('✅ Image uploaded successfully');
-          } else {
-            Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
-          }
-        } catch (error) {
-          console.error('Upload error:', error.response?.data || error.message);
-          Alert.alert('❌ Error uploading image');
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } catch (err) {
+          console.warn(err);
+          return false;
         }
       }
+      return true;
+    };
+  
+
+  // Open camera and upload image
+  const openCamera = (checkpoint) => {
+    return new Promise(async (resolve, reject) => {
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) {
+        Alert.alert('❌ Camera permission denied');
+        return reject('Camera permission denied');
+      }
+
+      launchCamera(
+        { mediaType: 'photo', quality: 0.7, saveToPhotos: true },
+        async (response) => {
+          try {
+            if (response.didCancel) return reject('User cancelled');
+            if (response.errorCode) return reject(response.errorMessage);
+
+            const asset = response.assets?.[0];
+            if (!asset?.uri) return reject('No image captured');
+
+            setImageUri(asset.uri);
+
+            const fileName = `${checkpoint.CheckListID}_${Date.now()}.jpg`;
+            const formData = new FormData();
+            formData.append('image', {
+              uri: asset.uri,
+              type: asset.type || 'image/jpeg',
+              name: fileName,
+            });
+
+            const uploadResponse = await axios.post(
+              `${BASE_URL}/HCMouldMonitoring/upload-image-to-checklist/${checkpoint.CheckListID}`,
+              formData,
+              { headers: { 'Content-Type': 'multipart/form-data' } }
+            );
+
+            if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
+              // Alert.alert('✅ Image uploaded successfully');
+              resolve();
+            } else {
+              reject(uploadResponse.data.message || 'Unknown upload error');
+            }
+          } catch (err) {
+            console.error('Upload error:', err.response?.data || err.message);
+            Alert.alert('❌ Error uploading image', err.response?.data?.message || 'Check console');
+            reject(err);
+          }
+        }
+      );
     });
   };
-
 
   return (
     <View style={styles.container}>
@@ -176,17 +186,20 @@ const HCMonitoring = ({ username, setIsLoggedIn }) => {
 
 
                 {item.HCStatus === 4 ? (
-                  <TouchableOpacity
+                 <TouchableOpacity
                     style={[styles.iconButton, { marginRight: 10 }]}
-                    onPress={() => openCamera(item)}
+                    onPress={async () => {
+                      try {
+                        await openCamera(item);
+                      } catch (err) {
+                        console.log('Camera upload error:', err);
+                      }
+                    }}
                   >
                     <Icon name="camera" size={24} color="white" />
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity
-                    style={[styles.iconButton, { marginRight: 10, backgroundColor: '#ccc' }]}
-                    disabled={true}
-                  >
+                  <TouchableOpacity style={[styles.iconButton, { marginRight: 10, backgroundColor: '#ccc' }]} disabled={true}>
                     <Icon name="camera" size={24} color="#666" />
                   </TouchableOpacity>
                 )}

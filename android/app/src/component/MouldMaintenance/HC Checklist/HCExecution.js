@@ -102,60 +102,56 @@ const HCExecution = ({ username }) => {
         }
     };
 
-    const requestCameraPermission = async () => {
-        if (Platform.OS === 'android') {
+   // Camera permissions
+      const requestCameraPermission = async () => {
+          if (Platform.OS === 'android') {
+              try {
+                  const granted = await PermissionsAndroid.request(
+                      PermissionsAndroid.PERMISSIONS.CAMERA,
+                      { title: 'Camera Permission', message: 'App needs access to your camera', buttonPositive: 'OK' }
+                  );
+                  return granted === PermissionsAndroid.RESULTS.GRANTED;
+              } catch (err) { console.warn(err); return false; }
+          }
+          return true;
+      };
+// Open camera and upload image
+  const openCamera = async (checkpoint) => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
+
+    launchCamera({ mediaType: 'photo', quality: 0.7, saveToPhotos: true }, async (response) => {
+        if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
+            const uri = response.assets[0].uri;
+            setImageUri(uri);
+
+            const fileName = `${checkpoint.CheckListID}_${checkpoint.CheckPointID}.jpg`;
+            const formData = new FormData();
+            formData.append("image", {
+                uri: Platform.OS === "android" ? uri : uri.replace("file://", ""),
+                type: "image/jpeg",
+                name: fileName
+            });
+
             try {
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.CAMERA,
-                    {
-                        title: 'Camera Permission',
-                        message: 'App needs access to your camera',
-                        buttonPositive: 'OK',
-                    }
-                );
-                return granted === PermissionsAndroid.RESULTS.GRANTED;
-            } catch (err) {
-                console.warn(err);
-                return false;
+                const uploadResponse = await axios.post(
+  `${BASE_URL}/HCMouldExecution/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}`,
+  formData,
+  { headers: { "Content-Type": "multipart/form-data" }, timeout: 10000 }
+);
+
+                if (uploadResponse.data.status === 200) {
+                    // Alert.alert('✅ Image uploaded successfully');
+                } else {
+                    Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error.response?.data || error.message);
+                Alert.alert('❌ Error uploading image');
             }
         }
-        return true;
-    };
-
-    const openCamera = async (checkpoint) => {
-        const hasPermission = await requestCameraPermission();
-        if (!hasPermission) return;
-
-        launchCamera({ mediaType: 'photo', quality: 0.7, saveToPhotos: true }, async response => {
-            if (!response.didCancel && !response.errorCode && response.assets?.[0]?.uri) {
-                const uri = response.assets[0].uri;
-                setImageUri(uri);
-                setCurrentCheckpoint(checkpoint);
-
-                const fileName = `${checkpoint.CheckListID}_${checkpoint.CheckPointID}.jpg`;
-                const formData = new FormData();
-                formData.append('image', { uri, type: 'image/jpeg', name: fileName });
-
-                try {
-                    const uploadResponse = await axios.post(
-                        `${BASE_URL}/HCMouldExecution/upload-image-to-checkpoint/${checkpoint.CheckListID}/${checkpoint.CheckPointID}`,
-                        formData,
-                        { headers: { 'Content-Type': 'multipart/form-data' } }
-                    );
-
-                    if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
-                        Alert.alert('✅ Image uploaded successfully');
-                    } else {
-                        Alert.alert('❌ Upload failed', uploadResponse.data.message || 'Unknown error');
-                    }
-                } catch (error) {
-                    console.error('Upload error:', error.response?.data || error.message);
-                    Alert.alert('❌ Error uploading image');
-                }
-            }
-        });
-    };
-
+    });
+};
     const renderItem = ({ item, index }) => (
         <View
             style={[
@@ -194,10 +190,48 @@ const HCExecution = ({ username }) => {
                     placeholderTextColor="#A9A9A9"
                 />
             </View>
+            <View style={styles.row4}>
+                <Text style={styles.label}>StandardCondition</Text>
+                <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
+                                    numberOfLines={4} value={item.StandardCondition} editable={false} />
+                        <Text style={styles.label}>CheckPointType</Text>
+                                <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
+                                    numberOfLines={4} value={item.CheckPointType} editable={false} />
+            <Text style={styles.label}>CheckingMethod</Text>
+                                <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
+                                    numberOfLines={4} value={item.CheckingMethod} editable={false} />
+                          <Text style={styles.label}>CheckArea</Text>
+                                <TextInput style={[styles.input4, { width: 150 }]} multiline={true}
+                                    numberOfLines={4} value={item.CheckArea} editable={false} />                        
+            </View>
+ <View style={styles.row4}>
+
+                                <Text style={styles.label}>CheckPointValue</Text>
+                                <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
+                                    numberOfLines={4} value={item.CheckPointValue?.toString() || ''} editable={false} />
+                                <Text style={styles.label}>UpperLimit</Text>
+                                <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
+                                    numberOfLines={4} value={item.UpperLimit?.toString() || ''} editable={false} />
+
+                                <Text style={styles.label}>LowerLimit</Text>
+                                <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
+                                    numberOfLines={4} value={item.LowerLimit?.toString() || ''} editable={false} />
+
+                                <Text style={styles.label}>Standard</Text>
+                                <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
+                                    numberOfLines={4} value={item.Standard?.toString() || ''} editable={false} />
+
+                                <Text style={styles.label}>UOM</Text>
+                                <TextInput style={[styles.input4, { width: 100 }]} multiline={true}
+                                    numberOfLines={4} value={item.UOM} editable={false} />
+                            </View>
 
             <View style={styles.row5}>
                 {item.CheckingMethod === 'Visual' && (
-                    <TouchableOpacity style={[styles.iconButton, { marginRight: 10 }]} onPress={() => openCamera(item)}>
+                    <TouchableOpacity
+                        style={[styles.iconButton, { marginRight: 10 }]}
+                        onPress={() => openCamera(item)}
+                    >
                         <Icon name="camera" size={24} color="white" />
                     </TouchableOpacity>
                 )}
