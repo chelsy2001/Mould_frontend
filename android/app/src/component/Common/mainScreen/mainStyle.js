@@ -40,7 +40,7 @@ const mainstyles = StyleSheet.create({
   },
   cardButtonDisabled: {
     ...baseCard,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: '#8e9394ff',
   },
   cardText: {
     marginTop: moderateScale(12),
@@ -51,9 +51,9 @@ const mainstyles = StyleSheet.create({
   },
   cardTextDisabled: {
     marginTop: moderateScale(12),
-    fontSize: scale(15),
+    fontSize: scale(10),
     fontWeight: '500',
-    color: '#7f8c8d',
+    color: '#1a1a1aff',
     textAlign: 'center',
   },
   icon: {
