@@ -165,7 +165,10 @@ const MouldLoadingScreen = ({ username }) => {
         MouldStatus: 2,
         EquipmentID: machineScan,
         MouldID: mouldScan,
+        MouldLifeStatus: mouldLife,
         CurrentMouldLife: mouldActualLife,
+        NewMouldLife: mouldActualLife ,  // or keep mouldActualLife
+  MouldActualLife: mouldActualLife,
         ParameterID: 4,
         ParameterValue: 2,
       };
