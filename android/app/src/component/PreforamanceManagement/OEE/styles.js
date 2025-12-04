@@ -85,7 +85,7 @@ button: {
 },
 button1: {
   paddingVertical: verticalScale(5),
-   paddingHorizontal: verticalScale(100),
+   paddingHorizontal: verticalScale(80),
    marginTop: verticalScale(10),
   borderRadius: scale(10),
   alignItems: 'center',
@@ -102,7 +102,7 @@ detailsBtn: {
 
 buttonText: {
   color: 'white',
-  fontSize: moderateScale(12),
+  fontSize: moderateScale(8),
   fontWeight: '600',
 },
 

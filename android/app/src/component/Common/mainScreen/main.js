@@ -13,7 +13,7 @@ const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
         {/* <Text style={mainstyles.sectionTitle}>Welcome, {username} 👋</Text> */}
 
         <View style={mainstyles.container}>
-          {/* <TouchableOpacity
+          <TouchableOpacity
             onPress={() => navigation.navigate('Performance')}
             style={mainstyles.cardButton}
             activeOpacity={0.85}
@@ -21,8 +21,8 @@ const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
             <Image source={require('../assets/mainper1.png')} style={{ width: '80%', height: '70%', resizeMode: 'center' }} />
 
             <Text style={mainstyles.cardText}>Performance Management</Text>
-          </TouchableOpacity> */}
-           <TouchableOpacity
+          </TouchableOpacity>
+           {/* <TouchableOpacity
             // onPress={() => navigation.navigate('Performance')}
             style={mainstyles.cardButtonDisabled}
             activeOpacity={0.85}
@@ -30,7 +30,7 @@ const MainHome = ({ navigation, setIsLoggedIn, username, title }) => {
             <Image source={require('../assets/mainper1.png')} style={{ width: '80%', height: '70%', resizeMode: 'center' }} />
 
             <Text style={mainstyles.cardTextDisabled}>Performance Management</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             onPress={() => navigation.navigate('Maintenance')}

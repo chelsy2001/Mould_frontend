@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const HealthCheck = ({ username,setIsLoggedIn }) => {
   const navigation = useNavigation();
-  const [mouldid, setMouldid] = useState(''); 
+  const [mouldId, setmouldId] = useState(''); 
   const [mouldData, setMouldData] = useState(null);
   const [error, setError] = useState(''); 
   const MouldScan = useRef(null);
@@ -83,12 +83,12 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
   };
 
  const uploadImage = async () => {
-      if (!imageUri || !mouldid) {
+      if (!imageUri || !mouldId) {
         console.log("No image or mould ID to upload.");
         return;
       }
     
-      const fileName = `${mouldid}_photo.jpg`;
+      const fileName = `${mouldId}_photo.jpg`;
     
       const formData = new FormData();
       formData.append('image', {
@@ -99,8 +99,8 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
       console.log('test',formData)
     
       try {
-        console.log("📤 Uploading to:", `${BASE_URL}/image/upload-image/${mouldid}`);
-        const response = await fetch(`${BASE_URL}/image/upload-image/${mouldid}`, {
+        console.log("📤 Uploading to:", `${BASE_URL}/image/upload-image/${mouldId}`);
+        const response = await fetch(`${BASE_URL}/image/upload-image/${mouldId}`, {
           method: 'POST',
           body: formData,
           // headers: {
@@ -136,7 +136,7 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
         }).start();
   }, []);
 
-  // Function to fetch mould details based on mouldid
+  // Function to fetch mould details based on mouldId
   const fetchMouldData = (id) => {
     const apiUrl = `${BASE_URL}/mould/details/${id}`;
 
@@ -164,7 +164,7 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
                       return;
                     }
           if (mouldDetail.MouldStatus !== 1 || mouldDetail.MouldStatus !== 3 ) {
-            Alert.alert('Info', 'To start Health Check, the mould needs to be in the "Mould  UnLoading and in preventive mantinace" status.');
+            // Alert.alert('Info', 'To start Health Check, the mould needs to be in the "Mould  UnLoading and in preventive mantinace" status.');
             return; // Exit if this condition is met
           }
         } else {
@@ -181,7 +181,7 @@ const HealthCheck = ({ username,setIsLoggedIn }) => {
 
   // Function to handle the Confirm button click and update the mould status
 const handleConfirm = async () => {
-  if (!mouldData || !mouldid) {
+  if (!mouldData || !mouldId) {
     Alert.alert('Error', 'Please fetch Mould data before confirming.');
     return;
   }
@@ -199,7 +199,7 @@ const handleConfirm = async () => {
   }
 
   const data = {
-    MouldID: mouldid,
+    mouldId: mouldId,
     MouldHealthStatus: 4, // Updating the status to 4 (in progress)
   };
 
@@ -293,14 +293,14 @@ const handleConfirm = async () => {
        });
      }; 
 
-  // useEffect to fetch data whenever mouldid changes
+  // useEffect to fetch data whenever mouldId changes
   useEffect(() => {
-    if (mouldid) {
-      fetchMouldData(mouldid); // Fetch data only if mouldid is not empty
+    if (mouldId) {
+      fetchMouldData(mouldId); // Fetch data only if mouldId is not empty
     } else {
       setMouldData(null); // Clear mould data if input is empty
     }
-  }, [mouldid]);
+  }, [mouldId]);
 
   return (
     <View style={styles.container}>
@@ -316,8 +316,8 @@ const handleConfirm = async () => {
               style={styles.input}
               ref={MouldScan}
               placeholder="Enter Mould ID"
-              value={mouldid}
-              onChangeText={setMouldid}
+              value={mouldId}
+              onChangeText={setmouldId}
               returnKeyType="done"
               onSubmitEditing={() => MouldScan.current.blur()}
               blurOnSubmit={false}
@@ -335,7 +335,7 @@ const handleConfirm = async () => {
           
             <View style={styles.dataRow}>
               <Text style={styles.dataLabel}>ID</Text>
-              <Text style={styles.dataValue}>{mouldData.MouldID}</Text>
+              <Text style={styles.dataValue}>{mouldData.mouldId}</Text>
             </View>
             <View style={styles.separator} />
           

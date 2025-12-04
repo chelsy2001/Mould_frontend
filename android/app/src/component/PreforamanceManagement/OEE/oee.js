@@ -412,7 +412,7 @@ const getCallBtnStyle = (departmentName) => {
       style={[styles.button1, styles.assignBtn]}
       onPress={() => navigation.navigate('Quality', { equipmentName })}
     >
-      <Text style={styles.buttonText}>Rejection Entry</Text>
+      <Text style={styles.buttonText}>RejectionEntry</Text>
     </TouchableOpacity>
   {/* <View style={styles.actionField}>
    
