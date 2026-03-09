@@ -15,13 +15,16 @@ import PMApprove from '../PM Checklist/PMApprove.js';
 import HCMonitoring from '../HC Checklist/HC Monitoring.js';
 import HCExecution from '../HC Checklist/HCExecution.js';
 import HCApprove from '../HC Checklist/HCApprove.js';
+import HCCheckPointImages from '../HC Checklist/HCCheckPointImages.js';
 import PMStatus from '../pmStatus/pmStatus.js';
 import HCStatus from '../hcStatus/hcStatus.js';
+
 
 import SeperatePMApproval from '../Approval/SeperatePMApproval.js';
 import SeperateHCApproval from '../Approval/SeperateHCApproval.js';
 import PMApprovalCheckpoint from '../Approval/PMApprovalCheckpoint.js';
 import HCApprovalCheckpoint from '../Approval/HCApprovalCheckpoint.js';
+import PMCheckPointImages from '../PM Checklist/PMCheckPointImages.js';
 const Stack = createNativeStackNavigator();
 
 const MouldStack = ({ setIsLoggedIn, username }) => {
@@ -92,6 +95,12 @@ const MouldStack = ({ setIsLoggedIn, username }) => {
       </Stack.Screen>
       <Stack.Screen name="HCApprovalCheckpoint">
         {() => <HCApprovalCheckpoint setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="PMCheckPointImages">
+        {() => <PMCheckPointImages setIsLoggedIn={setIsLoggedIn} username={username} />}
+      </Stack.Screen>
+      <Stack.Screen name="HCCheckPointImages">
+        {() => <HCCheckPointImages setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
 
     </Stack.Navigator>

@@ -191,7 +191,16 @@ const PMMouldMonitoring = ({ username }) => {
                 )}
 
                 {item.PMStatus === 4 || item.PMStatus === 5 ? (
-                  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PMPreparation', { checklistID: item.CheckListID })}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('PMPreparation', {
+                        checklistID: item.CheckListID,
+                        instance: item.Instance,
+                        mouldID: item.MouldID,
+                      })
+                    }
+                  >
                     <Text style={styles.buttonText}>Execute</Text>
                   </TouchableOpacity>
                 ) : (

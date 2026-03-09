@@ -20,8 +20,11 @@ import axios from 'axios';
 const PMPreparation = ({ username }) => {
     const route = useRoute();
     const navigation = useNavigation();
-    const { checklistID } = route.params;
-
+    const checklistID = route?.params?.checklistID || null;
+    const instance = route?.params?.instance || 0;
+    const mouldID = route?.params?.mouldID || null;
+console.log("ChecklistID:", checklistID);
+  console.log("Instance:", instance);
     const [checkpoints, setCheckpoints] = useState([]);
     const [imageUri, setImageUri] = useState(null);
     const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
@@ -93,7 +96,15 @@ const PMPreparation = ({ username }) => {
         .then(response => {
             if (response.status === 200) {
                 Alert.alert('Success', response.message || 'Moved to execution successfully.', [
-                    { text: 'OK', onPress: () => navigation.navigate('PMExecution', { checklistID }) }
+                    {
+                        text: 'OK',
+                        onPress: () =>
+                            navigation.navigate('PMExecution', {
+                                checklistID,
+                                instance,
+                                mouldID,
+                            }),
+                    },
                 ]);
                 setIsSubmitted(true);
             } else {
@@ -141,10 +152,10 @@ const PMPreparation = ({ username }) => {
 
                 try {
                     const uploadResponse = await axios.post(
-                        `${BASE_URL}/PMMouldPreparation/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}`,
-                        formData,
-                        { headers: { "Content-Type": "multipart/form-data" } }
-                    );
+  `${BASE_URL}/PMMouldPreparation/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}/${instance}`,
+  formData,
+  { headers: { "Content-Type": "multipart/form-data" } }
+);
 
                     if (uploadResponse.status === 200 && uploadResponse.data.status === 200) {
                         // Alert.alert('✅ Image uploaded successfully');
@@ -266,7 +277,13 @@ const PMPreparation = ({ username }) => {
                 ) : (
                     <TouchableOpacity
                         style={[styles.button, { marginRight: 10 }]}
-                        onPress={() => navigation.navigate('PMExecution', { checklistID })}
+                        onPress={() =>
+                            navigation.navigate('PMExecution', {
+                                checklistID,
+                                instance,
+                                mouldID,
+                            })
+                        }
                     >
                         <Text style={styles.buttonText}>Next</Text>
                     </TouchableOpacity>

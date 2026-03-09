@@ -21,7 +21,9 @@ import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const PMExecution = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
-    const { checklistID } = route.params;
+    const { checklistID, instance, mouldID } = route.params || {};
+console.log("ChecklistID:", checklistID);
+  console.log("Instance:", instance);
     const [checkpoints, setCheckpoints] = useState([]);
       const [imageUri, setImageUri] = useState(null);
     const navigation = useNavigation();
@@ -92,11 +94,16 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
             .then(response => {
                 if (response.status === 200) {
                     Alert.alert('Success', response.message || 'Moved to execution successfully.', [
-                        // You can navigate or refresh data here if needed
                         {
                             text: 'OK',
-                            onPress: () => navigation.navigate('PMApprove', { checklistID }), // Pass checklistID if needed
-                        },])
+                            onPress: () =>
+                                navigation.navigate('PMApprove', {
+                                    checklistID,
+                                    instance,
+                                    mouldID,
+                                }),
+                        },
+                    ])
                 } else {
                     Alert.alert('Error', response.message || 'Failed to Move to Execution.');
                 }
@@ -141,10 +148,10 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
             });
 
             try {
-                const uploadResponse = await axios.post(
-  `${BASE_URL}/PMMouldExecution/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}`,
+         const uploadResponse = await axios.post(
+  `${BASE_URL}/PMMouldExecution/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}/${instance}`,
   formData,
-  { headers: { "Content-Type": "multipart/form-data" }, timeout: 10000 }
+  { headers: { "Content-Type": "multipart/form-data" } }
 );
 
                 if (uploadResponse.data.status === 200) {
@@ -294,7 +301,13 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('PMPreparation', { checklistID })}
+        onPress={() =>
+          navigation.navigate('PMPreparation', {
+            checklistID,
+            instance,
+            mouldID,
+          })
+        }
       >
         <Text style={styles.buttonText}>Close</Text>
       </TouchableOpacity>

@@ -19,7 +19,9 @@ import axios from 'axios';
 
 const HCExecution = ({ username }) => {
     const route = useRoute();
-    const { checklistID } = route.params;
+    const { checklistID, instance, mouldID } = route.params || {};
+console.log("ChecklistID:", checklistID);
+  console.log("Instance:", instance);
     const [checkpoints, setCheckpoints] = useState([]);
     const [imageUri, setImageUri] = useState(null);
     const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
@@ -90,7 +92,12 @@ const HCExecution = ({ username }) => {
                 Alert.alert('Success', response.message || 'Moved to execution successfully.', [
                     {
                         text: 'OK',
-                        onPress: () => navigation.navigate('HCApprove', { checklistID }),
+                        onPress: () =>
+                            navigation.navigate('HCApprove', {
+                                checklistID,
+                                instance,
+                                mouldID,
+                            }),
                     },
                 ]);
             } else {
@@ -135,9 +142,9 @@ const HCExecution = ({ username }) => {
 
             try {
                 const uploadResponse = await axios.post(
-  `${BASE_URL}/HCMouldExecution/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}`,
+  `${BASE_URL}/HCMouldExecution/upload-image-to-checkpoint/${checklistID}/${checkpoint.CheckPointID}/${instance}`,
   formData,
-  { headers: { "Content-Type": "multipart/form-data" }, timeout: 10000 }
+  { headers: { "Content-Type": "multipart/form-data" } }
 );
 
                 if (uploadResponse.data.status === 200) {
