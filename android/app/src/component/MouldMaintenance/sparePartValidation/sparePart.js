@@ -16,6 +16,7 @@ import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { BASE_URL } from "../../Common/config/config";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 const SparePart = ({ username, setIsLoggedIn }) => {
   const [mouldId, setMouldId] = useState("");
@@ -27,7 +28,7 @@ const SparePart = ({ username, setIsLoggedIn }) => {
   const [currentQty, setCurrentQty] = useState("");
   const [locationData, setLocationData] = useState([]);
   const [selectedPartName, setSelectedPartName] = useState("");
-
+const navigation = useNavigation();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -175,40 +176,43 @@ const SparePart = ({ username, setIsLoggedIn }) => {
   };
 
   const handleConfirm = async () => {
-    const locationsToSend = locationData.map((r) => ({
-      LocationID: r.Location,
-      Quantity: Number(r.UseQty || 0),
-    }));
-    const totalUse = locationsToSend.reduce((sum, l) => sum + l.Quantity, 0);
+  const locationsToSend = locationData.map((r) => ({
+    LocationID: r.Location,
+    Quantity: Number(r.UseQty || 0),
+  }));
 
-    if (totalUse <= 0) {
-      Alert.alert("Error", "Please enter quantity to use.");
-      return;
-    }
+  const totalUse = locationsToSend.reduce((sum, l) => sum + l.Quantity, 0);
 
-    try {
-      const res = await axios.post(`${BASE_URL}/sparepart/movement`, {
-        MouldID: mouldId,
-        SparePartID: partId,
-        locations: locationsToSend,
-      });
-      if (res.data.success) {
-        Alert.alert("Success", `Consumed total ${totalUse}.`);
-        setLocationData(locationData.map((r) => ({ ...r, UseQty: "" })));
-        setCurrentQty((prev) => (Number(prev) - totalUse).toString());
-      } else {
-       Alert.alert('Success', successMessage, [
-                 {
-                   text: 'OK',
-                   onPress: () => navigation.navigate('MouldHome'),
-                 },
-               ]);
-      }
-    } catch (err) {
-      console.log("Movement API error:", err);
-      Alert.alert("Error", "Failed to update quantities.");
+  if (totalUse <= 0) {
+    Alert.alert("Error", "Please enter quantity to use.");
+    return;
+  }
+
+  try {
+    const res = await axios.post(`${BASE_URL}/sparepart/movement`, {
+      MouldID: mouldId,
+      SparePartID: partId,
+      locations: locationsToSend,
+    });
+
+    if (res.data.status === 200) {
+      Alert.alert("Success", `Consumed total ${totalUse}.`, [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("MouldHome"),
+        },
+      ]);
+
+      setLocationData(locationData.map((r) => ({ ...r, UseQty: "" })));
+      setCurrentQty((prev) => (Number(prev) - totalUse).toString());
+    } else {
+      Alert.alert("Error", res.data.message || "Something went wrong.");
     }
-  };
+  } catch (err) {
+    console.log("Movement API error:", err);
+    Alert.alert("Error", "Failed to update quantities.");
+  }
+};
 
   const rowBackgroundFor = (index) => {
     const firstNonDepleted = getFirstNonDepletedIndex(locationData);
