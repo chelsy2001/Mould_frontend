@@ -19,7 +19,7 @@ import axios from 'axios';
 
 const HCExecution = ({ username }) => {
     const route = useRoute();
-    const { checklistID, instance, mouldID } = route.params || {};
+    const { checklistID, instance } = route.params || {};
 console.log("ChecklistID:", checklistID);
   console.log("Instance:", instance);
     const [checkpoints, setCheckpoints] = useState([]);
@@ -92,12 +92,7 @@ console.log("ChecklistID:", checklistID);
                 Alert.alert('Success', response.message || 'Moved to execution successfully.', [
                     {
                         text: 'OK',
-                        onPress: () =>
-                            navigation.navigate('HCApprove', {
-                                checklistID,
-                                instance,
-                                mouldID,
-                            }),
+                        onPress: () => navigation.navigate('HCApprove', { checklistID }),
                     },
                 ]);
             } else {

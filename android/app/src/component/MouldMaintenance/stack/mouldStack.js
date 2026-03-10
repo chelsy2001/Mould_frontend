@@ -15,7 +15,7 @@ import PMApprove from '../PM Checklist/PMApprove.js';
 import HCMonitoring from '../HC Checklist/HC Monitoring.js';
 import HCExecution from '../HC Checklist/HCExecution.js';
 import HCApprove from '../HC Checklist/HCApprove.js';
-import HCCheckPointImages from '../HC Checklist/HCCheckPointImages.js';
+import HCCheckPointImages from '../HC Checklist/HCCheckpointImages.js';
 import PMStatus from '../pmStatus/pmStatus.js';
 import HCStatus from '../hcStatus/hcStatus.js';
 
@@ -99,10 +99,9 @@ const MouldStack = ({ setIsLoggedIn, username }) => {
       <Stack.Screen name="PMCheckPointImages">
         {() => <PMCheckPointImages setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-      <Stack.Screen name="HCCheckPointImages">
+ <Stack.Screen name="HCCheckPointImages">
         {() => <HCCheckPointImages setIsLoggedIn={setIsLoggedIn} username={username} />}
       </Stack.Screen>
-
     </Stack.Navigator>
   );
 };

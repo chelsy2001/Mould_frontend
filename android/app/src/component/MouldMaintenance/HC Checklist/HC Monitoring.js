@@ -208,11 +208,10 @@ const HCMonitoring = ({ username, setIsLoggedIn }) => {
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() =>
-                      navigation.navigate('HCExecution', {
-                        checklistID: item.CheckListID,
-                        instance: item.Instance,
-                        mouldID: item.MouldID,
-                      })
+                      navigation.navigate('HCExecution',{
+      checklistID: item.CheckListID,
+      instance: item.Instance,
+    })
                     }
                   >
                     <Text style={styles.buttonText}>Execute</Text>

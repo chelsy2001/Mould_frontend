@@ -15,8 +15,7 @@ import { BASE_URL, REPORT_URL } from '../../Common/config/config';
 
 const HCApprove = ({ username }) => {
     const route = useRoute();
-    const { checklistID, instance, mouldID } = route.params || {};
-    const newInstance = (instance ?? 0) + 1;
+    const { checklistID } = route.params;
     const [checkpoints, setCheckpoints] = useState([]);
     const navigation = useNavigation();
 
@@ -128,16 +127,10 @@ const HCApprove = ({ username }) => {
                 
                          <TouchableOpacity
                           style={styles.button}
-                          onPress={() => {
-                            if (!mouldID || newInstance <= 0) {
-                              Alert.alert('Info', 'Mould or instance not available from previous screens.');
-                              return;
-                            }
-                            navigation.navigate("HCCheckPointImages", {
-                              mouldID,
-                              instance: newInstance,
-                            });
-                          }}
+                          onPress={() => navigation.navigate("HCCheckPointImages", {
+                            mouldID,
+                            instance: newInstance,
+                })}
                         >
                           <Text style={styles.buttonText}>View Images</Text>
                         </TouchableOpacity>
