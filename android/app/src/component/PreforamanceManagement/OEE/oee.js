@@ -37,6 +37,7 @@ const OEE = ({ route, username, setIsLoggedIn }) => {
   const [availability, setAvailability] = useState("");
   const [performance, setPerformance] = useState("");
   const [quality, setQuality] = useState("");
+  const [oee, setOEE] = useState("");
   const [shiftTime, setShiftTime] = useState('');
   const [totalTime, setTotalTime] = useState('');
   const [totalDownTime, setTotalDownTime] = useState('');
@@ -53,7 +54,7 @@ const { width: windowWidth } = useWindowDimensions();
 const isLarge = windowWidth >= 900;
 const isMedium = windowWidth >= 420 && windowWidth < 900;
 
-  const oee = Math.round((availability * performance * quality) / 10000);
+  // const oee = Math.round((availability * performance * quality) / 10000);
 
   const metrics = [
     { title: 'OEE', value: oee },
@@ -119,6 +120,7 @@ const isMedium = windowWidth >= 420 && windowWidth < 900;
           const oeeData = oeeResponse.data.data[0];
           console.log("oee", oeeData)
           // Update values based on backend data instead of random
+          setOEE(Math.round(oeeData.OEE || 0));
           setAvailability(Math.round(oeeData.Availability || 0));
           setPerformance(Math.round(oeeData.Performance || 0));
           setQuality(Math.round(oeeData.Quality || 0));

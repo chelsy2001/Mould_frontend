@@ -16,10 +16,11 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [selectedLoss, setSelectedLoss] = useState('');
   const [subLossData, setSubLossData] = useState([]);
   const [selectedSubLoss, setSelectedSubLoss] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // NEW STATES
-  const [loss4MData, setLoss4MData] = useState([]);
-  const [selected4MLoss, setSelected4MLoss] = useState('');
+  // const [loss4MData, setLoss4MData] = useState([]);
+  // const [selected4MLoss, setSelected4MLoss] = useState('');
 
   const lineName = route?.params?.lineName ?? 'No Line Selected';
   const { equipmentName } = route.params;
@@ -28,7 +29,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     downtimeID: '',
     LossName: '',
     subLossName: '',
-    loss4MData:'',
+    // loss4MData:'',
     shift: '',
     startTime: '',
     endTime: '',
@@ -63,25 +64,25 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
   }, []);
 
   // 🔹 NEW: Fetch 4M Loss Data
-  useEffect(() => {
-    const fetchLoss4MData = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/downtime/loss4M`);
-        const result = await response.json();
-        if (result?.data) {
-          setLoss4MData(result.data.map(item => ({
-            key: item["4MLossID"].toString(),
-            value: item["4MLossName"],
-          })));
-        } else {
-          setLoss4MData([]);
-        }
-      } catch (error) {
-        console.error("Error fetching 4M loss data:", error);
-      }
-    };
-    fetchLoss4MData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchLoss4MData = async () => {
+  //     try {
+  //       const response = await fetch(`${BASE_URL}/downtime/loss4M`);
+  //       const result = await response.json();
+  //       if (result?.data) {
+  //         setLoss4MData(result.data.map(item => ({
+  //           key: item["4MLossID"].toString(),
+  //           value: item["4MLossName"],
+  //         })));
+  //       } else {
+  //         setLoss4MData([]);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching 4M loss data:", error);
+  //     }
+  //   };
+  //   fetchLoss4MData();
+  // }, []);
 
   useEffect(() => {
     if (!selectedLoss) return;
@@ -121,7 +122,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
             prodShift: item.ProdShift,
             LossName: item.LossName,
             subLossName: item.SubLossName,
-            loss4MName: item["4MLossName"] || '',
+            // loss4MName: item["4MLossName"] || '',
             downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             reason: item.Reason || '',
@@ -145,7 +146,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     setFormData(row);
     setSelectedLoss(row.LossName);
     setSelectedSubLoss(row.subLossName);
-    setSelected4MLoss(row.loss4MName);
+    // setSelected4MLoss(row.loss4MName);
   };
 
   const handleInputChange = (field, value) => {
@@ -166,7 +167,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
       LossName: selectedLossName,
       SubLossName: selectedSubLossName,
       Reason: formData.reason,
-      LossName4M: selected4MLoss,  // ✅ include 4M Loss
+      // LossName4M: selected4MLoss,  // ✅ include 4M Loss
     };
 
     try {
@@ -180,6 +181,23 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
 
       if (json.status === 200) {
         alert("Update successful");
+        // Clear form fields after successful save
+        setFormData({
+          downtimeID: '',
+          LossName: '',
+          subLossName: '',
+          shift: '',
+          startTime: '',
+          endTime: '',
+          prodDate: '',
+          duration: '',
+          reason: '',
+        });
+        setSelectedLoss('');
+        setSelectedSubLoss('');
+        setSubLossData([]);
+        setSelectedRow(null);
+        setRefreshKey(prev => prev + 1);
         fetchEquipmentIdAndDT();
       } else {
         alert("Update failed: " + json.message);
@@ -205,6 +223,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
           <Text style={styles.label}>Loss Name</Text>
           <View style={{ flex: 1, marginLeft: scale(53) }}>
             <SelectList
+              key={`loss-${refreshKey}`}
               boxStyles={{ backgroundColor: 'white' }}
               dropdownStyles={{ backgroundColor: '#f0f8ff' }}
               data={lossData.map(item => ({
@@ -225,6 +244,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
           <Text style={styles.label}>Subloss Name</Text>
           <View style={{ flex: 1, marginLeft: scale(35) }}>
             <SelectList
+              key={`subloss-${refreshKey}`}
               boxStyles={{ backgroundColor: 'white' }}
               dropdownStyles={{ backgroundColor: '#f0f8ff' }}
               setSelected={setSelectedSubLoss}
@@ -244,7 +264,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
         </View>
 
         {/* 🔹 NEW DROPDOWN FOR 4M LOSS NAME */}
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.label}>4M Loss Name</Text>
           <View style={{ flex: 1, marginLeft: scale(25) }}>
             <SelectList
@@ -261,7 +281,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
               }
             />
           </View>
-        </View>
+        </View> */}
 
         <Text style={[styles.label, { marginLeft: 12 }]}>Remark</Text>
         <TextInput
@@ -287,7 +307,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
                   <DataTable.Title style={{ width: scale(60), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff' }}>Downtime ID</DataTable.Title>
                   <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Loss Name</DataTable.Title>
                   <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Sub Loss Name</DataTable.Title>
-                  <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>4M Loss Name</DataTable.Title>
+                  {/* <DataTable.Title style={{ width: scale(100), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>4M Loss Name</DataTable.Title> */}
                   <DataTable.Title style={{ width: scale(50), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#aa9c9cff' }}>Shift</DataTable.Title>
                   <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Start Time</DataTable.Title>
                   <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>End Time</DataTable.Title>
@@ -315,9 +335,9 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
                  <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>
     {row.subLossName}
   </DataTable.Cell>
-  <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>
+  {/* <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>
     {row.loss4MName}
-  </DataTable.Cell>
+  </DataTable.Cell> */}
                         <DataTable.Cell style={{ width: scale(50), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.prodShift}</DataTable.Cell>
                         <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeStartTime}</DataTable.Cell>
                         <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeEndTime}</DataTable.Cell>
