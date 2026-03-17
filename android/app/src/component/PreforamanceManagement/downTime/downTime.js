@@ -126,7 +126,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
             downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             reason: item.Reason || '',
-            duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A",
+            duration: item.Duration || '0',
           }))
         );
       } else {
@@ -134,6 +134,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
       }
     } catch (error) {
       console.error("Error fetching downtime data:", error);
+      console.log("Duration",item.Duration);
     }
   };
 

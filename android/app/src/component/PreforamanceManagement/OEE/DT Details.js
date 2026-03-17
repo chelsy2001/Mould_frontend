@@ -103,7 +103,7 @@ const fetchEquipmentIdAndDT = async () => {
           downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           reason: item.Reason || '',
-          duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A"
+          duration: item.Duration  || "N/A",
         }))
       );
     } else {
@@ -163,7 +163,7 @@ const fetchData = async (pageNumber = 1) => {
           ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           : '',
         reason: item.Reason || '',
-        duration: item.SystemDownTime ? `${item.SystemDownTime} min` : "N/A"
+        duration: item.Duration  || "N/A",
       }));
 
       if (newData.length < 100) {
@@ -266,7 +266,7 @@ const loadMore = () => {
       <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1 }}>
         {row.LossName}
       </DataTable.Cell>
-      <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1 }}>
+      <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1 , flexWrap: 'wrap'}}>
         {row.subLossName}
       </DataTable.Cell>
       {/* <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1 }}>
@@ -285,7 +285,7 @@ const loadMore = () => {
         {row.prodDate}
       </DataTable.Cell>
       <DataTable.Cell style={{ width: scale(80), justifyContent: 'center', borderRightWidth: 1 }}>
-        {row.duration}
+        {row.duration} 
       </DataTable.Cell>
       <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>
         {row.reason}

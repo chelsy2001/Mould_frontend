@@ -50,6 +50,7 @@ const StationScreen = () => {
                         style={stationStyles.icon}
                       /> */}
                       <Text style={stationStyles.menuText}>{station.StationName}</Text>
+                      <Text style={stationStyles.menuText}>{station.EquipmentName}</Text>
                     </TouchableOpacity>
                   ))
                 )}
