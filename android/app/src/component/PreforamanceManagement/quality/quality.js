@@ -188,42 +188,49 @@ const fetchValidatedMoulds = async () => {
     try {
       if (!equipmentName) return;
 
+      // Get EquipmentID from EquipmentName
       const equipmentRes = await fetch(`${BASE_URL}/oee/getEquipmentID/${encodeURIComponent(equipmentName)}`);
       const equipmentData = await equipmentRes.json();
 
-      const EquipmentID = equipmentData?.EquipmentID;
+      let EquipmentID = equipmentData?.EquipmentID;
+      
       if (!EquipmentID) {
         console.warn("EquipmentID not found");
         return;
       }
 
-      console.log("Fetched EquipmentID:", EquipmentID);
+      console.log("Fetched EquipmentID for Rework Details:", EquipmentID);
 
-      const dtRes = await fetch(`${BASE_URL}/rework/ReworkGenelogy/${EquipmentID}`);
-      const dtData = await dtRes.json();
+      // Call the ReworkGenelogy endpoint with the EquipmentID
+      const reworkResponse = await fetch(`${BASE_URL}/rework/ReworkGenelogy/${encodeURIComponent(EquipmentID)}`);
+      const reworkData = await reworkResponse.json();
 
-      console.log("Rework API Response:", dtData);
+      console.log("ReworkGenelogy API Response:", reworkData);
 
-      if (dtData.status === 200 && Array.isArray(dtData.data)) {
-        setTableData(
-          dtData.data.map(item => ({
-            id: item.EquipmentID,
-            EquipmentID: item.EquipmentID ? item.EquipmentID.toString() : '',
-            EquipmentName: item.EquipmentName || '',
-            MouldName: item.MouldName || '',
-            ProdDate: item.ProdDate?.split("T")[0] || '',
-            ProdShift: item.ProdShift,
-            UserName: item.UserName,
-            NOKQuantity: item.NOKQuantity,
-            Remark: item.Remark || '',
-            Reason: item.Reason || '',
-          }))
-        );
+      if (reworkData && Array.isArray(reworkData.data) && reworkData.data.length > 0) {
+        // Map the API response to match the table columns
+        const mappedData = reworkData.data.map((item) => ({
+          id: item.UID || Math.random().toString(),
+          EquipmentID: item.EquipmentID || '',
+          EquipmentName: item.EquipmentName || '',
+          MouldName: item.MouldName || '',
+          UserName: item.UserName || '',
+          ProdDate: item.ProdDate || '',
+          ProdShift: item.ProdShift || '',
+          NOKQuantity: item.NOKQuantity || 0,
+          Remark: item.Remark || '',
+          Reason: item.Reason || '',
+        }));
+        setTableData(mappedData);
+        console.log("Table data set successfully:", mappedData.length, "records");
       } else {
+        console.log("No rework genealogy data found");
         setTableData([]);
       }
+      
     } catch (error) {
-      console.error("Error fetching downtime data:", error);
+      console.error("Error fetching rework details:", error);
+      setTableData([]);
     }
   };
   useEffect(() => {
@@ -237,13 +244,15 @@ const fetchValidatedMoulds = async () => {
 
     try {
       // Step 1: Get EquipmentID from EquipmentName
-      const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${equipmentName}`);
-      const EquipmentID = equipmentIdResponse.data.EquipmentID;
+      const equipmentIdResponse = await axios.get(`${BASE_URL}/oee/getEquipmentID/${encodeURIComponent(equipmentName)}`);
+      const EquipmentID = equipmentIdResponse.data?.EquipmentID;
 
       if (!EquipmentID) {
         console.warn("No EquipmentID found for:", equipmentName);
         return;
       }
+
+      console.log("Fetched EquipmentID for CycleSummary:", EquipmentID);
 
       // Step 2: Call CycleSummary API with EquipmentID
       const response = await fetch(
@@ -253,7 +262,7 @@ const fetchValidatedMoulds = async () => {
 
       console.log("CycleSummary API Response:", data);
 
-      if (data.status === 200 && data.data.length > 0) {
+      if (data.status === 200 && data.data?.length > 0) {
         const cycle = data.data[0];
         setRejectedCount(cycle.RejectedCount?.toString() || '0');
         setGoodPart(cycle.GoodPart?.toString() || '0');
@@ -315,7 +324,7 @@ const fetchValidatedMoulds = async () => {
       <Header
         username={username}
         setIsLoggedIn={setIsLoggedIn}
-        title="Rework Reason Assignment Screen"
+        title="Rejection Reason Assignment Screen"
       //  title={lineName}
       //  title={role}
       />

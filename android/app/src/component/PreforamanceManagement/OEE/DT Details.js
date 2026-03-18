@@ -103,7 +103,7 @@ const fetchEquipmentIdAndDT = async () => {
           downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           reason: item.Reason || '',
-          duration: item.Duration  || "N/A",
+          duration: item.Duration  || "0",
         }))
       );
     } else {
@@ -163,7 +163,7 @@ const fetchData = async (pageNumber = 1) => {
           ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           : '',
         reason: item.Reason || '',
-        duration: item.Duration  || "N/A",
+        duration: item.Duration  || "0",
       }));
 
       if (newData.length < 100) {
