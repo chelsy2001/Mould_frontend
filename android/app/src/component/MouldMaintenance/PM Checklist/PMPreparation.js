@@ -191,7 +191,7 @@ console.log("ChecklistID:", checklistID);
                 <Text style={styles.label}>Judgement Criteria</Text>
                 <TextInput style={[styles.input2, { width: 400 }]} multiline numberOfLines={4}
                     value={item.JudgementCriteria} editable={false} />
-                <Text style={styles.label}>Observation</Text>
+                <Text style={styles.label}>Observation & Action</Text>
                 <TextInput
                     style={[styles.input2, { width: 400 }]}
                     multiline

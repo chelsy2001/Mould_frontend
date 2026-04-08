@@ -6,6 +6,7 @@ import OEE from '../OEE/oee';
 import Downtime from '../downTime/downTime';
 import Quality from '../quality/quality';
 import DTDetails from '../OEE/DT Details';
+import DowntimeSplit from '../downTime/downTimeSplit';
 
 import ZoneScreen from '../zone/zone';
 import StationScreen from '../station/station';
@@ -38,6 +39,10 @@ const PerformanceStack = ({ setIsLoggedIn, username }) => {
       <Stack.Screen 
         name="Downtime" 
         children={(props) => <Downtime {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
+      />
+      <Stack.Screen 
+        name="DowntimeSplit" 
+        children={(props) => <DowntimeSplit {...props} setIsLoggedIn={setIsLoggedIn} username={username} />} 
       />
       <Stack.Screen 
         name="Quality" 

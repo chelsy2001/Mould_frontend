@@ -6,6 +6,8 @@ import { BASE_URL } from '../../Common/config/config';
 import Header from '../../Common/header/header';
 import styles from './style';
 import { scale, verticalScale, moderateScale } from '../../Common/utils/scale';
+import { useNavigation } from '@react-navigation/native';
+
 
 const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -17,6 +19,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
   const [subLossData, setSubLossData] = useState([]);
   const [selectedSubLoss, setSelectedSubLoss] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
+   const navigation = useNavigation();
 
   // NEW STATES
   // const [loss4MData, setLoss4MData] = useState([]);
@@ -88,7 +91,7 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     if (!selectedLoss) return;
     const fetchSubLossData = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/downtime/Subloss/LossName?LossName=${selectedLoss}`);
+        const response = await fetch(`${BASE_URL}/downtime/Subloss/?LossID=${selectedLoss}`);
         const json = await response.json();
         if (json.status === 200) {
           setSubLossData(json.data.map(item => ({ key: item.SubLossID.toString(), value: item.SubLossName })));
@@ -120,8 +123,11 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
             downtimeID: item.DowntimeID ? item.DowntimeID.toString() : '',
             prodDate: item.ProdDate?.split("T")[0] || '',
             prodShift: item.ProdShift,
-            LossName: item.LossName,
-            subLossName: item.SubLossName,
+           LossID: item.LossID,            // ✅ ADD
+SubLossID: item.SubLossID,      // ✅ ADD
+
+LossName: item.LossName,
+subLossName: item.SubLossName,
             // loss4MName: item["4MLossName"] || '',
             downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
@@ -144,9 +150,13 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
 
   const handleRowPress = (row) => {
     setSelectedRow(row.id);
-    setFormData(row);
-    setSelectedLoss(row.LossName);
-    setSelectedSubLoss(row.subLossName);
+    setFormData({
+  ...row,
+  LossID: row.LossID,
+  SubLossID: row.SubLossID
+});
+    setSelectedLoss(row.LossID?.toString());       // ✅ ID use karo
+setSelectedSubLoss(row.SubLossID?.toString()); 
     // setSelected4MLoss(row.loss4MName);
   };
 
@@ -164,12 +174,11 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
     const selectedSubLossName = subLossData.find(item => item.key === selectedSubLoss)?.value || formData.subLossName;
 
     const requestBody = {
-      DowntimeID: formData.downtimeID,
-      LossName: selectedLossName,
-      SubLossName: selectedSubLossName,
-      Reason: formData.reason,
-      // LossName4M: selected4MLoss,  // ✅ include 4M Loss
-    };
+  DowntimeID: parseInt(formData.downtimeID),
+  LossName: parseInt(selectedLoss || 0),       // ✅ ID
+  SubLossName: parseInt(selectedSubLoss || 0), // ✅ ID
+  Reason: formData.reason
+};
 
     try {
       const response = await fetch(`${BASE_URL}/downtime/downtime/update`, {
@@ -232,11 +241,17 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
                 value: item.LossName || "Unnamed Loss",
               }))}
               setSelected={setSelectedLoss}
-              save="value"
+              // save="value"
+              save="key"
               placeholder="Select Loss"
-              defaultOption={
-                formData.LossName ? { key: formData.LossName, value: formData.LossName } : null
-              }
+             defaultOption={
+  formData.LossID
+    ? {
+        key: formData.LossID.toString(),
+        value: formData.LossName
+      }
+    : null
+}
             />
           </View>
         </View>
@@ -253,13 +268,13 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
               save="key"
               placeholder="Select SubLoss"
               defaultOption={
-                selectedSubLoss
-                  ? {
-                    key: selectedSubLoss,
-                    value: subLossData.find(item => item.key === selectedSubLoss)?.value || selectedSubLoss,
-                  }
-                  : null
-              }
+  formData.SubLossID
+    ? {
+        key: formData.SubLossID.toString(),
+        value: formData.subLossName
+      }
+    : null
+}
             />
           </View>
         </View>
@@ -292,10 +307,32 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
           multiline={true}
           placeholder="Enter your remark"
         />
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
         <TouchableOpacity style={styles.button} onPress={handleSave}>
           
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
+        //split
+        <TouchableOpacity
+  style={styles.button}
+  onPress={() => {
+    if (!selectedRow) {
+      alert("Please select a row first");
+      return;
+    }
+
+    navigation.navigate("DowntimeSplit", {
+  rowData: {
+    ...formData,
+    LossID: selectedLoss,
+    SubLossID: selectedSubLoss
+  }
+});
+  }}
+>
+  <Text style={styles.buttonText}>Split</Text>
+</TouchableOpacity>
+        </View>
       </View>
 
       <View style={{ flex: 1, marginTop: verticalScale(10) }}>

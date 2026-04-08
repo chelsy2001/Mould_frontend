@@ -59,31 +59,77 @@ const isLargeScreen = width > 600; // You can tune this threshold
    // 🔹 Fetch Validated Moulds when equipmentName changes
 const fetchValidatedMoulds = async () => {
   try {
-    if (!equipmentName) return;
+    if (!equipmentName || !selectedDate || !selectedShift) {
+      console.log("⛔ Skipping API call: Missing data");
+      return;
+    }
+
+    console.log("🔥 API HIT with:", equipmentName, selectedDate, selectedShift);
 
     const response = await axios.get(
-      `${BASE_URL}/rework/getValidatedMoulds/${encodeURIComponent(equipmentName)}`
+      `${BASE_URL}/rework/getValidatedMoulds/${encodeURIComponent(equipmentName)}`,
+      {
+        params: { 
+          ProdDate: selectedDate,
+          ProdShift: selectedShift   // ✅ correct value
+        }
+      }
     );
 
-    if (response.data.status === 200 && Array.isArray(response.data.data)) {
-      const formatted = response.data.data.map(mould => ({
-        key: mould.MouldID,
+    const data = response.data?.data || [];
+
+    if (data.length > 0) {
+      const formatted = data.map((mould, index) => ({
+        key: index, // since API only returns MouldName
         value: mould.MouldName,
       }));
       setMouldList(formatted);
-      setSelectedMould(''); // reset previous selection
     } else {
+      console.warn("⚠️ No moulds found");
       setMouldList([]);
     }
+
   } catch (error) {
-    console.error('❌ Error fetching validated moulds:', error);
+    console.error("❌ Error fetching moulds:", error);
     setMouldList([]);
   }
 };
+// const fetchValidatedMouldsWithDate = async (date) => {
+//   try {
+//     console.log("🔥 API HIT with:", equipmentName, date);
 
- useEffect(() => {
-  if (equipmentName) fetchValidatedMoulds();
-}, [equipmentName]);
+//     const response = await axios.get(
+//       `${BASE_URL}/rework/getValidatedMoulds/${encodeURIComponent(equipmentName)}`,
+//       {
+//         params: { ProdDate: date },
+//         params: { ProdShift: NVarChar }
+//       },
+//     );
+
+//     const data = response.data?.data || [];
+
+//     if (data.length > 0) {
+//       const formatted = data.map(mould => ({
+//         key: mould.MouldID,
+//         value: mould.MouldName,
+//       }));
+//       setMouldList(formatted);
+//     } else {
+//       console.warn("⚠️ No moulds found for selected date");
+//       setMouldList([]);
+//     }
+
+//   } catch (error) {
+//     console.error('❌ Error fetching validated moulds:', error);
+//     setMouldList([]);
+//   }
+// };
+
+useEffect(() => {
+  if (equipmentName && selectedDate && selectedShift) {
+    fetchValidatedMoulds();
+  }
+}, [equipmentName, selectedDate, selectedShift]);
 
   ///-----------set the role to quality supervisor
   useEffect(() => {
@@ -306,15 +352,22 @@ const fetchValidatedMoulds = async () => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (date) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    setSelectedDate(formattedDate);
-    hideDatePicker();
+ const handleConfirm = (date) => {
+  const formattedDate = date.toISOString().split('T')[0];
+  setSelectedDate(formattedDate);
+  hideDatePicker();
 
-    if (selectedShift && equipmentName) {
-      fetchCycleSummary(formattedDate, selectedShift, equipmentName);
-    }
-  };
+  console.log("📅 Selected Date:", formattedDate);
+
+  // ✅ CALL API HERE DIRECTLY
+  if (equipmentName) {
+    fetchValidatedMouldsWithDate(formattedDate);
+  }
+
+  if (selectedShift && equipmentName) {
+    fetchCycleSummary(formattedDate, selectedShift, equipmentName);
+  }
+};
 
 
   //-------------------------------------------------
