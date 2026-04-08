@@ -146,7 +146,19 @@ const DowntimeSplit = ({ route, navigation }) => {
       <View style={styles.card}>
         <Text>ID: {form.downtimeID}</Text>
         <Text>Shift: {form.shift}</Text>
-
+<Text style={styles.label}> Duration</Text>
+        <TextInput
+          style={styles.input}
+          value={form.duration?.toString()}
+          editable={false}
+        />
+        <Text style={styles.label}>Split Duration</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={form.newDuration?.toString()}
+          onChangeText={(t) => handleChange("newDuration", t)}
+        />
         <Text style={styles.label}>Loss 1</Text>
         <SelectList
           data={lossData.map(item => ({
@@ -174,13 +186,7 @@ const DowntimeSplit = ({ route, navigation }) => {
 
       {/* 🔹 SPLIT */}
       <View style={styles.card}>
-        <Text style={styles.label}>Split Duration</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={form.newDuration?.toString()}
-          onChangeText={(t) => handleChange("newDuration", t)}
-        />
+        
 
         <Text style={styles.label}>Remaining Duration</Text>
         <TextInput

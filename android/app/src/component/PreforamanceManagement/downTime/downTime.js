@@ -228,7 +228,13 @@ setSelectedSubLoss(row.SubLossID?.toString());
             <Text style={{ padding: scale(10) }}>{equipmentName}</Text>
           </View>
         </View>
-
+<View style={styles.row}>
+          <Text style={styles.label}>Downtime ID</Text>
+          <View style={styles.pickerContainer}>
+            <Text style={{ padding: scale(10) }}>{formData.downtimeID }</Text>
+          </View>
+        </View>
+        
         <View style={styles.row}>
           <Text style={styles.label}>Loss Name</Text>
           <View style={{ flex: 1, marginLeft: scale(53) }}>
