@@ -105,42 +105,68 @@ const Downtime = ({ route, username, setIsLoggedIn }) => {
 
   const fetchEquipmentIdAndDT = async () => {
     try {
-      if (!equipmentName) return;
+      if (!equipmentName) {
+        console.log("fetchEquipmentIdAndDT: No equipmentName provided");
+        return;
+      }
+      console.log("fetchEquipmentIdAndDT: Fetching for equipment:", equipmentName);
 
+      // Fetch EquipmentID
       const equipmentRes = await fetch(`${BASE_URL}/oee/getEquipmentID/${encodeURIComponent(equipmentName)}`);
+      console.log("Equipment lookup response status:", equipmentRes.status);
+      
+      if (!equipmentRes.ok) {
+        throw new Error(`Equipment lookup failed: HTTP ${equipmentRes.status}`);
+      }
+      
       const equipmentData = await equipmentRes.json();
+      console.log("Equipment lookup response:", equipmentData);
 
       const EquipmentID = equipmentData?.EquipmentID;
-      if (!EquipmentID) return;
+      if (!EquipmentID) {
+        console.log("No EquipmentID found for:", equipmentName);
+        setTableData([]);
+        return;
+      }
+      console.log("Resolved EquipmentID:", EquipmentID);
 
+      // Fetch unassigned downtimes
       const dtRes = await fetch(`${BASE_URL}/downtime/Getdowntime/unassigned/${EquipmentID}`);
+      console.log("Downtime fetch response status:", dtRes.status);
+      
+      if (!dtRes.ok) {
+        throw new Error(`Downtime fetch failed: HTTP ${dtRes.status} ${dtRes.statusText}`);
+      }
+      
       const dtData = await dtRes.json();
+      console.log("Downtime fetch response:", JSON.stringify(dtData).substring(0, 500));
 
       if (dtData.status === 200 && Array.isArray(dtData.data)) {
+        console.log(`Setting ${dtData.data.length} rows in table`);
         setTableData(
           dtData.data.map(item => ({
             id: item.DowntimeID,
             downtimeID: item.DowntimeID ? item.DowntimeID.toString() : '',
             prodDate: item.ProdDate?.split("T")[0] || '',
             prodShift: item.ProdShift,
-           LossID: item.LossID,            // ✅ ADD
-SubLossID: item.SubLossID,      // ✅ ADD
-
-LossName: item.LossName,
-subLossName: item.SubLossName,
-            // loss4MName: item["4MLossName"] || '',
+            LossID: item.LossID,
+            SubLossID: item.SubLossID,
+            LossName: item.LossName,
+            subLossName: item.SubLossName,
             downtimeStartTime: item.StartTime ? new Date(item.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             downtimeEndTime: item.EndTime ? new Date(item.EndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
             reason: item.Reason || '',
             duration: item.Duration || '0',
+    DurationInMinutes: item.DurationInMinutes || 0
           }))
         );
       } else {
+        console.log("No valid data returned - status:", dtData.status, "data type:", typeof dtData.data);
         setTableData([]);
       }
     } catch (error) {
-      console.error("Error fetching downtime data:", error);
-      console.log("Duration",item.Duration);
+      console.error("Error fetching downtime data:", error.message);
+      setTableData([]);
     }
   };
 
@@ -357,6 +383,7 @@ setSelectedSubLoss(row.SubLossID?.toString());
                   <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>End Time</DataTable.Title>
                   <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Prod Date</DataTable.Title>
                   <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>Duration</DataTable.Title>
+                   <DataTable.Title style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#aa9c9cff'  }}>DurationInMin</DataTable.Title>
                   <DataTable.Title style={{ width: scale(200), justifyContent: 'center' }}>Remark</DataTable.Title>
                 </DataTable.Header>
               </DataTable>
@@ -371,9 +398,9 @@ setSelectedSubLoss(row.SubLossID?.toString());
                 nestedScrollEnabled
               >
                 <DataTable style={{ minWidth: scale(1200) }}>
-                  {tableData.length > 0 ? (
-                    tableData.map((row) => (
-                      <DataTable.Row key={row.id}  onPress={() => handleRowPress(row)}>
+                   {tableData.length > 0 ? (
+                     tableData.map((row, index) => (
+                       <DataTable.Row key={`${row.id}-${index}`}  onPress={() => handleRowPress(row)}>
                         <DataTable.Cell style={{ width: scale(60), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.downtimeID}</DataTable.Cell>
                         <DataTable.Cell style={{ width: scale(100), justifyContent: 'center' ,borderRightWidth: 1,borderColor: '#E0E0E0' }}>{row.LossName}</DataTable.Cell>
                  <DataTable.Cell style={{ width: scale(100), justifyContent: 'center', borderRightWidth: 1, borderColor: '#E0E0E0' }}>
@@ -387,6 +414,7 @@ setSelectedSubLoss(row.SubLossID?.toString());
                         <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.downtimeEndTime}</DataTable.Cell>
                         <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.prodDate}</DataTable.Cell>
                         <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.duration}</DataTable.Cell>
+                        <DataTable.Cell style={{ width: scale(80), justifyContent: 'center',borderRightWidth: 1,borderColor: '#E0E0E0'  }}>{row.DurationInMinutes}</DataTable.Cell>
                         <DataTable.Cell style={{ width: scale(200), justifyContent: 'center' }}>{row.reason}</DataTable.Cell>
                       </DataTable.Row>
                     ))

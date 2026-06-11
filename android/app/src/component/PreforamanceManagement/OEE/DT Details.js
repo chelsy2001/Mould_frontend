@@ -84,15 +84,17 @@ const fetchEquipmentIdAndDT = async () => {
     if (params.length > 0) url += '?' + params.join('&');
 
     const dtRes = await fetch(url);
+    
+    if (!dtRes.ok) {
+      throw new Error(`HTTP ${dtRes.status}: ${dtRes.statusText}`);
+    }
+    
     const dtData = await dtRes.json();
 
-    console.log("Downtime API Response:", dtData);
-
     if (dtData.status === 200 && Array.isArray(dtData.data)) {
-      // Limit data to prevent performance issues - show max 1000 records
-      const limitedData = dtData.data.slice(0, 1000);
+      // Server now handles pagination - backend returns max 3000 records per page
       setTableData(
-        limitedData.map(item => ({
+        dtData.data.map(item => ({
           id: item.DowntimeID,
           downtimeID: item.DowntimeID ? item.DowntimeID.toString() : '',
           prodDate: item.ProdDate?.split("T")[0] || '',
@@ -249,7 +251,7 @@ const loadMore = () => {
           ) : tableData.length > 0 ? (
            <FlatList
   data={tableData}
-  keyExtractor={(item) => item.id.toString()}
+   keyExtractor={(item, index) => `${item.id}-${index}`}
   onEndReached={loadMore}
   onEndReachedThreshold={0.5}
   nestedScrollEnabled

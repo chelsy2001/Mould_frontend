@@ -332,7 +332,7 @@ if (mouldData.EquipmentID == machineScan && mouldData.MouldID == mouldScan) {
     }
   };
 
-  const isConfirmEnabled = machineScan && mouldScan && productName && mouldActualLife !== null && pmWarning !== null && !isMouldNotInUse;
+  const isConfirmEnabled = Boolean(machineScan && mouldScan && mouldActualLife !== null && pmWarning !== null && !isMouldNotInUse);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>

@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     width:'95%',
     borderBottomColor: '#ccc',
    backgroundColor: 'white',
+   color: 'black',
   borderRadius: scale(6),
    marginLeft: scale(10),
     marginTop: verticalScale(4),

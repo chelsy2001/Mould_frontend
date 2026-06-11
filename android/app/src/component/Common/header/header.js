@@ -52,7 +52,16 @@ const Header = ({ username, setIsLoggedIn, title }) => {
     >
       {/* Top row: back button + title */}
       <View style={styles.topRow}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideIcon}>
+        <TouchableOpacity 
+          onPress={() => {
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            } else {
+              navigation.navigate('HomeScreen');
+            }
+          }} 
+          style={styles.sideIcon}
+        >
           <Icon name="arrow-left" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
