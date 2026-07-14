@@ -5,7 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  ScrollView,
+  FlatList,
+  ActivityIndicator,
   Platform,
   PermissionsAndroid,
   Image,
@@ -20,6 +21,8 @@ import axios from 'axios';
 
 const PMMouldMonitoring = ({ username }) => {
   const [checklistData, setChecklistData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [imageUri, setImageUri] = useState(null);
   const navigation = useNavigation();
 
@@ -29,10 +32,17 @@ const PMMouldMonitoring = ({ username }) => {
       try {
         const res = await fetch(`${BASE_URL}/PMMouldMonitoring/PMChecklist`);
         const data = await res.json();
-        if (data.status === 200) setChecklistData(data.data);
-        else console.log('Error fetching checklist:', data.message);
+        if (data.status === 200) {
+          setChecklistData(data.data || []);
+        } else {
+          setError(data.message || 'Failed to load checklist');
+          console.log('Error fetching checklist:', data.message);
+        }
       } catch (err) {
+        setError('Failed to fetch checklist. Try again later.');
         console.error('API fetch error:', err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchChecklist();
@@ -52,6 +62,90 @@ const PMMouldMonitoring = ({ username }) => {
     };
     return statusMap[pmStatus] || 'Unknown Status';
   };
+
+  const renderChecklistItem = ({ item }) => (
+    <View>
+      <View
+        style={[
+          styles.Container1,
+          (item.PMStatus === 4 || item.PMStatus === 5) && {
+            backgroundColor: '#00b050',
+            borderColor: '#28a745',
+            borderWidth: 1.5,
+          },
+        ]}
+      >
+        <View style={styles.row1}>
+          <Text style={styles.label}>Checklist Name</Text>
+          <TextInput style={[styles.input1, { width: 200 }]} value={item.CheckListName} editable={false} />
+
+          <Text style={styles.label}>MouldID</Text>
+          <TextInput style={[styles.input1, { width: 250 }]} value={item.MouldID.toString()} editable={false} />
+
+          <Text style={styles.label}>Mould Name</Text>
+          <TextInput style={styles.input1} value={item.MouldName} editable={false} />
+
+          <Text style={styles.label}>PMFreqCount</Text>
+          <TextInput style={[styles.input1, { width: 100 }]} value={item.PMFreqCount.toString()} editable={false} />
+        </View>
+
+        <View style={styles.row2}>
+          <Text style={styles.label}>PMFreqDays</Text>
+          <TextInput style={[styles.input1, { width: 60, marginLeft: 37 }]} value={item.PMFreqDays.toString()} editable={false} />
+
+          <Text style={styles.label}>PMWarningCount</Text>
+          <TextInput style={[styles.input2, { width: 80 }]} value={item.PMWarningCount.toString()} editable={false} />
+
+          <Text style={styles.label}>PMWarningDays</Text>
+          <TextInput style={[styles.input2, { width: 60 }]} value={item.PMWarningDays.toString()} editable={false} />
+
+          <Text style={styles.label}>Instance</Text>
+          <TextInput style={[styles.input2, { width: 50 }]} value={item.Instance.toString()} editable={false} />
+
+          <Text style={styles.label}>PMStatus</Text>
+          <TextInput style={[styles.input2, { width: 140 }]} value={getPMStatusText(item.PMStatus)} editable={false} />
+
+          {item.PMStatus === 4 || item.PMStatus === 5 ? (
+            <TouchableOpacity
+              style={[styles.iconButton, { marginRight: 10 }]}
+              onPress={async () => {
+                try {
+                  await openCamera(item);
+                } catch (err) {
+                  console.log('Camera upload error:', err);
+                }
+              }}
+            >
+              <Icon name="camera" size={24} color="white" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={[styles.iconButton, { marginRight: 10, backgroundColor: '#ccc' }]} disabled={true}>
+              <Icon name="camera" size={24} color="#666" />
+            </TouchableOpacity>
+          )}
+
+          {item.PMStatus === 4 || item.PMStatus === 5 ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() =>
+                navigation.navigate('PMPreparation', {
+                  checklistID: item.CheckListID,
+                  instance: item.Instance,
+                  mouldID: item.MouldID,
+                })
+              }
+            >
+              <Text style={styles.buttonText}>Execute</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#ccc' }]} disabled={true}>
+              <Text style={[styles.buttonText, { color: '#666' }]}>Execute</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </View>
+  );
 
   // Request camera permission
   const requestCameraPermission = async () => {
@@ -128,91 +222,28 @@ const PMMouldMonitoring = ({ username }) => {
   return (
     <View style={styles.container}>
       <Header username={username} title="Preventive Maintenance Monitoring" />
-      <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}>
-        {checklistData.map((item) => (
-          <View key={item.UID}>
-            <View
-              style={[
-                styles.Container1,
-                (item.PMStatus === 4 || item.PMStatus === 5) && {
-                  backgroundColor: '#00b050',
-                  borderColor: '#28a745',
-                  borderWidth: 1.5,
-                },
-              ]}
-            >
-              <View style={styles.row1}>
-                <Text style={styles.label}>Checklist Name</Text>
-                <TextInput style={[styles.input1, { width: 200 }]} value={item.CheckListName} editable={false} />
-
-                <Text style={styles.label}>MouldID</Text>
-                <TextInput style={[styles.input1, { width: 250 }]} value={item.MouldID.toString()} editable={false} />
-
-                <Text style={styles.label}>Mould Name</Text>
-                <TextInput style={styles.input1} value={item.MouldName} editable={false} />
-
-                <Text style={styles.label}>PMFreqCount</Text>
-                <TextInput style={[styles.input1, { width: 100 }]} value={item.PMFreqCount.toString()} editable={false} />
-              </View>
-
-              <View style={styles.row2}>
-                <Text style={styles.label}>PMFreqDays</Text>
-                <TextInput style={[styles.input1, { width: 60, marginLeft: 37 }]} value={item.PMFreqDays.toString()} editable={false} />
-
-                <Text style={styles.label}>PMWarningCount</Text>
-                <TextInput style={[styles.input2, { width: 80 }]} value={item.PMWarningCount.toString()} editable={false} />
-
-                <Text style={styles.label}>PMWarningDays</Text>
-                <TextInput style={[styles.input2, { width: 60 }]} value={item.PMWarningDays.toString()} editable={false} />
-
-                <Text style={styles.label}>Instance</Text>
-                <TextInput style={[styles.input2, { width: 50 }]} value={item.Instance.toString()} editable={false} />
-
-                <Text style={styles.label}>PMStatus</Text>
-                <TextInput style={[styles.input2, { width: 140 }]} value={getPMStatusText(item.PMStatus)} editable={false} />
-
-                {item.PMStatus === 4 || item.PMStatus === 5 ? (
-                  <TouchableOpacity
-                    style={[styles.iconButton, { marginRight: 10 }]}
-                    onPress={async () => {
-                      try {
-                        await openCamera(item);
-                      } catch (err) {
-                        console.log('Camera upload error:', err);
-                      }
-                    }}
-                  >
-                    <Icon name="camera" size={24} color="white" />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity style={[styles.iconButton, { marginRight: 10, backgroundColor: '#ccc' }]} disabled={true}>
-                    <Icon name="camera" size={24} color="#666" />
-                  </TouchableOpacity>
-                )}
-
-                {item.PMStatus === 4 || item.PMStatus === 5 ? (
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      navigation.navigate('PMPreparation', {
-                        checklistID: item.CheckListID,
-                        instance: item.Instance,
-                        mouldID: item.MouldID,
-                      })
-                    }
-                  >
-                    <Text style={styles.buttonText}>Execute</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity style={[styles.button, { backgroundColor: '#ccc' }]} disabled={true}>
-                    <Text style={[styles.buttonText, { color: '#666' }]}>Execute</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      ) : error ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={checklistData}
+          keyExtractor={(item) => item.UID.toString()}
+          style={{ maxHeight: 700, marginBottom: 30, marginTop: 20 }}
+          nestedScrollEnabled={true}
+          renderItem={renderChecklistItem}
+          ListEmptyComponent={() => (
+            <View style={styles.loadingContainer}>
+              <Text>No checklist items found.</Text>
             </View>
-          </View>
-        ))}
-      </ScrollView>
+          )}
+        />
+      )}
     </View>
   );
 };

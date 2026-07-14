@@ -20,11 +20,11 @@ import axios from 'axios';
 const PMPreparation = ({ username }) => {
     const route = useRoute();
     const navigation = useNavigation();
-    const checklistID = route?.params?.checklistID || null;
-    const instance = route?.params?.instance || 0;
-    const mouldID = route?.params?.mouldID || null;
-console.log("ChecklistID:", checklistID);
-  console.log("Instance:", instance);
+    const checklistID = route?.params?.checklistID || route?.params?.CheckListID || null;
+    const instance = route?.params?.instance || route?.params?.Instance || 0;
+    const mouldID = route?.params?.mouldID || route?.params?.MouldID || null;
+    console.log("ChecklistID:", checklistID);
+    console.log("Instance:", instance);
     const [checkpoints, setCheckpoints] = useState([]);
     const [imageUri, setImageUri] = useState(null);
     const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
@@ -32,7 +32,7 @@ console.log("ChecklistID:", checklistID);
 
     // Fetch checkpoints on component mount
     useEffect(() => {
-        fetch(`${BASE_URL}/PMMouldPreparation/GetCheckPoints/${checklistID}`)
+        fetch(`${BASE_URL}/PMMouldPreparation/GetCheckPoints/${checklistID}/${mouldID}`)
             .then(res => res.json())
             .then(response => {
                 if (response.status === 200) {
@@ -50,14 +50,20 @@ console.log("ChecklistID:", checklistID);
                 }
             })
             .catch(err => console.error('API fetch error:', err));
-    }, [checklistID]);
+    }, [checklistID, mouldID]);
 
     // Update checkpoint OK/NOK status
-    const updateCheckpoint = (checkPointID, observation, oknok, index) => {
+    const updateCheckpoint = (checkPointID, itemMouldID, observation, oknok, index) => {
+        const payloadMouldID = itemMouldID || mouldID;
+        if (!payloadMouldID) {
+            Alert.alert('Error', 'MouldID is required to update checkpoint.');
+            return;
+        }
+
         fetch(`${BASE_URL}/PMMouldPreparation/UpdateCheckPointStatus`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ CheckPointID: checkPointID, Observation: observation, OKNOK: oknok })
+            body: JSON.stringify({ CheckPointID: checkPointID, MouldID: payloadMouldID, Observation: observation, OKNOK: oknok })
         })
         .then(res => res.json())
         .then(response => {
@@ -179,11 +185,14 @@ console.log("ChecklistID:", checklistID);
             {/* Row 1 */}
             <View style={styles.row1}>
                 <Text style={styles.label}>Checklist Name</Text>
-                <TextInput style={[styles.input1, { width: 400 }]} multiline numberOfLines={4}
+                <TextInput style={[styles.input1, { width: 200 }]} multiline numberOfLines={4}
                     value={item.CheckListName} editable={false} />
                 <Text style={styles.label}>CheckPoint Name</Text>
-                <TextInput style={[styles.input1, { width: 400 }]} multiline numberOfLines={4}
+                <TextInput style={[styles.input1, { width: 200 }]} multiline numberOfLines={4}
                     value={item.CheckPointName} editable={false} />
+                    <Text style={styles.label}>MouldID</Text>
+                <TextInput style={[styles.input1, { width: 200 }]} multiline numberOfLines={4}
+                    value={item.MouldID} editable={false} />
             </View>
 
             {/* Row 2 */}
@@ -237,7 +246,7 @@ console.log("ChecklistID:", checklistID);
 
                 <TouchableOpacity
                     style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
-                    onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 1, index)}
+                    onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.MouldID, item.ObservationInput, 1, index)}
                     disabled={item.isDisabled}
                 >
                     <Text style={styles.buttonText}>OK</Text>
@@ -245,7 +254,7 @@ console.log("ChecklistID:", checklistID);
 
                 <TouchableOpacity
                     style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
-                    onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.ObservationInput, 2, index)}
+                    onPress={() => !item.isDisabled && updateCheckpoint(item.CheckPointID, item.MouldID, item.ObservationInput, 2, index)}
                     disabled={item.isDisabled}
                 >
                     <Text style={styles.buttonText}>NOK</Text>
@@ -291,7 +300,10 @@ console.log("ChecklistID:", checklistID);
 
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('PMMouldMonitoring', { checklistID })}
+                    onPress={() => navigation.navigate('PMPreparation', {
+                        checklistID: checklistID,
+                        mouldID: mouldID,
+                    })}
                 >
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>

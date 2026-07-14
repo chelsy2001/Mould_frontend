@@ -29,8 +29,6 @@ const SeperatePMApproval = ({ username }) => {
   const [selectedUser, setSelectedUser] = useState('');
   const [password, setPassword] = useState('');
   const [modalMode, setModalMode] = useState(''); // 'approve' or 'edit'
-  const [mouldOptions, setMouldOptions] = useState([]);
-  const [selectMouldId, setSelectedMouldId] = useState('select mould');
   const [showPassword, setShowPassword] = useState(false);
 
   const getPMStatusText = (pmStatus) => {
@@ -105,37 +103,41 @@ const SeperatePMApproval = ({ username }) => {
     );
   };
 
-  useEffect(() => {
-    const fetchMouldIds = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/mould/ids`);
-        const data = await response.json();
-        if (data.status === 200) {
-          const options = data.data.map(item => ({ key: item.MouldID, value: item.MouldID }));
-          setMouldOptions(options);
-        }
-      } catch (error) {
-        console.error('Error fetching Mould IDs:', error);
-      }
-    };
-    fetchMouldIds();
-  }, []);
 
-  const fetchChecklistData = (mouldId) => {
-    fetch(`${BASE_URL}/SeperatePMApproval/pm-approval/${mouldId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          const formatted = [];
-          Array.isArray(data.pmStart) && data.pmStart.forEach(item => formatted.push({ ...item, type: 'Start' }));
-          Array.isArray(data.pmApproved) && data.pmApproved.forEach(item => formatted.push({ ...item, type: 'Approved' }));
-          setPmData(formatted);
-        } else setPmData([]);
+
+  const fetchChecklistData = () => {
+    console.log('📡 Fetching PM Approval data from:', `${BASE_URL}/SeperatePMApproval/pm-approval`);
+    fetch(`${BASE_URL}/SeperatePMApproval/pm-approval`)
+      .then(res => {
+        console.log('📶 Response status:', res.status);
+        return res.json();
       })
-      .catch(err => console.error('❌ API fetch error:', err));
+      .then(data => {
+        console.log('📦 Raw API response:', JSON.stringify(data));
+
+        const dataArray = Array.isArray(data?.data)
+          ? data.data
+          : Array.isArray(data?.pmStart) || Array.isArray(data?.pmApproved)
+            ? [...(data.pmStart || []), ...(data.pmApproved || [])]
+            : [];
+
+        if (dataArray.length > 0) {
+          console.log('✅ Records found:', dataArray.length);
+          setPmData(dataArray);
+        } else {
+          console.warn('⚠️ Unexpected response shape or no data:', data);
+          setPmData([]);
+        }
+      })
+      .catch(err => {
+        console.error('❌ API fetch error:', err);
+        setPmData([]);
+      });
   };
 
-  useEffect(() => fetchChecklistData(selectMouldId), [selectMouldId]);
+ useEffect(() => {
+  fetchChecklistData();
+}, []);
 
   useEffect(() => {
     fetch(`${BASE_URL}/SeperatePMApproval/Users`)
@@ -221,12 +223,12 @@ const SeperatePMApproval = ({ username }) => {
 
       {/* Buttons */}
       <View style={styles.row3}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.button, { marginRight: 10 }]}
           onPress={() => Linking.openURL(REPORT_URL).catch(err => Alert.alert('Error', 'Failed to open report'))}
         >
           <Text style={styles.buttonText}>View Reports</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {item.PMStatus === 6 && (
           <>
@@ -253,19 +255,6 @@ const SeperatePMApproval = ({ username }) => {
     <View style={styles.container}>
       <Header username={username} title="PM Approval" />
 
-      <View style={styles.dropdownContainer}>
-        <Text style={styles.dropdownLabel}>Select Mould ID</Text>
-        <SelectList
-          setSelected={(val) => setSelectedMouldId(val)}
-          data={mouldOptions}
-          save="value"
-          placeholder="Choose a Mould ID"
-          boxStyles={styles.dropdownBox}
-          inputStyles={styles.dropdownInput}
-          dropdownStyles={styles.dropdownList}
-          dropdownTextStyles={styles.dropdownText}
-        />
-      </View>
 
       <FlatList
         data={pmData}
@@ -413,7 +402,7 @@ const SeperatePMApproval = ({ username }) => {
 
                   if (approveData.status === 200) {
                     Alert.alert('Approved', 'Checklist approved successfully');
-                    fetchChecklistData(selectMouldId);
+                    fetchChecklistData();
                     setIsModalVisible(false);
                   } else {
                     Alert.alert('Error', approveData.message);
@@ -421,7 +410,11 @@ const SeperatePMApproval = ({ username }) => {
                 }
                 // Edit flow
                 else if (modalMode === 'edit') {
-                  navigation.navigate('PMApprovalCheckpoint', { checklist: selectedChecklist });
+                  navigation.navigate('PMApprovalCheckpoint', {
+                    checklist: selectedChecklist,
+                    checklistID: selectedChecklist.CheckListID,
+                    mouldID: selectedChecklist.MouldID,
+                  });
                   setIsModalVisible(false);
                 }
 

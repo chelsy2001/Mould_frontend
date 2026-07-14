@@ -5,7 +5,7 @@ import {
     TextInput,
     TouchableOpacity,
     Alert,
-    ScrollView,
+    FlatList,
     KeyboardAvoidingView,
     Platform,
     Animated
@@ -18,12 +18,14 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const PMExecution = ({ username, setIsLoggedIn }) => {
     const route = useRoute();
-    const { checklistID } = route.params;
+    const checklistID = route?.params?.checklistID || route?.params?.CheckListID || null;
+    const instance = route?.params?.instance || route?.params?.Instance || 0;
+    const mouldID = route?.params?.mouldID || route?.params?.MouldID || null;
     const [checkpoints, setCheckpoints] = useState([]);
     const navigation = useNavigation();
     //fetch the PM Execution data  
     useEffect(() => {
-        fetch(`${BASE_URL}/PMMouldExecution/GetExecuteCheckPoints/${checklistID}`)
+        fetch(`${BASE_URL}/PMMouldExecution/GetExecuteCheckPoints/${checklistID}/${mouldID}`)
             .then(res => res.json())
             .then(response => {
                 if (response.status === 200) {
@@ -44,9 +46,15 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                 }
             })
             .catch(err => console.error('API fetch error:', err));
-    }, [checklistID]);
+    }, [checklistID, mouldID]);
     // Handle update API call
-    const updateCheckpoint = (checkPointID, observation, oknok, upperLimit, lowerLimit, index) => {
+    const updateCheckpoint = (checkPointID, itemMouldID, observation, oknok, upperLimit, lowerLimit, index) => {
+        const payloadMouldID = itemMouldID || mouldID;
+        if (!payloadMouldID) {
+            Alert.alert('Error', 'MouldID missing for checkpoint update');
+            return;
+        }
+
         fetch(`${BASE_URL}/PMMouldExecution/ExecuteUpdateCheckPointStatus`, {
             method: 'POST',
             headers: {
@@ -54,8 +62,9 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
             },
             body: JSON.stringify({
                 CheckPointID: checkPointID,
+                MouldID: payloadMouldID,
                 Observation: observation,
-                OKNOK: oknok,// 1 for OK, 2 for NOK
+                OKNOK: oknok, // 1 for OK, 2 for NOK
                 UpperLimit: upperLimit,   // NEW
                 LowerLimit: lowerLimit
             })
@@ -83,56 +92,79 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
         setCheckpoints(updated);
     };
     //Integrate the API to submit the list
-    const handleSubmit = () => {
-        fetch(`${BASE_URL}/PMMouldExecution/SubmitPMChecklist`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ CheckListID: checklistID })
-        })
-            .then(res => res.json())
-            .then(response => {
-                if (response.status === 200) {
-                    Alert.alert('Success', response.message || 'Moved to execution successfully.', [
-                        // You can navigate or refresh data here if needed
+  const handleSubmit = () => {
+    if (!mouldID) {
+      Alert.alert('Error', 'MouldID is required before submitting.');
+      return;
+    }
+
+    fetch(`${BASE_URL}/PMMouldExecution/SubmitPMChecklist`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            CheckListID: checklistID,
+            MouldID: mouldID,
+        }),
+    })
+        .then(res => res.json())
+        .then(response => {
+            if (response.status === 200) {
+                Alert.alert(
+                    'Success',
+                    response.message || 'PM Checklist submitted successfully.',
+                    [
                         {
                             text: 'OK',
-                            onPress: () => navigation.navigate('PMApprove', { checklistID }), // Pass checklistID if needed
-                        },])
-                } else {
-                    Alert.alert('Error', response.message || 'Failed to move to execution.');
-                }
-            })
-            .catch(error => {
-                console.error('Submit error:', error);
-                Alert.alert('Error', 'Submission failed: ' + error.message);
-            });
-    };
+                            onPress: () =>
+                                navigation.navigate('PMApprove', {
+                                    checklistID,
+                                    instance,
+                                    mouldID,
+                                }),
+                        },
+                    ]
+                );
+            } else {
+                Alert.alert('Error', response.message || 'Failed to submit PM Checklist.');
+            }
+        })
+        .catch(error => {
+            console.error('Submit error:', error);
+            Alert.alert('Error', 'Submission failed: ' + error.message);
+        });
+};
 
     return (
         <View style={styles.container}>
             <Header username={username} title="PM Execution" />
-            <ScrollView nestedScrollEnabled={true} style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}>
-                <View>
-                    {checkpoints.map((item, index) => (
-                        <View key={index}
-                            style={[
-                                styles.Container1,
-                                item.OKNOK === 1
-                                    ? { backgroundColor: '#00b050' } // Green background for OK
-                                    : item.OKNOK === 2
-                                        ? { backgroundColor: 'red' } // Red background for NOK
-                                        : {}
-                            ]}>
-                            <View style={styles.row1}>
+            <FlatList
+                data={checkpoints}
+                keyExtractor={(item, index) => item.CheckPointID?.toString() || index.toString()}
+                style={{ maxHeight: 630, marginBottom: 30, marginTop: 20 }}
+                nestedScrollEnabled={true}
+                renderItem={({ item, index }) => (
+                    <View
+                        style={[
+                            styles.Container1,
+                            item.OKNOK === 1
+                                ? { backgroundColor: '#00b050' } // Green background for OK
+                                : item.OKNOK === 2
+                                    ? { backgroundColor: 'red' } // Red background for NOK
+                                    : {}
+                        ]}>
+                        <View style={styles.row1}>
                                 <Text style={styles.label}>Checklist Name</Text>
-                                <TextInput style={[styles.input1, { width: 400 }]} multiline={true}
+                                <TextInput style={[styles.input1, { width: 200 }]} multiline={true}
                                     numberOfLines={4} value={item.CheckListName} editable={false} />
 
                                 <Text style={styles.label}>CheckPoint Name</Text>
-                                <TextInput style={[styles.input1, { width: 400 },]} multiline={true}
+                                <TextInput style={[styles.input1, { width: 200 },]} multiline={true}
                                     numberOfLines={4} value={item.CheckPointName} editable={false} />
+                                    <Text style={styles.label}>MouldID</Text>
+                                <TextInput style={[styles.input1, { width: 200 },]} multiline={true}
+                                    numberOfLines={4} value={item.MouldID} editable={false} />
                             </View>
 
                             <View style={styles.row2}>
@@ -228,6 +260,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                     style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
                                     onPress={() => !item.isDisabled && updateCheckpoint(
                                         item.CheckPointID,
+                                        item.MouldID,
                                         item.ObservationInput,
                                         1,
                                         item.UpperLimitInput,
@@ -242,6 +275,7 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                 <TouchableOpacity style={[styles.button, { marginRight: 10, opacity: item.isDisabled ? 0.5 : 1 }]}
                                     onPress={() => !item.isDisabled && updateCheckpoint(
                                         item.CheckPointID,
+                                        item.MouldID,
                                         item.ObservationInput,
                                         2,
                                         item.UpperLimitInput,
@@ -255,9 +289,8 @@ const PMExecution = ({ username, setIsLoggedIn }) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    ))}
-                </View>
-            </ScrollView>
+                    )}
+            />
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: -20, marginRight: 30 }}>
                 <TouchableOpacity style={[styles.button, { marginRight: 10 }]}
                     onPress={handleSubmit}>

@@ -16,12 +16,22 @@ import { BASE_URL, REPORT_URL } from '../../Common/config/config';
 const PMApprove = ({ username }) => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { checklistID, instance, mouldID } = route.params || {};
+  const checklistID = route?.params?.checklistID || route?.params?.CheckListID || null;
+  const instance = route?.params?.instance || route?.params?.Instance || 0;
+  const mouldID = route?.params?.mouldID || route?.params?.MouldID || null;
+  const parsedChecklistID = Number(checklistID);
+  const parsedMouldID = mouldID; 
   const newInstance = (instance ?? 0) + 1;
   const [checkpoints, setCheckpoints] = useState([]);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/PMMouldApproval/GetCheckPoints/${checklistID}`)
+    if (Number.isNaN(parsedChecklistID) || !parsedMouldID) {
+  console.error('Invalid checklistID or mouldID:', checklistID, mouldID);
+  Alert.alert('Error', 'Invalid checklist or mould identifier provided.');
+  return;
+}
+
+    fetch(`${BASE_URL}/PMMouldApproval/GetCheckPoints/${parsedChecklistID}/${encodeURIComponent(parsedMouldID)}`)
       .then(res => res.json())
       .then(response => {
         if (response.status === 200) {
@@ -36,7 +46,7 @@ const PMApprove = ({ username }) => {
         }
       })
       .catch(err => console.error('API fetch error:', err));
-  }, [checklistID]);
+  }, [checklistID, mouldID]);
 
   const renderItem = ({ item, index }) => (
     <View
@@ -52,16 +62,24 @@ const PMApprove = ({ username }) => {
       <View style={styles.row1}>
         <Text style={styles.label}>Checklist Name</Text>
         <TextInput
-          style={[styles.input1, { width: 400 }]}
+          style={[styles.input1, { width: 200 }]}
           multiline
           numberOfLines={4}
           value={item.CheckListName}
           editable={false}
         />
+        <Text style={styles.label}>MouldID</Text>
+        <TextInput
+          style={[styles.input1, { width: 200 }]}
+          multiline
+          numberOfLines={4}
+          value={item.MouldID}
+          editable={false}
+        />
 
         <Text style={styles.label}>CheckPoint Name</Text>
         <TextInput
-          style={[styles.input1, { width: 400 }]}
+          style={[styles.input1, { width: 200 }]}
           multiline
           numberOfLines={4}
           value={item.CheckPointName}
@@ -163,7 +181,7 @@ const PMApprove = ({ username }) => {
         >
           <Text style={styles.buttonText}>View Images</Text>
         </TouchableOpacity>
-
+{/* 
         <TouchableOpacity
           style={[styles.button, { marginRight: 10, width: '14%' }]}
           onPress={() => {
@@ -174,7 +192,7 @@ const PMApprove = ({ username }) => {
           }}
         >
           <Text style={styles.buttonText}>View Reports</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           style={styles.button}

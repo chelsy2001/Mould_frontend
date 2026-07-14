@@ -17,30 +17,44 @@ import { scale } from '../../Common/utils/scale';
 const PMApprovalCheckpoint = ({ username }) => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { checklist } = route.params;
-  const checklistID = checklist?.CheckListID;
+  const { checklist } = route.params || {};
+  const checklistID = checklist?.CheckListID || route.params?.checklistID;
+  const MouldId = checklist?.MouldID || route.params?.MouldID || route.params?.mouldID;
 
   const [checkpoints, setCheckpoints] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (!checklistID) return;
-    fetch(`${BASE_URL}/SeperatePMApproval/GetCheckPoints/${checklistID}`)
+    if (!checklistID || !MouldId) {
+      setIsLoading(false);
+      setErrorMessage('Missing checklist or mould ID. Cannot load checkpoints.');
+      return;
+    }
+
+    fetch(`${BASE_URL}/SeperatePMApproval/GetCheckPoints/${checklistID}/${MouldId}`)
       .then(res => res.json())
       .then(response => {
-        if (response.status === 200) {
+        if (response.status === 200 && Array.isArray(response.data)) {
           const updatedData = response.data.map(item => ({
             ...item,
+            MouldID: item.MouldID || MouldId,
             ObservationInput: item.Observation ?? '',
             OKNOKInput: item.OKNOK ?? null,
             isDisabled: item.Observation !== null && item.Observation !== '' && item.OKNOK !== null,
           }));
           setCheckpoints(updatedData);
         } else {
-          console.warn('API error:', response.message);
+          console.warn('API error or empty data:', response);
+          setErrorMessage('No checkpoint data returned from API.');
         }
       })
-      .catch(err => console.error('API fetch error:', err));
-  }, [checklistID]);
+      .catch(err => {
+        console.error('API fetch error:', err);
+        setErrorMessage('Failed to load checkpoints.');
+      })
+      .finally(() => setIsLoading(false));
+  }, [checklistID, MouldId]);
 
   const handleUpdate = async index => {
     const item = checkpoints[index];
@@ -97,7 +111,7 @@ const PMApprovalCheckpoint = ({ username }) => {
       <View style={styles.row1}>
         <Text style={styles.label}>Checklist Name</Text>
         <TextInput
-          style={[styles.input1, { width: 400 }]}
+          style={[styles.input1, { width: 200 }]}
           multiline
           numberOfLines={4}
           value={item.CheckListName}
@@ -106,10 +120,19 @@ const PMApprovalCheckpoint = ({ username }) => {
 
         <Text style={styles.label}>CheckPoint Name</Text>
         <TextInput
-          style={[styles.input1, { width: 400 }]}
+          style={[styles.input1, { width: 200 }]}
           multiline
           numberOfLines={4}
           value={item.CheckPointName}
+          editable={false}
+        />
+
+        <Text style={styles.label}>Mould ID</Text>
+        <TextInput
+          style={[styles.input1, { width: 200 }]}
+          multiline
+          numberOfLines={4}
+          value={item.MouldID}
           editable={false}
         />
       </View>
@@ -215,12 +238,32 @@ const PMApprovalCheckpoint = ({ username }) => {
     <View style={styles.container}>
       <Header username={username} title="PM Preparation" />
 
-      <FlatList
-        data={checkpoints}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderCheckpoint}
-        contentContainerStyle={{ paddingBottom: 100, marginTop: scale(10) }}
-      />
+      {/* <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
+        <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Mould ID:</Text>
+        <Text>{MouldId || 'Unknown'}</Text>
+      </View> */}
+
+      {isLoading ? (
+        <View style={{ padding: 20 }}>
+          <Text>Loading checkpoints...</Text>
+        </View>
+      ) : errorMessage ? (
+        <View style={{ padding: 20 }}>
+          <Text style={{ color: 'red' }}>{errorMessage}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={checkpoints}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderCheckpoint}
+          contentContainerStyle={{ paddingBottom: 100, marginTop: scale(10) }}
+          ListEmptyComponent={() => (
+            <View style={{ padding: 20 }}>
+              <Text>No checkpoints available.</Text>
+            </View>
+          )}
+        />
+      )}
 
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10, marginRight: 30 }}>
         <TouchableOpacity
